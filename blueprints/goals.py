@@ -12,6 +12,12 @@ def api_get_goals():
     goals = models.list_pending_goals(user_id=current_user.id)
     return jsonify({"goals": goals})
 
+@goals_bp.route("/completed", methods=['GET'])
+@login_required
+def api_get_completed_goals():
+    goals = models.list_completed_goals(user_id=current_user.id)
+    return jsonify({"goals": goals})
+
 @goals_bp.route("", methods=['POST'])
 @login_required
 def api_add_goal():

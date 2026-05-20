@@ -66,51 +66,76 @@
           <!-- Daily Goals Column -->
           <div class="flex flex-col h-full">
             <section class="bg-white rounded-lg shadow-md p-6 mb-8 flex-1">
-              <h2 class="text-2xl font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">Daily One-Minute Goals</h2>
-              <ul class="divide-y divide-gray-100">
-                <li v-for="goal in goals" :key="goal.id" class="py-4 flex flex-col group">
-                  <div class="flex justify-between items-center w-full">
-                    <span class="text-gray-700">
-                      <span class="text-gray-400 font-mono text-sm mr-2">[{{ goal.id }}]</span>
+              <div class="flex justify-between border-b border-gray-100 pb-3 mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Daily One-Minute Goals</h2>
+                <div class="flex gap-2">
+                  <button @click="activeTab = 'active'" :class="{'bg-blue-100 text-blue-800': activeTab === 'active', 'text-gray-500 hover:text-gray-700': activeTab !== 'active'}" class="px-3 py-1 rounded font-medium text-sm transition">Active</button>
+                  <button @click="activeTab = 'completed'" :class="{'bg-blue-100 text-blue-800': activeTab === 'completed', 'text-gray-500 hover:text-gray-700': activeTab !== 'completed'}" class="px-3 py-1 rounded font-medium text-sm transition">History</button>
+                </div>
+              </div>
+
+              <!-- Active Goals Tab -->
+              <div v-if="activeTab === 'active'">
+                <ul class="divide-y divide-gray-100">
+                  <li v-for="goal in goals" :key="goal.id" class="py-4 flex flex-col group">
+                    <div class="flex justify-between items-center w-full">
+                      <span class="text-gray-700">
+                        <span class="text-gray-400 font-mono text-sm mr-2">[{{ goal.id }}]</span>
+                        {{ goal.description }}
+                      </span>
+                      <div>
+                        <button @click="addSubGoalForm(goal.id)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded shadow transition duration-150 font-medium mr-2 text-sm">
+                          + Sub-goal
+                        </button>
+                        <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded shadow transition duration-150 font-medium text-sm">
+                          Complete
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Subgoals List -->
+                    <ul v-if="goal.subgoals && goal.subgoals.length > 0" class="mt-2 ml-6 border-l-2 border-gray-200 pl-4">
+                      <li v-for="sub in goal.subgoals" :key="sub.id" class="py-2 flex justify-between items-center">
+                        <span class="text-gray-600 text-sm">
+                          <span class="text-gray-400 font-mono text-xs mr-2">[{{ sub.id }}]</span>
+                          {{ sub.description }}
+                        </span>
+                        <button @click="completeGoal(sub.id)" class="bg-green-400 hover:bg-green-500 text-white px-3 py-1 rounded shadow transition duration-150 font-medium text-xs">
+                          Complete
+                        </button>
+                      </li>
+                    </ul>
+
+                    <!-- Add Subgoal Form -->
+                    <form v-if="activeSubGoalParent === goal.id" @submit.prevent="submitSubGoal(goal.id)" class="mt-3 ml-6 flex gap-2">
+                      <input v-model="newSubGoalDescription" type="text" placeholder="Sub-goal description..." required autofocus class="flex-1 px-3 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow font-medium text-sm">Save</button>
+                      <button type="button" @click="activeSubGoalParent = null" class="text-gray-500 hover:text-gray-700 px-2 text-sm">Cancel</button>
+                    </form>
+                  </li>
+                  <li v-if="goals.length === 0" class="py-4 text-gray-500 italic text-center">No pending goals. Great job!</li>
+                </ul>
+
+                <form @submit.prevent="submitGoal" class="mt-6 flex gap-3">
+                  <input v-model="newGoal" type="text" placeholder="New daily goal..." required class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-medium">Add Goal</button>
+                </form>
+              </div>
+
+              <!-- Completed Goals Tab -->
+              <div v-if="activeTab === 'completed'">
+                <ul class="divide-y divide-gray-100">
+                  <li v-for="goal in completedGoals" :key="goal.id" class="py-4 flex justify-between items-center opacity-60">
+                    <span class="text-gray-700 line-through">
+                      <span class="text-gray-400 font-mono text-sm mr-2 line-through">[{{ goal.id }}]</span>
                       {{ goal.description }}
                     </span>
-                    <div>
-                      <button @click="addSubGoalForm(goal.id)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded shadow transition duration-150 font-medium mr-2 text-sm">
-                        + Sub-goal
-                      </button>
-                      <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded shadow transition duration-150 font-medium text-sm">
-                        Complete
-                      </button>
-                    </div>
-                  </div>
+                    <span class="text-green-600 font-bold text-lg">✓</span>
+                  </li>
+                  <li v-if="completedGoals.length === 0" class="py-4 text-gray-500 italic text-center">No completed goals yet.</li>
+                </ul>
+              </div>
 
-                  <!-- Subgoals List -->
-                  <ul v-if="goal.subgoals && goal.subgoals.length > 0" class="mt-2 ml-6 border-l-2 border-gray-200 pl-4">
-                    <li v-for="sub in goal.subgoals" :key="sub.id" class="py-2 flex justify-between items-center">
-                      <span class="text-gray-600 text-sm">
-                        <span class="text-gray-400 font-mono text-xs mr-2">[{{ sub.id }}]</span>
-                        {{ sub.description }}
-                      </span>
-                      <button @click="completeGoal(sub.id)" class="bg-green-400 hover:bg-green-500 text-white px-3 py-1 rounded shadow transition duration-150 font-medium text-xs">
-                        Complete
-                      </button>
-                    </li>
-                  </ul>
-
-                  <!-- Add Subgoal Form -->
-                  <form v-if="activeSubGoalParent === goal.id" @submit.prevent="submitSubGoal(goal.id)" class="mt-3 ml-6 flex gap-2">
-                    <input v-model="newSubGoalDescription" type="text" placeholder="Sub-goal description..." required autofocus class="flex-1 px-3 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow font-medium text-sm">Save</button>
-                    <button type="button" @click="activeSubGoalParent = null" class="text-gray-500 hover:text-gray-700 px-2 text-sm">Cancel</button>
-                  </form>
-                </li>
-                <li v-if="goals.length === 0" class="py-4 text-gray-500 italic text-center">No pending goals. Great job!</li>
-              </ul>
-
-              <form @submit.prevent="submitGoal" class="mt-6 flex gap-3">
-                <input v-model="newGoal" type="text" placeholder="New daily goal..." required class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-medium">Add Goal</button>
-              </form>
             </section>
           </div>
 
@@ -167,7 +192,10 @@ const registerForm = reactive({ username: '', password: '' })
 const toastMessage = ref('')
 const toastError = ref(false)
 
+const activeTab = ref('active') // 'active' or 'completed'
+
 const goals = ref([])
+const completedGoals = ref([])
 const newGoal = ref('')
 
 const initiatives = ref([])
@@ -242,9 +270,10 @@ const logout = async () => {
 
 const fetchData = async () => {
   if (!user.authenticated) return
-  const [goalsRes, initRes] = await Promise.all([
+  const [goalsRes, initRes, compRes] = await Promise.all([
     fetch('/api/goals'),
-    fetch('/api/initiatives')
+    fetch('/api/initiatives'),
+    fetch('/api/goals/completed')
   ])
   if (goalsRes.ok) {
     const gData = await goalsRes.json()
@@ -253,6 +282,10 @@ const fetchData = async () => {
   if (initRes.ok) {
     const iData = await initRes.json()
     initiatives.value = iData.initiatives
+  }
+  if (compRes.ok) {
+    const cData = await compRes.json()
+    completedGoals.value = cData.goals
   }
 }
 

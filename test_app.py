@@ -91,6 +91,17 @@ def test_api_complete_goal(client):
     assert rv.status_code == 200
     assert rv.json['message'] == "Goal 1 completed."
 
+def test_api_get_completed_goals(client):
+    login_test_user(client)
+    models.add_goal("Done goal", user_id=1)
+    models.complete_goal(1, user_id=1)
+
+    rv = client.get('/api/goals/completed')
+    assert rv.status_code == 200
+    goals = rv.json['goals']
+    assert len(goals) == 1
+    assert goals[0]['description'] == "Done goal"
+
 def test_api_add_initiative(client):
     login_test_user(client)
     rv = client.post('/api/initiatives', json=dict(quarter='Q1', description='Test Web Initiative'))

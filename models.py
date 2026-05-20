@@ -129,6 +129,20 @@ def list_pending_goals(user_id=1, db_path=None):
     session.close()
     return results
 
+def list_completed_goals(user_id=1, db_path=None):
+    session = _get_session(db_path)
+    # Return completed goals (flat list is usually fine for history)
+    goals = session.query(Goal).filter(Goal.status == 'completed', Goal.user_id == user_id).order_by(Goal.id.desc()).all()
+
+    results = [{
+        "id": g.id,
+        "description": g.description,
+        "parent_id": g.parent_id
+    } for g in goals]
+
+    session.close()
+    return results
+
 def complete_goal(goal_id, user_id=1, db_path=None):
     session = _get_session(db_path)
     goal = session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()

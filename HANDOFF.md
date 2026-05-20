@@ -10,7 +10,7 @@
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently. `Dockerfile` uses a multi-stage approach to compile Node.js assets before assembling the Python environment.
-10. **Next highest-impact implementation tasks**: The technical scaling roadmap is complete. Future tasks should focus on feature roadmap development (e.g., adding user avatars, or calendar views).
+10. **Next highest-impact implementation tasks**: Add a user avatar/profile page, or implement a chronological "Calendar View" combining the Active/History goals.
 
 ## Dependency Inventory
 
@@ -96,4 +96,8 @@
 ## Phase 15 Update (v0.15.0)
 - **Implemented:** Added hierarchical Sub-Goals feature. Updated `models.py` Goal model with `parent_id` foreign key. Updated `/api/goals` to natively fetch recursive structures. Added visual rendering and inline add-forms to the Vue 3 component `App.vue`.
 - **Tested:** Added `test_api_add_subgoal` to `test_app.py`. Validated structural parity recursively across the `cli.py` lists. Handled E2E testing. All tests pass flawlessly.
-- **Next:** User Avatars or Calendar Views.
+
+## Phase 16 Update (v0.16.0)
+- **Implemented:** Developed a Completed Goals History UI logic. Wrote `models.list_completed_goals()`, exported via `GET /api/goals/completed`, and surfaced in `App.vue` using a dual-tab toggle to swap between the pending dashboard and historical views seamlessly.
+- **Tested:** Overhauled `test_app.py` extending logic to assert the completed goals retrieval. Ran Playwright e2e validation testing to ensure identical flow patterns.
+- **Next:** Proceed into avatar profiles or calendar chronologies.

@@ -1,4 +1,9 @@
 # Changelog
+## [0.16.0] - Completed Goals History
+- Developed a new `list_completed_goals()` data-layer query fetching goals marked `status == 'completed'`.
+- Added the `/api/goals/completed` endpoint to expose goal history payload.
+- Refactored `App.vue` introducing a dual-tab "Active" vs "History" selector, empowering users to review accomplished objectives visually.
+
 ## [0.15.0] - Hierarchical Sub-Goals
 - Enhanced the Data Model by adding a self-referential `parent_id` to the `Goal` entity.
 - Expanded the `/api/goals` GET payload to serialize and nest sub-goals intrinsically.
