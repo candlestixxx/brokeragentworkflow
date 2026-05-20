@@ -1,4 +1,7 @@
 # Changelog
+## [0.10.0] - Real-Time WebSockets
+- Integrated `Flask-SocketIO` to push real-time updates directly to the Vue frontend when backend database modifications occur, keeping multiple browser sessions perfectly synced.
+
 ## [0.9.0] - Vue.js Single Page Application
 - Refactored `app.py` from server-side rendering to a JSON REST API.
 - Created `spa.html` implementing a Vue 3 reactive interface for seamless state updates without page reloading.

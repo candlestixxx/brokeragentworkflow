@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_socketio import SocketIO, emit
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.twiml.voice_response import VoiceResponse
 from notifications import notify_all
@@ -8,6 +9,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -99,6 +101,7 @@ def api_add_goal():
             body=f"You added a new goal: {description}",
             speakable_message=f"You added a new goal: {description}"
         )
+        socketio.emit('data_updated', {"message": "Goal added"})
         return jsonify({"message": "Goal added.", "id": goal_id}), 201
     return jsonify({"error": "Description required."}), 400
 
@@ -112,6 +115,7 @@ def api_complete_goal(goal_id):
             body=f"Excellent work! You completed goal {goal_id}.",
             speakable_message=f"Excellent work! You completed goal {goal_id}."
         )
+        socketio.emit('data_updated', {"message": "Goal completed"})
         return jsonify({"message": f"Goal {goal_id} completed."})
     return jsonify({"error": "Goal not found."}), 404
 
@@ -134,6 +138,7 @@ def api_add_initiative():
             body=f"You added a new initiative for {quarter}: {description}",
             speakable_message=f"You added a new quarterly initiative for {quarter}: {description}"
         )
+        socketio.emit('data_updated', {"message": "Initiative added"})
         return jsonify({"message": "Initiative added.", "id": init_id}), 201
     return jsonify({"error": "Quarter and description required."}), 400
 
@@ -147,6 +152,7 @@ def api_complete_initiative(initiative_id):
             body=f"Great job completing quarterly initiative {initiative_id}.",
             speakable_message=f"Great job completing quarterly initiative {initiative_id}."
         )
+        socketio.emit('data_updated', {"message": "Initiative completed"})
         return jsonify({"message": f"Initiative {initiative_id} completed."})
     return jsonify({"error": "Initiative not found."}), 404
 
@@ -188,4 +194,4 @@ def voice_reply():
     return str(resp)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)

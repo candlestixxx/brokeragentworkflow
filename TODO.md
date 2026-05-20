@@ -1,5 +1,4 @@
 # TODO
-1. Refactor `app.py` endpoints to return JSON instead of HTML template redirects.
-2. Convert frontend to a Vue.js Single Page Application (`spa.html`).
-3. Update `test_app.py` to assert against JSON endpoints rather than HTML strings.
-4. Clean up obsolete Jinja templates.
+1. Add `Flask-SocketIO` dependency.
+2. Configure SocketIO in `app.py` and broadcast `data_updated` events when goals/initiatives are added or completed.
+3. Update `spa.html` Vue app to listen for SocketIO events and automatically refresh state.

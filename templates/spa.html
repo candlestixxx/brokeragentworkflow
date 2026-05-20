@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue.js 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Socket.io -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased max-w-4xl mx-auto p-6 mt-8">
 
@@ -154,6 +156,25 @@
                     setTimeout(() => toastMessage.value = '', 4000)
                 }
 
+                let socket = null
+
+                const initSocket = () => {
+                    if (!socket) {
+                        socket = io()
+                        socket.on('data_updated', (data) => {
+                            console.log("WebSocket data updated event received:", data)
+                            fetchDashboardData()
+                        })
+                    }
+                }
+
+                const disconnectSocket = () => {
+                    if (socket) {
+                        socket.disconnect()
+                        socket = null
+                    }
+                }
+
                 const fetchSession = async () => {
                     try {
                         const res = await fetch('/api/me')
@@ -162,6 +183,7 @@
                         user.username = data.username || ''
                         if (user.authenticated) {
                             fetchDashboardData()
+                            initSocket()
                         }
                     } catch (e) {
                         console.error(e)
@@ -207,6 +229,7 @@
                     user.username = ''
                     goals.value = []
                     initiatives.value = []
+                    disconnectSocket()
                     showToast("Logged out successfully.")
                 }
 
