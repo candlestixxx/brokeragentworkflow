@@ -1,4 +1,8 @@
 # Changelog
+## [0.19.0] - Frontend Vue Component Modularization
+- Re-architected monolithic `App.vue` entrypoint down into targeted Single File Components (`NavBar.vue`, `AuthTabs.vue`, `ActiveGoals.vue`, `CompletedGoals.vue`, `CalendarGoals.vue`, `QuarterlyInitiatives.vue`).
+- Abstracted reactive context parameters handling global application tracking into a centralized `store.js` state.
+
 ## [0.18.0] - Chronological Calendar View
 - Added a `models.list_calendar_goals` data-layer query fetching all goals grouped by their `created_at` timestamp array.
 - Mounted `GET /api/goals/calendar` to map timeline logic outwards to the frontend.
