@@ -1,4 +1,9 @@
 # Changelog
+## [0.18.0] - Chronological Calendar View
+- Added a `models.list_calendar_goals` data-layer query fetching all goals grouped by their `created_at` timestamp array.
+- Mounted `GET /api/goals/calendar` to map timeline logic outwards to the frontend.
+- Augmented the `App.vue` UI with a `Calendar` tab rendering visual history of historical objectives partitioned strictly by distinct operational days.
+
 ## [0.17.0] - User Avatars
 - Added an `avatar_url` database column to the `User` model.
 - Established `POST /api/me/avatar` to securely bind profile URLs to authenticated users.

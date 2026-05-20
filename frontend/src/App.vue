@@ -90,11 +90,12 @@
           <!-- Daily Goals Column -->
           <div class="flex flex-col h-full">
             <section class="bg-white rounded-lg shadow-md p-6 mb-8 flex-1">
-              <div class="flex justify-between border-b border-gray-100 pb-3 mb-4">
+              <div class="flex flex-col gap-3 lg:flex-row lg:justify-between border-b border-gray-100 pb-3 mb-4">
                 <h2 class="text-2xl font-semibold text-gray-800">Daily One-Minute Goals</h2>
                 <div class="flex gap-2">
                   <button @click="activeTab = 'active'" :class="{'bg-blue-100 text-blue-800': activeTab === 'active', 'text-gray-500 hover:text-gray-700': activeTab !== 'active'}" class="px-3 py-1 rounded font-medium text-sm transition">Active</button>
                   <button @click="activeTab = 'completed'" :class="{'bg-blue-100 text-blue-800': activeTab === 'completed', 'text-gray-500 hover:text-gray-700': activeTab !== 'completed'}" class="px-3 py-1 rounded font-medium text-sm transition">History</button>
+                  <button @click="activeTab = 'calendar'" :class="{'bg-blue-100 text-blue-800': activeTab === 'calendar', 'text-gray-500 hover:text-gray-700': activeTab !== 'calendar'}" class="px-3 py-1 rounded font-medium text-sm transition">Calendar</button>
                 </div>
               </div>
 
@@ -160,6 +161,23 @@
                 </ul>
               </div>
 
+              <!-- Calendar Goals Tab -->
+              <div v-if="activeTab === 'calendar'">
+                <div v-for="(dayGoals, date) in calendarGoals" :key="date" class="mb-6">
+                  <h3 class="font-bold text-gray-700 bg-gray-50 px-3 py-2 rounded-t border border-gray-100 border-b-0">{{ date }}</h3>
+                  <ul class="border border-gray-100 rounded-b divide-y divide-gray-50">
+                    <li v-for="goal in dayGoals" :key="goal.id" :class="{'opacity-60 bg-gray-50': goal.status === 'completed'}" class="py-3 px-4 flex justify-between items-center">
+                      <span class="text-gray-700" :class="{'line-through': goal.status === 'completed'}">
+                        {{ goal.description }}
+                      </span>
+                      <span v-if="goal.status === 'completed'" class="text-green-600 font-bold text-sm">✓</span>
+                      <span v-else class="text-yellow-600 text-xs font-semibold px-2 py-1 bg-yellow-100 rounded">Pending</span>
+                    </li>
+                  </ul>
+                </div>
+                <div v-if="Object.keys(calendarGoals).length === 0" class="py-4 text-gray-500 italic text-center">No goals recorded yet.</div>
+              </div>
+
             </section>
           </div>
 
@@ -219,10 +237,11 @@ const registerForm = reactive({ username: '', password: '' })
 const toastMessage = ref('')
 const toastError = ref(false)
 
-const activeTab = ref('active') // 'active' or 'completed'
+const activeTab = ref('active') // 'active', 'completed', or 'calendar'
 
 const goals = ref([])
 const completedGoals = ref([])
+const calendarGoals = ref({})
 const newGoal = ref('')
 
 const initiatives = ref([])
@@ -313,10 +332,11 @@ const logout = async () => {
 
 const fetchData = async () => {
   if (!user.authenticated) return
-  const [goalsRes, initRes, compRes] = await Promise.all([
+  const [goalsRes, initRes, compRes, calRes] = await Promise.all([
     fetch('/api/goals'),
     fetch('/api/initiatives'),
-    fetch('/api/goals/completed')
+    fetch('/api/goals/completed'),
+    fetch('/api/goals/calendar')
   ])
   if (goalsRes.ok) {
     const gData = await goalsRes.json()
@@ -329,6 +349,10 @@ const fetchData = async () => {
   if (compRes.ok) {
     const cData = await compRes.json()
     completedGoals.value = cData.goals
+  }
+  if (calRes.ok) {
+    const calData = await calRes.json()
+    calendarGoals.value = calData.calendar
   }
 }
 

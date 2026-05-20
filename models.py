@@ -155,6 +155,29 @@ def list_completed_goals(user_id=1, db_path=None):
     session.close()
     return results
 
+def list_calendar_goals(user_id=1, db_path=None):
+    """Retrieve all goals for a user mapped chronologically by creation date."""
+    session = _get_session(db_path)
+    # Fetch all goals ordered by creation date descending
+    goals = session.query(Goal).filter(Goal.user_id == user_id).order_by(Goal.created_at.desc()).all()
+
+    calendar_data = {}
+    for g in goals:
+        # Convert datetime to YYYY-MM-DD string
+        date_str = g.created_at.strftime('%Y-%m-%d')
+        if date_str not in calendar_data:
+            calendar_data[date_str] = []
+
+        calendar_data[date_str].append({
+            "id": g.id,
+            "description": g.description,
+            "status": g.status,
+            "parent_id": g.parent_id
+        })
+
+    session.close()
+    return calendar_data
+
 def complete_goal(goal_id, user_id=1, db_path=None):
     session = _get_session(db_path)
     goal = session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()

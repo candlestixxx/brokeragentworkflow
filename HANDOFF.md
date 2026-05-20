@@ -10,7 +10,7 @@
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently. `Dockerfile` uses a multi-stage approach to compile Node.js assets before assembling the Python environment.
-10. **Next highest-impact implementation tasks**: Add a chronological "Calendar View" combining the Active/History goals, or integrate an external UI library (like Element Plus or Vuetify) to formalize the Vue 3 component suite.
+10. **Next highest-impact implementation tasks**: Integrate an external UI library (like Element Plus or Vuetify) to formalize the Vue 3 component suite, or split `App.vue` into smaller dedicated sub-components (e.g. `Calendar.vue`, `GoalList.vue`).
 
 ## Dependency Inventory
 
@@ -104,4 +104,8 @@
 ## Phase 17 Update (v0.17.0)
 - **Implemented:** Implemented User Profiles via Avatar tracking. Migrated `User` model to map `avatar_url` database string schemas. Created `POST /api/me/avatar` updating logic, and exposed data out to `App.vue` updating the Navigation bar with hover interaction modalities and `ui-avatars.com` automated API fallbacks.
 - **Tested:** Wrote `test_api_update_avatar` within `test_app.py`. E2E suite succeeds gracefully.
-- **Next:** Calendar specific view mapping.
+
+## Phase 18 Update (v0.18.0)
+- **Implemented:** Implemented a chronological "Calendar View" natively grouping tasks inside the ORM by `.strftime('%Y-%m-%d')`. Added the `GET /api/goals/calendar` controller endpoint, and extended `App.vue` with a 3rd navigational state rendering distinct dates into card lists visually differentiating completion.
+- **Tested:** Verified payload structures locally deploying headless Pytests. Validated logic integration tracking chronological groupings via `test_app.py`.
+- **Next:** Refactor `App.vue` down into standalone SFC components, or implement a Vue Router framework.

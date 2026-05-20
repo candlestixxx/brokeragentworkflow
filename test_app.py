@@ -110,6 +110,19 @@ def test_api_get_completed_goals(client):
     assert len(goals) == 1
     assert goals[0]['description'] == "Done goal"
 
+def test_api_get_calendar_goals(client):
+    login_test_user(client)
+    models.add_goal("Day goal 1", user_id=1)
+
+    rv = client.get('/api/goals/calendar')
+    assert rv.status_code == 200
+    calendar = rv.json['calendar']
+
+    # We should have exactly 1 date key today
+    keys = list(calendar.keys())
+    assert len(keys) == 1
+    assert calendar[keys[0]][0]['description'] == "Day goal 1"
+
 def test_api_add_initiative(client):
     login_test_user(client)
     rv = client.post('/api/initiatives', json=dict(quarter='Q1', description='Test Web Initiative'))
