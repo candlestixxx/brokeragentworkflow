@@ -60,10 +60,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
 import { io } from 'socket.io-client'
-import { user, activeTab, toastState, checkAuth, fetchData } from './store.js'
+import { user, activeTab, toastState, checkAuth, fetchData } from './store'
 
 import NavBar from './components/NavBar.vue'
 import AuthTabs from './components/AuthTabs.vue'

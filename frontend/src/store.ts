@@ -1,17 +1,42 @@
 import { reactive, ref } from 'vue'
 
-export const user = reactive({ authenticated: false, username: null, avatar_url: null })
-export const currentView = ref('login') // 'login' or 'register'
-export const activeTab = ref('active') // 'active', 'completed', or 'calendar'
+export interface SubGoal {
+  id: number;
+  description: string;
+}
 
-export const goals = ref([])
-export const completedGoals = ref([])
-export const calendarGoals = ref({})
-export const initiatives = ref([])
+export interface Goal {
+  id: number;
+  description: string;
+  subgoals?: SubGoal[];
+  status?: string;
+  parent_id?: number | null;
+}
+
+export interface Initiative {
+  id: number;
+  quarter: string;
+  description: string;
+}
+
+export interface UserState {
+  authenticated: boolean;
+  username: string | null;
+  avatar_url: string | null;
+}
+
+export const user = reactive<UserState>({ authenticated: false, username: null, avatar_url: null })
+export const currentView = ref<string>('login') // 'login' or 'register'
+export const activeTab = ref<string>('active') // 'active', 'completed', or 'calendar'
+
+export const goals = ref<Goal[]>([])
+export const completedGoals = ref<Goal[]>([])
+export const calendarGoals = ref<Record<string, Goal[]>>({})
+export const initiatives = ref<Initiative[]>([])
 
 export const toastState = reactive({ message: '', error: false })
 
-export const showToast = (msg, isError = false) => {
+export const showToast = (msg: string, isError: boolean = false) => {
   toastState.message = msg
   toastState.error = isError
   setTimeout(() => toastState.message = '', 4000)

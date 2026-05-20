@@ -30,9 +30,9 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive } from 'vue'
-import { initiatives, showToast } from '../store.js'
+import { initiatives, showToast } from '../store'
 
 const newInitiative = reactive({ quarter: '', description: '' })
 
@@ -49,7 +49,7 @@ const addInitiative = async () => {
   }
 }
 
-const completeInitiative = async (id) => {
+const completeInitiative = async (id: number) => {
   const res = await fetch(`/api/initiatives/${id}/complete`, { method: 'POST' })
   if (res.ok) {
     showToast("Initiative completed!")

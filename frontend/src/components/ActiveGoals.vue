@@ -47,15 +47,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { goals, showToast } from '../store.js'
+import { goals, showToast } from '../store'
 
-const newGoal = ref('')
-const activeSubGoalParent = ref(null)
-const newSubGoalDescription = ref('')
+const newGoal = ref<string>('')
+const activeSubGoalParent = ref<number | null>(null)
+const newSubGoalDescription = ref<string>('')
 
-const completeGoal = async (id) => {
+const completeGoal = async (id: number) => {
   const res = await fetch(`/api/goals/${id}/complete`, { method: 'POST' })
   if (res.ok) {
     showToast("Goal completed! Excellent work.")
@@ -74,12 +74,12 @@ const submitGoal = async () => {
   }
 }
 
-const addSubGoalForm = (parentId) => {
+const addSubGoalForm = (parentId: number) => {
   activeSubGoalParent.value = parentId
   newSubGoalDescription.value = ''
 }
 
-const submitSubGoal = async (parentId) => {
+const submitSubGoal = async (parentId: number) => {
   const res = await fetch('/api/goals', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

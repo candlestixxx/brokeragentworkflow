@@ -30,9 +30,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive } from 'vue'
-import { currentView, showToast, checkAuth } from '../store.js'
+import { currentView, showToast, checkAuth } from '../store'
 
 const loginForm = reactive({ username: '', password: '' })
 const registerForm = reactive({ username: '', password: '' })

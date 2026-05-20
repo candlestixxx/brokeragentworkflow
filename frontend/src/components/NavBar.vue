@@ -38,9 +38,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { user, currentView, logout, showToast } from '../store.js'
+import { user, currentView, logout, showToast } from '../store'
 
 const showAvatarModal = ref(false)
 const newAvatarUrl = ref('')

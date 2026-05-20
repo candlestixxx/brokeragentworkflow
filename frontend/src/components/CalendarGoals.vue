@@ -14,6 +14,6 @@
   <div v-if="Object.keys(calendarGoals).length === 0" class="py-4 text-gray-500 italic text-center">No goals recorded yet.</div>
 </template>
 
-<script setup>
-import { calendarGoals } from '../store.js'
+<script setup lang="ts">
+import { calendarGoals } from '../store'
 </script>

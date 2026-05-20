@@ -11,6 +11,6 @@
   </ul>
 </template>
 
-<script setup>
-import { completedGoals } from '../store.js'
+<script setup lang="ts">
+import { completedGoals } from '../store'
 </script>

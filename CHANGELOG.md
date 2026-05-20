@@ -1,4 +1,9 @@
 # Changelog
+## [0.20.0] - TypeScript Frontend Migration
+- Established strict TypeScript configuration environments leveraging `tsconfig.json` & `vue-tsc`.
+- Migrated all `frontend/src/*` logic mapping `main.js` and `store.js` over to strict `*.ts` extensions mapping explicit interfaces for User, Goal, and Initiative schemas.
+- Modified Vue components into `<script setup lang="ts">` binding variables eliminating unmapped runtime exceptions.
+
 ## [0.19.0] - Frontend Vue Component Modularization
 - Re-architected monolithic `App.vue` entrypoint down into targeted Single File Components (`NavBar.vue`, `AuthTabs.vue`, `ActiveGoals.vue`, `CompletedGoals.vue`, `CalendarGoals.vue`, `QuarterlyInitiatives.vue`).
 - Abstracted reactive context parameters handling global application tracking into a centralized `store.js` state.
