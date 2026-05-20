@@ -1,15 +1,16 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, send_from_directory
+import os
 
 views_bp = Blueprint('views', __name__)
 
-def get_app_version():
-    try:
-        with open("VERSION.md", "r") as f:
-            return f.read().strip()
-    except Exception:
-        return "unknown"
+@views_bp.route("/", defaults={'path': ''})
+@views_bp.route("/<path:path>")
+def serve_vue_app(path):
+    """Serve the compiled Vue application and its static assets."""
+    # Assuming Vite builds to 'dist' directory at the project root
+    dist_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dist')
 
-@views_bp.route("/")
-def index():
-    """Serve the single page application."""
-    return render_template("spa.html", app_version=get_app_version())
+    if path and os.path.exists(os.path.join(dist_dir, path)):
+        return send_from_directory(dist_dir, path)
+
+    return send_from_directory(dist_dir, 'index.html')

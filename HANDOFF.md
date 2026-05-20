@@ -6,11 +6,11 @@
 3. **Backend features not wired to the frontend**: None. All core DB functionality (add/list/complete goals and initiatives) is connected to both the CLI and the Web UI.
 4. **UI features missing/hidden/unpolished**: The UI leverages Vue 3 and Tailwind CSS and refreshes automatically across tabs via WebSockets. Optimistic UI updates could still improve perceived speed further.
 5. **Bugs or fragile areas**: None known. Database persistence within Docker is safely handled via the PostgreSQL container named volume `postgres_data`.
-6. **Refactor opportunities**: The application has been refactored into Flask Blueprints (Phase 11) and decoupled its background jobs into Celery tasks (Phase 12).
+6. **Refactor opportunities**: The application is highly scaled via Flask Blueprints (Phase 11), Celery tasks (Phase 12), and Vite/Vue 3 modular builds (Phase 14). Next refactor opportunity would be migrating to TypeScript in the frontend.
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
-9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently.
-10. **Next highest-impact implementation tasks**: Migrate the frontend from a monolithic `spa.html` to a Vite/Webpack build structure.
+9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently. `Dockerfile` uses a multi-stage approach to compile Node.js assets before assembling the Python environment.
+10. **Next highest-impact implementation tasks**: The technical scaling roadmap is complete. Future tasks should focus on feature roadmap development (e.g., adding user avatars, sub-goals, or calendar views).
 
 ## Dependency Inventory
 
@@ -19,16 +19,19 @@
 | `click` | 8.1.7 | `venv/` | CLI framework | Core UI for the application. |
 | `pytest` | 8.0.0 | `venv/` | Testing | Core testing framework. |
 | `playwright` | 1.42.0 | `venv/` | E2E Testing | Navigates Chromium to test Vue.js UI flows dynamically. |
+| `vite` | 8.0.12 | `frontend/` | Bundler | Compiles Vue 3 `.vue` SFCs into optimized JS/CSS. |
+| `vue` | 3.5.34 | `frontend/` | UI Framework | Drives the reactive front-end interface natively rather than through CDN. |
+| `tailwindcss` | 4.3.0 | `frontend/` | CSS Framework | Compiles utility classes. |
 | `python-dotenv` | 1.0.1 | `venv/` | Environment config | Safely loads secrets from `.env`. |
 | `twilio` | 9.0.4 | `venv/` | API wrapper | Handles programmatic SMS/Voice calls. |
-| `Flask` | 3.0.2 | `venv/` | Web server | Handles webhook POST requests and renders the Jinja web UI. |
+| `Flask` | 3.0.2 | `venv/` | Web server | Handles API POST requests and serves the compiled Vue index file. |
 | `celery` | 5.6.3 | `venv/` | Task queue | Executes background jobs (replacing `APScheduler`). |
 | `redis` | 7.4.0 | `venv/` | Message broker | Intermediary for `celery` queues. |
 | `SQLAlchemy` | 2.0.25 | `venv/` | ORM | Abstracts database access, replacing raw SQL in `models.py`. |
 | `psycopg2-binary` | 2.9.9 | `venv/` | Driver | Allows Python to interface directly with PostgreSQL via SQLAlchemy. |
 | `Flask-Login` | 0.6.3 | `venv/` | Authentication | Manages user session state in `app.py`. |
 | `Flask-Bcrypt` | 1.0.1 | `venv/` | Security | Hashes and salts user passwords for database storage. |
-| `Flask-SocketIO` | 5.3.6 | `venv/` | WebSockets | Facilitates persistent bi-directional communication between the Python API and Vue.js client. |
+| `Flask-SocketIO` | 5.3.6 | `venv/` | WebSockets | Facilitates persistent bi-directional communication. |
 
 ## Execution Log
 
@@ -85,4 +88,8 @@
 ## Phase 13 Update (v0.13.0)
 - **Implemented:** Bootstrapped the `playwright` E2E testing suite inside `test_e2e.py` by launching a subprocess Flask instance wrapping a temporary `sqlite` database.
 - **Tested:** Mapped out an automated browser journey navigating through Registration, Login, Dashboard Visualization, Creating a Goal, and Checking a Goal off using exact DOM locators. Test suite runs perfectly headlessly.
-- **Next:** Migrate the Vue frontend into a structured Vite/Webpack build.
+
+## Phase 14 Update (v0.14.0)
+- **Implemented:** Created a `frontend/` directory initializing `vite@latest` and `vue@latest`. Migrated the monolithic CDN implementation inside `spa.html` into a compiled Node.js build process. Reconfigured `views.py` and the `Dockerfile` to compile and securely serve the generated `dist/` logic via Flask.
+- **Tested:** Re-ran `test_e2e.py` over the newly compiled Chromium layer and confirmed 100% feature parity.
+- **Next:** The architectural scaling phase is complete. Proceed with net-new feature additions.

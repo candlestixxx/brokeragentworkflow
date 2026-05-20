@@ -1,4 +1,10 @@
 # Changelog
+## [0.14.0] - Vite and Vue 3 Frontend Migration
+- Deprecated monolithic `spa.html` CDN approach.
+- Implemented a structured Node.js frontend pipeline utilizing Vite, Vue 3 Single File Components (SFCs), and TailwindCSS PostCSS bindings.
+- Updated `docker-compose.yml` and `Dockerfile` to handle multi-stage builds (`npm run build` translating to `/dist`).
+- Re-routed Flask Blueprint `views.py` to seamlessly serve generated `dist/` static files.
+
 ## [0.13.0] - Playwright End-to-End Testing
 - Integrated `playwright` and `pytest-playwright` into the testing framework.
 - Developed a comprehensive `test_e2e.py` suite mimicking actual user browser behavior for multi-tenant Registration, Login, and Goal Tracking loops.

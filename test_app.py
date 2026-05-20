@@ -43,7 +43,8 @@ def login_test_user(client):
 def test_spa_root(client):
     rv = client.get('/')
     assert rv.status_code == 200
-    assert b"One-Minute Manager Dashboard" in rv.data
+    # Because we migrated to Vite, the root HTML is just an empty div#app shell.
+    assert b'<div id="app"></div>' in rv.data
 
 def test_api_goals_empty(client):
     login_test_user(client)

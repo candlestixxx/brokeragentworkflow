@@ -1,14 +1,26 @@
 FROM python:3.12-slim
 
-# Set working directory
+# Build frontend assets
+FROM node:22-slim AS frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# Build Python app
+FROM python:3.12-slim
 WORKDIR /app
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
+# Copy the python application code
 COPY . .
+
+# Copy compiled frontend assets from the node builder stage
+COPY --from=frontend-builder /app/dist /app/dist
 
 # Set default env variables (can be overridden by docker-compose)
 ENV FLASK_APP=app.py
