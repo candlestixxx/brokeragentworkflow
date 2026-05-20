@@ -5,6 +5,7 @@ import pytest
 from playwright.sync_api import Page, expect
 import models
 
+
 @pytest.fixture(scope="session", autouse=True)
 def test_server():
     """Start the Flask server in a subprocess for E2E tests."""
@@ -21,10 +22,7 @@ def test_server():
     models.init_db("test_e2e.db")
 
     process = subprocess.Popen(
-        ["python", "app.py"],
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        ["python", "app.py"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
     # Wait for server to be ready
@@ -38,6 +36,7 @@ def test_server():
     if os.path.exists("test_e2e.db"):
         os.remove("test_e2e.db")
 
+
 def test_user_registration_and_login(page: Page):
     """Test the full flow of registering, logging in, and creating a goal."""
     # 1. Register
@@ -47,14 +46,19 @@ def test_user_registration_and_login(page: Page):
     page.click("a:has-text('Register')")
 
     # Add random string to avoid duplicate user issues between test runs
-    import time
     username = f"e2e_user_{int(time.time())}"
 
     # Fill registration
     # Use robust locators targeting the labels within the view
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> input[type='text']").fill(username)
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> input[type='password']").fill("secret123")
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']").click()
+    page.locator(
+        "div.max-w-md:has(h2:has-text('Register')) >> input[type='text']"
+    ).fill(username)
+    page.locator(
+        "div.max-w-md:has(h2:has-text('Register')) >> input[type='password']"
+    ).fill("secret123")
+    page.locator(
+        "div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']"
+    ).click()
 
     # Wait for success flash
     expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
@@ -63,9 +67,15 @@ def test_user_registration_and_login(page: Page):
     page.click("a:has-text('Login')")
 
     # 2. Login
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(username)
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='password']").fill("secret123")
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> button[type='submit']").click()
+    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(
+        username
+    )
+    page.locator(
+        "div.max-w-md:has(h2:has-text('Login')) >> input[type='password']"
+    ).fill("secret123")
+    page.locator(
+        "div.max-w-md:has(h2:has-text('Login')) >> button[type='submit']"
+    ).click()
 
     # Wait for dashboard to load (username should be visible)
     expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)

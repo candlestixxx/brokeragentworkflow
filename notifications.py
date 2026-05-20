@@ -2,8 +2,10 @@ import os
 import smtplib
 from email.message import EmailMessage
 
+
 def is_notifications_enabled():
     return os.getenv("NOTIFICATIONS_ENABLED", "false").lower() == "true"
+
 
 def send_email(subject, body):
     if not is_notifications_enabled():
@@ -23,9 +25,9 @@ def send_email(subject, body):
     try:
         msg = EmailMessage()
         msg.set_content(body)
-        msg['Subject'] = subject
-        msg['From'] = from_email
-        msg['To'] = to_email
+        msg["Subject"] = subject
+        msg["From"] = from_email
+        msg["To"] = to_email
 
         server = smtplib.SMTP(host, port)
         server.starttls()
@@ -36,6 +38,7 @@ def send_email(subject, body):
     except Exception as e:
         print(f"Failed to send email: {e}")
         return False
+
 
 def send_sms(body):
     if not is_notifications_enabled():
@@ -52,6 +55,7 @@ def send_sms(body):
 
     try:
         from twilio.rest import Client
+
         client = Client(sid, token)
         client.messages.create(body=body, from_=from_num, to=to_num)
         return True
@@ -61,6 +65,7 @@ def send_sms(body):
     except Exception as e:
         print(f"Failed to send SMS: {e}")
         return False
+
 
 def make_call(message):
     if not is_notifications_enabled():
@@ -78,10 +83,11 @@ def make_call(message):
     try:
         from twilio.rest import Client
         import html
+
         client = Client(sid, token)
         # Using Twilio's TwiML bin to speak the message
         escaped_message = html.escape(message)
-        twiml = f'<Response><Say>{escaped_message}</Say></Response>'
+        twiml = f"<Response><Say>{escaped_message}</Say></Response>"
         client.calls.create(twiml=twiml, from_=from_num, to=to_num)
         return True
     except ImportError:
@@ -90,6 +96,7 @@ def make_call(message):
     except Exception as e:
         print(f"Failed to make call: {e}")
         return False
+
 
 def notify_all(subject, body, speakable_message):
     send_email(subject, body)

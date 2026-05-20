@@ -21,13 +21,16 @@ socketio.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 @login_manager.unauthorized_handler
 def unauthorized():
     return jsonify({"error": "Unauthorized"}), 401
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return models.get_user_by_id(user_id)
+
 
 # Register Blueprints
 app.register_blueprint(views_bp)
@@ -40,9 +43,11 @@ app.register_blueprint(webhooks_bp)
 with app.app_context():
     models.init_db()
 
+
 def get_db_path():
     """Temporary backwards compatibility function. `models.get_db_url` handles the actual config."""
     return os.getenv("DATABASE_PATH", "goals.db")
 
+
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, debug=True, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)
