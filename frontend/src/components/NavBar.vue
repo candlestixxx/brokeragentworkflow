@@ -14,8 +14,8 @@
         <button @click="logout" class="text-red-600 hover:text-red-800 transition duration-150 font-medium ml-2 border-l border-gray-300 pl-4">Logout</button>
       </div>
       <div v-else>
-        <button @click="currentView = 'login'" :class="{'underline': currentView === 'login'}" class="text-blue-600 hover:text-blue-800 mr-4">Login</button>
-        <button @click="currentView = 'register'" :class="{'underline': currentView === 'register'}" class="text-blue-600 hover:text-blue-800">Register</button>
+        <router-link to="/login" class="text-blue-600 hover:text-blue-800 mr-4" active-class="underline">Login</router-link>
+        <router-link to="/register" class="text-blue-600 hover:text-blue-800" active-class="underline">Register</router-link>
       </div>
     </nav>
   </header>
@@ -40,10 +40,17 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { user, currentView, logout, showToast } from '../store'
+import { useRouter } from 'vue-router'
+import { user, logout as storeLogout, showToast } from '../store'
 
+const router = useRouter()
 const showAvatarModal = ref(false)
 const newAvatarUrl = ref('')
+
+const logout = async () => {
+  await storeLogout()
+  router.push({ name: 'login' })
+}
 
 const updateAvatar = async () => {
   const res = await fetch('/api/me/avatar', {

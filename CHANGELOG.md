@@ -1,4 +1,9 @@
 # Changelog
+## [0.21.0] - Frontend Vue-Router Navigation
+- Installed `vue-router@4` introducing exact URL history manipulation directly bypassing implicit DOM reactiveness states.
+- Bound `/login`, `/register`, and `/` explicitly into targeted `DashboardView`, `LoginView`, and `RegisterView` components wrapping conditional navigation layers.
+- Validated Chromium traversal algorithms tracking router execution paths sequentially via Playwright E2E frameworks.
+
 ## [0.20.0] - TypeScript Frontend Migration
 - Established strict TypeScript configuration environments leveraging `tsconfig.json` & `vue-tsc`.
 - Migrated all `frontend/src/*` logic mapping `main.js` and `store.js` over to strict `*.ts` extensions mapping explicit interfaces for User, Goal, and Initiative schemas.

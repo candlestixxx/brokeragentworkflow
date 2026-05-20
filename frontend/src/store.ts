@@ -26,7 +26,6 @@ export interface UserState {
 }
 
 export const user = reactive<UserState>({ authenticated: false, username: null, avatar_url: null })
-export const currentView = ref<string>('login') // 'login' or 'register'
 export const activeTab = ref<string>('active') // 'active', 'completed', or 'calendar'
 
 export const goals = ref<Goal[]>([])

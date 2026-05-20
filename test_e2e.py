@@ -44,7 +44,7 @@ def test_user_registration_and_login(page: Page):
     page.goto("http://localhost:5000/")
 
     # Toggle to register view
-    page.click("button:has-text('Register')")
+    page.click("a:has-text('Register')")
 
     # Add random string to avoid duplicate user issues between test runs
     import time
@@ -60,7 +60,7 @@ def test_user_registration_and_login(page: Page):
     expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
 
     # Switch to login view
-    page.click("button:has-text('Login')")
+    page.click("a:has-text('Login')")
 
     # 2. Login
     page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(username)
