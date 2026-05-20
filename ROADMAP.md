@@ -5,5 +5,5 @@
 - **Phase 4:** Expand into a full web-based dashboard to supplement the CLI using Flask and Jinja templates. (Completed)
 - **Phase 5:** Migrate raw SQL data access layer to an ORM (SQLAlchemy) and containerize the application with Docker for seamless deployments. (Completed)
 - **Phase 6:** Enhance the Jinja2 Web UI using Tailwind CSS for a modern, responsive design. (Completed)
-- **Phase 7 (Current):** Migrate from local SQLite to a production-grade database (PostgreSQL) using Docker-Compose.
-- **Phase 8:** Add User Authentication to support multi-tenant team usage.
+- **Phase 7:** Migrate from local SQLite to a production-grade database (PostgreSQL) using Docker-Compose. (Completed)
+- **Phase 8 (Current):** Add User Authentication to support multi-tenant team usage.

@@ -1,4 +1,9 @@
 # Changelog
+## [0.8.0] - User Authentication
+- Added `Flask-Login` and `Flask-Bcrypt` to support multi-tenant user authentication.
+- Added `User` data model and linked goals and initiatives via `user_id` foreign keys.
+- Implemented `/login`, `/register`, and `/logout` routes in the Web Dashboard.
+
 ## [0.7.0] - PostgreSQL Integration
 - Added `psycopg2-binary` to support PostgreSQL.
 - Updated `docker-compose.yml` to orchestrate a dedicated `db` container running `postgres:15-alpine`.

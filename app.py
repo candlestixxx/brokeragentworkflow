@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.twiml.voice_response import VoiceResponse
 from notifications import notify_all
@@ -7,6 +8,14 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return models.get_user_by_id(user_id)
 
 # Ensure DB is initialized before first request
 with app.app_context():
@@ -28,18 +37,55 @@ def get_db_path():
     """Temporary backwards compatibility function. `models.get_db_url` handles the actual config."""
     return os.getenv("DATABASE_PATH", "goals.db")
 
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = models.get_user_by_username(username)
+        if user and user.check_password(password):
+            login_user(user)
+            flash("Logged in successfully.")
+            return redirect(url_for('dashboard'))
+        flash("Invalid username or password.")
+    return render_template("login.html")
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if models.get_user_by_username(username):
+            flash("Username already exists.")
+        else:
+            user_id = models.create_user(username, password)
+            if user_id:
+                flash("Registration successful. Please log in.")
+                return redirect(url_for('login'))
+            flash("Registration failed.")
+    return render_template("register.html")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have been logged out.")
+    return redirect(url_for('login'))
+
 @app.route("/")
+@login_required
 def dashboard():
     """Render the main web dashboard."""
-    goals = models.list_pending_goals()
-    initiatives = models.list_pending_initiatives()
+    goals = models.list_pending_goals(user_id=current_user.id)
+    initiatives = models.list_pending_initiatives(user_id=current_user.id)
     return render_template("dashboard.html", goals=goals, initiatives=initiatives)
 
 @app.route("/goal/add", methods=['POST'])
+@login_required
 def add_goal_route():
     description = request.form.get("description")
     if description:
-        models.add_goal(description)
+        models.add_goal(description, user_id=current_user.id)
         notify_all(
             subject="New Goal Added",
             body=f"You added a new goal: {description}",
@@ -49,8 +95,9 @@ def add_goal_route():
     return redirect(url_for('dashboard'))
 
 @app.route("/goal/complete/<int:goal_id>", methods=['POST'])
+@login_required
 def complete_goal_route(goal_id):
-    success = models.complete_goal(goal_id)
+    success = models.complete_goal(goal_id, user_id=current_user.id)
     if success:
         notify_all(
             subject="Goal Completed!",
@@ -63,11 +110,12 @@ def complete_goal_route(goal_id):
     return redirect(url_for('dashboard'))
 
 @app.route("/initiative/add", methods=['POST'])
+@login_required
 def add_initiative_route():
     quarter = request.form.get("quarter")
     description = request.form.get("description")
     if quarter and description:
-        models.add_initiative(quarter, description)
+        models.add_initiative(quarter, description, user_id=current_user.id)
         notify_all(
             subject="New Initiative Added",
             body=f"You added a new initiative for {quarter}: {description}",
@@ -77,8 +125,9 @@ def add_initiative_route():
     return redirect(url_for('dashboard'))
 
 @app.route("/initiative/complete/<int:initiative_id>", methods=['POST'])
+@login_required
 def complete_initiative_route(initiative_id):
-    success = models.complete_initiative(initiative_id)
+    success = models.complete_initiative(initiative_id, user_id=current_user.id)
     if success:
         notify_all(
             subject="Initiative Completed!",

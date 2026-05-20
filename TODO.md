@@ -1,4 +1,5 @@
 # TODO
-1. Update `models.py` to support dynamic `DATABASE_URL` connections via SQLAlchemy.
-2. Add PostgreSQL service to `docker-compose.yml`.
-3. Add `psycopg2-binary` to dependencies to allow Python -> Postgres connections.
+1. Add `Flask-Login` and `Flask-Bcrypt` to dependencies.
+2. Add a `User` table to `models.py` and link existing tables with `user_id`.
+3. Build `/login` and `/register` views with Tailwind styling.
+4. Update `cli.py` and `scheduler.py` to handle multi-tenancy.

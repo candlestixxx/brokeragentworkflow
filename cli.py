@@ -21,9 +21,10 @@ def init():
 
 @cli.command()
 @click.argument('description')
-def add(description):
+@click.option('--user-id', default=1, type=int, help='The ID of the user')
+def add(description, user_id):
     """Add a new one-minute goal."""
-    models.add_goal(description)
+    models.add_goal(description, user_id=user_id)
     click.echo(f"Added goal: '{description}'")
     notify_all(
         subject="New Goal Added",
@@ -32,9 +33,10 @@ def add(description):
     )
 
 @cli.command()
-def list():
+@click.option('--user-id', default=1, type=int, help='The ID of the user')
+def list(user_id):
     """List all pending one-minute goals."""
-    goals = models.list_pending_goals()
+    goals = models.list_pending_goals(user_id=user_id)
     if not goals:
         click.echo("No pending goals. Great job!")
         return
@@ -45,9 +47,10 @@ def list():
 
 @cli.command()
 @click.argument('goal_id', type=int)
-def complete(goal_id):
+@click.option('--user-id', default=1, type=int, help='The ID of the user')
+def complete(goal_id, user_id):
     """Mark a one-minute goal as complete."""
-    success = models.complete_goal(goal_id)
+    success = models.complete_goal(goal_id, user_id=user_id)
     if not success:
         click.echo(f"No goal found with ID {goal_id}.")
     else:
@@ -61,9 +64,10 @@ def complete(goal_id):
 @cli.command()
 @click.argument('quarter')
 @click.argument('description')
-def add_initiative(quarter, description):
+@click.option('--user-id', default=1, type=int, help='The ID of the user')
+def add_initiative(quarter, description, user_id):
     """Add a new quarterly initiative (e.g. Q4 "Holiday mailers")."""
-    models.add_initiative(quarter, description)
+    models.add_initiative(quarter, description, user_id=user_id)
     click.echo(f"Added quarterly initiative for {quarter}: '{description}'")
     notify_all(
         subject="New Initiative Added",
@@ -72,9 +76,10 @@ def add_initiative(quarter, description):
     )
 
 @cli.command()
-def list_initiatives():
+@click.option('--user-id', default=1, type=int, help='The ID of the user')
+def list_initiatives(user_id):
     """List all pending quarterly initiatives."""
-    initiatives = models.list_pending_initiatives()
+    initiatives = models.list_pending_initiatives(user_id=user_id)
     if not initiatives:
         click.echo("No pending initiatives.")
         return
@@ -85,9 +90,10 @@ def list_initiatives():
 
 @cli.command()
 @click.argument('initiative_id', type=int)
-def complete_initiative(initiative_id):
+@click.option('--user-id', default=1, type=int, help='The ID of the user')
+def complete_initiative(initiative_id, user_id):
     """Mark a quarterly initiative as complete."""
-    success = models.complete_initiative(initiative_id)
+    success = models.complete_initiative(initiative_id, user_id=user_id)
     if not success:
         click.echo(f"No initiative found with ID {initiative_id}.")
     else:

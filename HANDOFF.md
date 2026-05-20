@@ -1,16 +1,16 @@
 # Handoff
 ## In-Depth Analysis
 
-1. **Completed features**: Core Python architecture, sqlite database initialization, an abstracted `models.py` Data Access Layer powered by SQLAlchemy ORM connected to PostgreSQL, CLI for daily goal tracking, programmable Twilio/SMTP notifications, quarterly tracking initialization, Flask webhook routing for Twilio SMS/Voice, an APScheduler-based daemon (`scheduler.py`), a complete Flask + Jinja2 web-based UI Dashboard (`app.py`) natively styled with Tailwind CSS, and Docker containerization configuration.
-2. **Partially implemented features**: N/A. All Phase 1 through 7 roadmap items are fully completed.
+1. **Completed features**: Core Python architecture, sqlite database initialization, an abstracted `models.py` Data Access Layer powered by SQLAlchemy ORM connected to PostgreSQL, CLI for daily goal tracking, programmable Twilio/SMTP notifications, quarterly tracking initialization, Flask webhook routing for Twilio SMS/Voice, an APScheduler-based daemon (`scheduler.py`), a complete Flask + Jinja2 web-based UI Dashboard (`app.py`) natively styled with Tailwind CSS, Docker containerization configuration, and full User Authentication handling via Flask-Login.
+2. **Partially implemented features**: N/A. All Phase 1 through 8 roadmap items are fully completed.
 3. **Backend features not wired to the frontend**: None. All core DB functionality (add/list/complete goals and initiatives) is connected to both the CLI and the Web UI.
 4. **UI features missing/hidden/unpolished**: The UI is now highly polished via Tailwind CSS. Could be expanded with JavaScript for dynamic single-page interactions to avoid page reloads.
 5. **Bugs or fragile areas**: None known. Database persistence within Docker is safely handled via the PostgreSQL container named volume `postgres_data`.
-6. **Refactor opportunities**: The application is highly structured. Code is mostly complete, next major hurdle is authentication.
+6. **Refactor opportunities**: The application is highly structured and secure. The next step is scaling frontend interactions.
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` provides a production-ready PostgreSQL template.
-10. **Next highest-impact implementation tasks**: Migration to a single-page React app or adding User Authentication logic for multi-user support (Phase 8).
+10. **Next highest-impact implementation tasks**: Migration to a single-page React app or adopting a UI component library framework.
 
 ## Dependency Inventory
 
@@ -24,6 +24,8 @@
 | `APScheduler` | 3.10.4 | `venv/` | Job scheduling | Runs the recurring background cron jobs in `scheduler.py`. |
 | `SQLAlchemy` | 2.0.25 | `venv/` | ORM | Abstracts database access, replacing raw SQL in `models.py`. |
 | `psycopg2-binary` | 2.9.9 | `venv/` | Driver | Allows Python to interface directly with PostgreSQL via SQLAlchemy. |
+| `Flask-Login` | 0.6.3 | `venv/` | Authentication | Manages user session state in `app.py`. |
+| `Flask-Bcrypt` | 1.0.1 | `venv/` | Security | Hashes and salts user passwords for database storage. |
 
 ## Execution Log
 
@@ -56,4 +58,8 @@
 ## Phase 7 Update (v0.7.0)
 - **Implemented:** Added `psycopg2-binary` and orchestrated a PostgreSQL container in `docker-compose.yml`. Configured `models.py` logic to securely fall back to SQLite during test/local CLI invocations but prioritize the PostgreSQL `DATABASE_URL` environment string during Docker execution.
 - **Tested:** Ensured backward compatibility locally using `pytest`.
-- **Next:** Phase 8: User Authentication or React Single Page App migration.
+
+## Phase 8 Update (v0.8.0)
+- **Implemented:** Added multi-tenant support. Created a `User` model using Flask-Login and updated `Goal` and `QuarterlyInitiative` models to require a `user_id` foreign key. Secured Web Dashboard using `@login_required` decorators and built Tailwind-styled `login.html` and `register.html` templates.
+- **Tested:** Updated Pytest suites to inject dummy user context during automated assertion checks.
+- **Next:** React Single Page App migration.

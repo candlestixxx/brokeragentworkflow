@@ -8,8 +8,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def trigger_morning_prompt():
-    """Trigger a daily morning prompt if there are pending goals."""
-    goals = models.list_pending_goals()
+    """Trigger a daily morning prompt if there are pending goals.
+       Note: In a full multi-tenant system with different contact info per user,
+       we would iterate through each user. For now, we assume user_id=1 for
+       the primary notification receiver, or query it generically.
+    """
+    goals = models.list_pending_goals(user_id=1)
     if not goals:
         return
 
@@ -23,7 +27,7 @@ def trigger_morning_prompt():
 
 def trigger_quarterly_reminder():
     """Trigger a weekly reminder about upcoming quarterly initiatives."""
-    initiatives = models.list_pending_initiatives()
+    initiatives = models.list_pending_initiatives(user_id=1)
     if not initiatives:
         return
 
