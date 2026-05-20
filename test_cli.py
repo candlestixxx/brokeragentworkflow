@@ -2,7 +2,8 @@ import os
 import pytest
 from click.testing import CliRunner
 from unittest.mock import patch
-from cli import cli, init_db
+from cli import cli
+import models
 
 # Use an in-memory database or a separate test DB
 os.environ["DATABASE_PATH"] = "test_goals.db"
@@ -24,7 +25,7 @@ def setup_teardown():
     os.environ["DATABASE_PATH"] = "test_goals.db"
 
     # Must explicitly pass the overridden DB_PATH
-    init_db("test_goals.db")
+    models.init_db("test_goals.db")
 
     yield
 

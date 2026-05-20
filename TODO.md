@@ -1,4 +1,4 @@
 # TODO
-1. Implement Quarterly tracking in the CLI.
-2. Build Twilio Webhook to allow SMS/Call responses.
-3. Set up cron/scheduled triggers for 3-month look-ahead reminders.
+1. Refactor SQLite execution logic from `cli.py` and `webhook.py` into a dedicated `models.py`.
+2. Implement automated scheduled triggers (e.g. APScheduler) for morning goal prompts.
+3. Prepare for Phase 4 web-dashboard migration.

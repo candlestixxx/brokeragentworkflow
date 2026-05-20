@@ -1,16 +1,9 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.twiml.voice_response import VoiceResponse
-import sqlite3
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+import models
 
 app = Flask(__name__)
-
-def get_db_path():
-    return os.getenv("DATABASE_PATH", "goals.db")
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
@@ -22,11 +15,7 @@ def sms_reply():
     resp = MessagingResponse()
 
     if body and body.lower().strip() == 'list':
-        conn = sqlite3.connect(get_db_path())
-        c = conn.cursor()
-        c.execute('SELECT id, description FROM goals WHERE status = "pending"')
-        goals = c.fetchall()
-        conn.close()
+        goals = models.list_pending_goals()
 
         if not goals:
             resp.message("No pending daily goals. Great job!")

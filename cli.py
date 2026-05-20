@@ -1,41 +1,6 @@
 import click
-import sqlite3
-import os
-from dotenv import load_dotenv
 from notifications import notify_all
-
-load_dotenv()
-
-def get_db_path():
-    return os.getenv("DATABASE_PATH", "goals.db")
-
-def init_db(db_path=None):
-    if db_path is None:
-        db_path = get_db_path()
-    """Initialize the database with the goals table."""
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS goals (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            description TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS quarterly_initiatives (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            quarter TEXT NOT NULL,
-            description TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
+import models
 
 @click.group()
 def cli():
@@ -45,20 +10,15 @@ def cli():
 @cli.command()
 def init():
     """Initialize the goals database."""
-    db_path = get_db_path()
-    init_db(db_path)
+    db_path = models.get_db_path()
+    models.init_db(db_path)
     click.echo(f"Initialized database at {db_path}")
 
 @cli.command()
 @click.argument('description')
 def add(description):
     """Add a new one-minute goal."""
-    conn = sqlite3.connect(get_db_path())
-    c = conn.cursor()
-    c.execute('INSERT INTO goals (description) VALUES (?)', (description,))
-    goal_id = c.lastrowid
-    conn.commit()
-    conn.close()
+    models.add_goal(description)
     click.echo(f"Added goal: '{description}'")
     notify_all(
         subject="New Goal Added",
@@ -69,12 +29,7 @@ def add(description):
 @cli.command()
 def list():
     """List all pending one-minute goals."""
-    conn = sqlite3.connect(get_db_path())
-    c = conn.cursor()
-    c.execute('SELECT id, description FROM goals WHERE status = "pending"')
-    goals = c.fetchall()
-    conn.close()
-
+    goals = models.list_pending_goals()
     if not goals:
         click.echo("No pending goals. Great job!")
         return
@@ -87,10 +42,8 @@ def list():
 @click.argument('goal_id', type=int)
 def complete(goal_id):
     """Mark a one-minute goal as complete."""
-    conn = sqlite3.connect(get_db_path())
-    c = conn.cursor()
-    c.execute('UPDATE goals SET status = "completed" WHERE id = ?', (goal_id,))
-    if c.rowcount == 0:
+    success = models.complete_goal(goal_id)
+    if not success:
         click.echo(f"No goal found with ID {goal_id}.")
     else:
         click.echo(f"Goal {goal_id} marked as completed! Excellent work.")
@@ -99,20 +52,13 @@ def complete(goal_id):
             body=f"Excellent work! You completed goal {goal_id}.",
             speakable_message=f"Excellent work! You completed goal {goal_id}."
         )
-    conn.commit()
-    conn.close()
 
 @cli.command()
 @click.argument('quarter')
 @click.argument('description')
 def add_initiative(quarter, description):
     """Add a new quarterly initiative (e.g. Q4 "Holiday mailers")."""
-    conn = sqlite3.connect(get_db_path())
-    c = conn.cursor()
-    c.execute('INSERT INTO quarterly_initiatives (quarter, description) VALUES (?, ?)', (quarter, description))
-    initiative_id = c.lastrowid
-    conn.commit()
-    conn.close()
+    models.add_initiative(quarter, description)
     click.echo(f"Added quarterly initiative for {quarter}: '{description}'")
     notify_all(
         subject="New Initiative Added",
@@ -123,12 +69,7 @@ def add_initiative(quarter, description):
 @cli.command()
 def list_initiatives():
     """List all pending quarterly initiatives."""
-    conn = sqlite3.connect(get_db_path())
-    c = conn.cursor()
-    c.execute('SELECT id, quarter, description FROM quarterly_initiatives WHERE status = "pending" ORDER BY quarter ASC')
-    initiatives = c.fetchall()
-    conn.close()
-
+    initiatives = models.list_pending_initiatives()
     if not initiatives:
         click.echo("No pending initiatives.")
         return
@@ -141,10 +82,8 @@ def list_initiatives():
 @click.argument('initiative_id', type=int)
 def complete_initiative(initiative_id):
     """Mark a quarterly initiative as complete."""
-    conn = sqlite3.connect(get_db_path())
-    c = conn.cursor()
-    c.execute('UPDATE quarterly_initiatives SET status = "completed" WHERE id = ?', (initiative_id,))
-    if c.rowcount == 0:
+    success = models.complete_initiative(initiative_id)
+    if not success:
         click.echo(f"No initiative found with ID {initiative_id}.")
     else:
         click.echo(f"Initiative {initiative_id} marked as completed!")
@@ -153,9 +92,7 @@ def complete_initiative(initiative_id):
             body=f"Great job completing quarterly initiative {initiative_id}.",
             speakable_message=f"Great job completing quarterly initiative {initiative_id}."
         )
-    conn.commit()
-    conn.close()
 
 if __name__ == '__main__':
-    init_db()
+    models.init_db()
     cli()

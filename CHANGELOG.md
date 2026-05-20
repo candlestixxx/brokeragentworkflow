@@ -1,4 +1,8 @@
 # Changelog
+## [0.3.0] - Database Refactor and Scheduled Triggers
+- Refactored all direct SQLite database execution out of the CLI/Webhook layer and into a dedicated `models.py` module.
+- Added `scheduler.py` using APScheduler to trigger daily and weekly reminders via Twilio and SMTP.
+
 ## [0.2.0] - Quarterly Planning and Webhooks
 - Added new table `quarterly_initiatives` to track larger quarterly initiatives.
 - Added `add-initiative`, `list-initiatives`, and `complete-initiative` to the CLI.

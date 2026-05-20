@@ -1,7 +1,7 @@
 import os
 import pytest
 from webhook import app
-from cli import init_db
+import models
 
 @pytest.fixture
 def client():
@@ -11,7 +11,7 @@ def client():
     if os.path.exists("test_webhook.db"):
         os.remove("test_webhook.db")
 
-    init_db("test_webhook.db")
+    models.init_db("test_webhook.db")
 
     app.config['TESTING'] = True
     with app.test_client() as client:
