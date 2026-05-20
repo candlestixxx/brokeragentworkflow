@@ -10,7 +10,7 @@
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently.
-10. **Next highest-impact implementation tasks**: E2E testing framework integration via Playwright.
+10. **Next highest-impact implementation tasks**: Migrate the frontend from a monolithic `spa.html` to a Vite/Webpack build structure.
 
 ## Dependency Inventory
 
@@ -18,6 +18,7 @@
 |---------|---------|----------|---------|--------------|
 | `click` | 8.1.7 | `venv/` | CLI framework | Core UI for the application. |
 | `pytest` | 8.0.0 | `venv/` | Testing | Core testing framework. |
+| `playwright` | 1.42.0 | `venv/` | E2E Testing | Navigates Chromium to test Vue.js UI flows dynamically. |
 | `python-dotenv` | 1.0.1 | `venv/` | Environment config | Safely loads secrets from `.env`. |
 | `twilio` | 9.0.4 | `venv/` | API wrapper | Handles programmatic SMS/Voice calls. |
 | `Flask` | 3.0.2 | `venv/` | Web server | Handles webhook POST requests and renders the Jinja web UI. |
@@ -80,4 +81,8 @@
 ## Phase 12 Update (v0.12.0)
 - **Implemented:** Migrated the background tasks architecture from `APScheduler` over to a distributed `Celery` + `Redis` setup. Replaced `scheduler.py` with `tasks.py` and updated `docker-compose.yml` to orchestrate dedicated worker and beat containers.
 - **Tested:** Overhauled test framework to `test_tasks.py` to validate Celery dispatch. All tests pass.
-- **Next:** Create comprehensive Playwright End-to-End testing.
+
+## Phase 13 Update (v0.13.0)
+- **Implemented:** Bootstrapped the `playwright` E2E testing suite inside `test_e2e.py` by launching a subprocess Flask instance wrapping a temporary `sqlite` database.
+- **Tested:** Mapped out an automated browser journey navigating through Registration, Login, Dashboard Visualization, Creating a Goal, and Checking a Goal off using exact DOM locators. Test suite runs perfectly headlessly.
+- **Next:** Migrate the Vue frontend into a structured Vite/Webpack build.

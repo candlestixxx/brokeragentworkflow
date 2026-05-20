@@ -1,4 +1,8 @@
 # Changelog
+## [0.13.0] - Playwright End-to-End Testing
+- Integrated `playwright` and `pytest-playwright` into the testing framework.
+- Developed a comprehensive `test_e2e.py` suite mimicking actual user browser behavior for multi-tenant Registration, Login, and Goal Tracking loops.
+
 ## [0.12.0] - Celery and Redis Task Queue
 - Migrated background daemon methodology from `APScheduler` to a robust `celery` + `redis` worker infrastructure.
 - Replaced `scheduler.py` with `tasks.py` to handle `@celery_app.task` dispatching for daily and weekly prompts.
