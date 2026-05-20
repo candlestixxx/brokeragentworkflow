@@ -67,3 +67,34 @@ def test_complete_invalid_goal(runner):
     result = runner.invoke(cli, ['complete', '999'])
     assert result.exit_code == 0
     assert "No goal found with ID 999" in result.output
+
+def test_add_initiative(runner):
+    result = runner.invoke(cli, ['add-initiative', 'Q4', 'Holiday Mailers'])
+    assert result.exit_code == 0
+    assert "Added quarterly initiative for Q4: 'Holiday Mailers'" in result.output
+
+def test_list_initiatives(runner):
+    # Empty first
+    result = runner.invoke(cli, ['list-initiatives'])
+    assert result.exit_code == 0
+    assert "No pending initiatives" in result.output
+
+    # Add one and check
+    runner.invoke(cli, ['add-initiative', 'Q4', 'Holiday Mailers'])
+    result = runner.invoke(cli, ['list-initiatives'])
+    assert result.exit_code == 0
+    assert "Pending Quarterly Initiatives" in result.output
+    assert "Holiday Mailers" in result.output
+
+def test_complete_initiative(runner):
+    # Add an initiative
+    runner.invoke(cli, ['add-initiative', 'Q4', 'Holiday Mailers'])
+
+    # Complete the initiative (ID 1 in a fresh DB)
+    result = runner.invoke(cli, ['complete-initiative', '1'])
+    assert result.exit_code == 0
+    assert "Initiative 1 marked as completed" in result.output
+
+    # Ensure it doesn't show up in list
+    result = runner.invoke(cli, ['list-initiatives'])
+    assert "No pending initiatives" in result.output

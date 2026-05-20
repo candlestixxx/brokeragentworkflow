@@ -23,6 +23,17 @@ def init_db(db_path=None):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS quarterly_initiatives (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            quarter TEXT NOT NULL,
+            description TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -87,6 +98,60 @@ def complete(goal_id):
             subject="Goal Completed!",
             body=f"Excellent work! You completed goal {goal_id}.",
             speakable_message=f"Excellent work! You completed goal {goal_id}."
+        )
+    conn.commit()
+    conn.close()
+
+@cli.command()
+@click.argument('quarter')
+@click.argument('description')
+def add_initiative(quarter, description):
+    """Add a new quarterly initiative (e.g. Q4 "Holiday mailers")."""
+    conn = sqlite3.connect(get_db_path())
+    c = conn.cursor()
+    c.execute('INSERT INTO quarterly_initiatives (quarter, description) VALUES (?, ?)', (quarter, description))
+    initiative_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    click.echo(f"Added quarterly initiative for {quarter}: '{description}'")
+    notify_all(
+        subject="New Initiative Added",
+        body=f"You added a new initiative for {quarter}: {description}",
+        speakable_message=f"You added a new quarterly initiative for {quarter}: {description}"
+    )
+
+@cli.command()
+def list_initiatives():
+    """List all pending quarterly initiatives."""
+    conn = sqlite3.connect(get_db_path())
+    c = conn.cursor()
+    c.execute('SELECT id, quarter, description FROM quarterly_initiatives WHERE status = "pending" ORDER BY quarter ASC')
+    initiatives = c.fetchall()
+    conn.close()
+
+    if not initiatives:
+        click.echo("No pending initiatives.")
+        return
+
+    click.echo("Pending Quarterly Initiatives:")
+    for init in initiatives:
+        click.echo(f"[{init[0]}] {init[1]}: {init[2]}")
+
+@cli.command()
+@click.argument('initiative_id', type=int)
+def complete_initiative(initiative_id):
+    """Mark a quarterly initiative as complete."""
+    conn = sqlite3.connect(get_db_path())
+    c = conn.cursor()
+    c.execute('UPDATE quarterly_initiatives SET status = "completed" WHERE id = ?', (initiative_id,))
+    if c.rowcount == 0:
+        click.echo(f"No initiative found with ID {initiative_id}.")
+    else:
+        click.echo(f"Initiative {initiative_id} marked as completed!")
+        notify_all(
+            subject="Initiative Completed!",
+            body=f"Great job completing quarterly initiative {initiative_id}.",
+            speakable_message=f"Great job completing quarterly initiative {initiative_id}."
         )
     conn.commit()
     conn.close()
