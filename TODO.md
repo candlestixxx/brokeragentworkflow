@@ -1,4 +1,4 @@
 # TODO
-1. Refactor SQLite execution logic from `cli.py` and `webhook.py` into a dedicated `models.py`.
-2. Implement automated scheduled triggers (e.g. APScheduler) for morning goal prompts.
-3. Prepare for Phase 4 web-dashboard migration.
+1. Create a Flask Web Dashboard (`app.py` + `templates/`) to visualize and manage goals.
+2. Port Twilio webhook routes into the main Flask application.
+3. Update tests to cover new HTML endpoints.

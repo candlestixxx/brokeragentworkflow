@@ -1,16 +1,16 @@
 # Handoff
 ## In-Depth Analysis
 
-1. **Completed features**: Core Python architecture, sqlite database initialization, abstracted `models.py` Data Access Layer, CLI for daily goal tracking, programmable Twilio/SMTP notifications, quarterly tracking initialization, Flask webhook routing for Twilio SMS/Voice, and an APScheduler-based daemon (`scheduler.py`) to automate recurring notification prompts.
-2. **Partially implemented features**: N/A. All requested Phase 1, Phase 2, and Phase 3 features are completed.
-3. **Backend features not wired to the frontend**: N/A (Currently pure CLI/API).
-4. **UI features missing/hidden/unpolished**: No GUI/web dashboard exists yet (slated for Phase 4).
+1. **Completed features**: Core Python architecture, sqlite database initialization, abstracted `models.py` Data Access Layer, CLI for daily goal tracking, programmable Twilio/SMTP notifications, quarterly tracking initialization, Flask webhook routing for Twilio SMS/Voice, an APScheduler-based daemon (`scheduler.py`), and a complete Flask + Jinja2 web-based UI Dashboard (`app.py`).
+2. **Partially implemented features**: N/A. All Phase 1, 2, 3, and 4 roadmap items are fully completed.
+3. **Backend features not wired to the frontend**: None. All core DB functionality (add/list/complete goals and initiatives) is connected to both the CLI and the Web UI.
+4. **UI features missing/hidden/unpolished**: The web UI is simple and uses native HTML/CSS. It could be expanded with JavaScript or a UI library (like Bootstrap/Tailwind) for a more modern feel.
 5. **Bugs or fragile areas**: Database currently lives locally (`goals.db`); if containerized, DB persistence will break without mounted volumes.
-6. **Refactor opportunities**: Consider migrating from raw SQLite queries in `models.py` to an ORM (like SQLAlchemy) before starting Phase 4 (web dashboard) to simplify state management.
-7. **Documentation gaps**: Fully resolved (created all missing files requested).
-8. **Dependency/library gaps**: None currently. APScheduler successfully fulfills the cron job requirement.
-9. **Deployment/versioning gaps**: Not containerized yet (missing `Dockerfile`). Versioning is properly synced to `VERSION.md`.
-10. **Next highest-impact implementation tasks**: Phase 4: Create a web-based dashboard (using React or Jinja) to replace the CLI.
+6. **Refactor opportunities**: Consider migrating from raw SQLite queries in `models.py` to an ORM (like SQLAlchemy).
+7. **Documentation gaps**: None.
+8. **Dependency/library gaps**: None currently.
+9. **Deployment/versioning gaps**: The app is ready for local deployment. Could benefit from a `Dockerfile` for easy cross-platform hosting.
+10. **Next highest-impact implementation tasks**: Containerization (Docker) and exploring advanced UI styling (Tailwind CSS) or migration to a single-page React app.
 
 ## Dependency Inventory
 
@@ -20,7 +20,7 @@
 | `pytest` | 8.0.0 | `venv/` | Testing | Core testing framework. |
 | `python-dotenv` | 1.0.1 | `venv/` | Environment config | Safely loads secrets from `.env`. |
 | `twilio` | 9.0.4 | `venv/` | API wrapper | Handles programmatic SMS/Voice calls. |
-| `Flask` | 3.0.2 | `venv/` | Web server | Handles incoming Twilio webhook POST requests. |
+| `Flask` | 3.0.2 | `venv/` | Web server | Handles webhook POST requests and renders the Jinja web UI. |
 | `APScheduler` | 3.10.4 | `venv/` | Job scheduling | Runs the recurring background cron jobs in `scheduler.py`. |
 
 ## Execution Log
@@ -38,4 +38,8 @@
 ## Phase 3 Update (v0.3.0)
 - **Implemented:** Abstracted all SQLite database execution into `models.py` for a cleaner separation of concerns. Created `scheduler.py` relying on `APScheduler` to run a blocking daemon that triggers automated morning notification prompts and weekly quarterly-initiative look-aheads based on the current database state.
 - **Tested:** Wrote `test_scheduler.py` and ran the full suite across CLI, Webhooks, and Schedulers.
-- **Next:** Phase 4: Full web dashboard expansion.
+
+## Phase 4 Update (v0.4.0)
+- **Implemented:** Converted `webhook.py` into a full-scale `app.py` Flask web application. Designed `layout.html` and `dashboard.html` templates using HTML/CSS. Wired up web endpoints (`/goal/add`, `/goal/complete/<id>`, etc.) to reuse `models.py` and trigger the same notifications as the CLI.
+- **Tested:** Overhauled testing suite (`test_app.py`) to verify HTTP response routing and Jinja template flash messages using `Flask.test_client()`.
+- **Next:** Dockerization and UI styling enhancements.

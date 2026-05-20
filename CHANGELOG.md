@@ -1,4 +1,9 @@
 # Changelog
+## [0.4.0] - Web Dashboard
+- Expanded `webhook.py` into `app.py` functioning as a full Flask web server.
+- Added `templates/layout.html` and `templates/dashboard.html`.
+- Implemented a graphical user interface for visualizing, adding, and completing daily goals and quarterly initiatives.
+
 ## [0.3.0] - Database Refactor and Scheduled Triggers
 - Refactored all direct SQLite database execution out of the CLI/Webhook layer and into a dedicated `models.py` module.
 - Added `scheduler.py` using APScheduler to trigger daily and weekly reminders via Twilio and SMTP.

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="section">
+    <h2>Daily One-Minute Goals</h2>
+    <ul>
+        {% for goal in goals %}
+        <li>
+            <span>[{{ goal[0] }}] {{ goal[1] }}</span>
+            <form action="{{ url_for('complete_goal_route', goal_id=goal[0]) }}" method="POST" style="margin: 0;">
+                <button type="submit" class="complete-btn">Complete</button>
+            </form>
+        </li>
+        {% else %}
+        <li>No pending daily goals. Great job!</li>
+        {% endfor %}
+    </ul>
+
+    <form action="{{ url_for('add_goal_route') }}" method="POST">
+        <input type="text" name="description" placeholder="New daily goal..." required>
+        <button type="submit">Add Goal</button>
+    </form>
+</div>
+
+<div class="section">
+    <h2>Quarterly Initiatives (3-Month Look-Ahead)</h2>
+    <ul>
+        {% for init in initiatives %}
+        <li>
+            <span>[{{ init[0] }}] <strong>{{ init[1] }}</strong>: {{ init[2] }}</span>
+            <form action="{{ url_for('complete_initiative_route', initiative_id=init[0]) }}" method="POST" style="margin: 0;">
+                <button type="submit" class="complete-btn">Complete</button>
+            </form>
+        </li>
+        {% else %}
+        <li>No pending quarterly initiatives. Plan ahead!</li>
+        {% endfor %}
+    </ul>
+
+    <form action="{{ url_for('add_initiative_route') }}" method="POST">
+        <input type="text" name="quarter" placeholder="Q4" style="flex: 0 0 60px;" required>
+        <input type="text" name="description" placeholder="Holiday mailers..." required>
+        <button type="submit">Add Initiative</button>
+    </form>
+</div>
+{% endblock %}
