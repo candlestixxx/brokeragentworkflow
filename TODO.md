@@ -1,4 +1,4 @@
 # TODO
-1. Create a Flask Web Dashboard (`app.py` + `templates/`) to visualize and manage goals.
-2. Port Twilio webhook routes into the main Flask application.
-3. Update tests to cover new HTML endpoints.
+1. Rewrite `models.py` to use SQLAlchemy instead of raw `sqlite3`.
+2. Write a `Dockerfile` for the Python application.
+3. Write a `docker-compose.yml` to orchestrate the Flask web server and the APScheduler background daemon simultaneously.

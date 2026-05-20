@@ -1,96 +1,105 @@
-import sqlite3
 import os
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.sql import func
 from dotenv import load_dotenv
 
 load_dotenv()
 
+Base = declarative_base()
+
+class Goal(Base):
+    __tablename__ = 'goals'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String, nullable=False)
+    status = Column(String, nullable=False, default='pending')
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class QuarterlyInitiative(Base):
+    __tablename__ = 'quarterly_initiatives'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    quarter = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    status = Column(String, nullable=False, default='pending')
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+# Helper function to get the current engine / session factory
 def get_db_path():
     return os.getenv("DATABASE_PATH", "goals.db")
 
-def init_db(db_path=None):
+def _get_session(db_path=None):
     if db_path is None:
         db_path = get_db_path()
-    """Initialize the database with required tables."""
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS goals (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            description TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
+    engine = create_engine(f'sqlite:///{db_path}', echo=False)
+    Session = sessionmaker(bind=engine)
+    return Session()
 
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS quarterly_initiatives (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            quarter TEXT NOT NULL,
-            description TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
+def init_db(db_path=None):
+    """Initialize the database with required tables using SQLAlchemy."""
+    if db_path is None:
+        db_path = get_db_path()
+    engine = create_engine(f'sqlite:///{db_path}', echo=False)
+    Base.metadata.create_all(engine)
 
 # --- Daily Goals ---
 def add_goal(description, db_path=None):
-    if db_path is None: db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('INSERT INTO goals (description) VALUES (?)', (description,))
-    goal_id = c.lastrowid
-    conn.commit()
-    conn.close()
+    session = _get_session(db_path)
+    new_goal = Goal(description=description)
+    session.add(new_goal)
+    session.commit()
+    goal_id = new_goal.id
+    session.close()
     return goal_id
 
 def list_pending_goals(db_path=None):
-    if db_path is None: db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('SELECT id, description FROM goals WHERE status = "pending"')
-    goals = c.fetchall()
-    conn.close()
-    return goals
+    session = _get_session(db_path)
+    # Return as tuples (id, description) to maintain backwards compatibility
+    # with the rest of the application that expects a tuple like (1, 'do laundry')
+    goals = session.query(Goal).filter(Goal.status == 'pending').all()
+    results = [(g.id, g.description) for g in goals]
+    session.close()
+    return results
 
 def complete_goal(goal_id, db_path=None):
-    if db_path is None: db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('UPDATE goals SET status = "completed" WHERE id = ?', (goal_id,))
-    success = c.rowcount > 0
-    conn.commit()
-    conn.close()
+    session = _get_session(db_path)
+    goal = session.query(Goal).filter(Goal.id == goal_id).first()
+    success = False
+    if goal:
+        goal.status = 'completed'
+        session.commit()
+        success = True
+    session.close()
     return success
 
 # --- Quarterly Initiatives ---
 def add_initiative(quarter, description, db_path=None):
-    if db_path is None: db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('INSERT INTO quarterly_initiatives (quarter, description) VALUES (?, ?)', (quarter, description))
-    initiative_id = c.lastrowid
-    conn.commit()
-    conn.close()
+    session = _get_session(db_path)
+    new_init = QuarterlyInitiative(quarter=quarter, description=description)
+    session.add(new_init)
+    session.commit()
+    initiative_id = new_init.id
+    session.close()
     return initiative_id
 
 def list_pending_initiatives(db_path=None):
-    if db_path is None: db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('SELECT id, quarter, description FROM quarterly_initiatives WHERE status = "pending" ORDER BY quarter ASC')
-    initiatives = c.fetchall()
-    conn.close()
-    return initiatives
+    session = _get_session(db_path)
+    # Return as tuples (id, quarter, description) to maintain backwards compatibility
+    initiatives = session.query(QuarterlyInitiative)\
+                         .filter(QuarterlyInitiative.status == 'pending')\
+                         .order_by(QuarterlyInitiative.quarter.asc())\
+                         .all()
+    results = [(i.id, i.quarter, i.description) for i in initiatives]
+    session.close()
+    return results
 
 def complete_initiative(initiative_id, db_path=None):
-    if db_path is None: db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('UPDATE quarterly_initiatives SET status = "completed" WHERE id = ?', (initiative_id,))
-    success = c.rowcount > 0
-    conn.commit()
-    conn.close()
+    session = _get_session(db_path)
+    initiative = session.query(QuarterlyInitiative).filter(QuarterlyInitiative.id == initiative_id).first()
+    success = False
+    if initiative:
+        initiative.status = 'completed'
+        session.commit()
+        success = True
+    session.close()
     return success

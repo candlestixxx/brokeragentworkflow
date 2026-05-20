@@ -1,4 +1,8 @@
 # Changelog
+## [0.5.0] - ORM Migration and Dockerization
+- Migrated the raw SQLite data access layer in `models.py` to use SQLAlchemy ORM, improving safety and maintainability.
+- Containerized the application using a `Dockerfile` and `docker-compose.yml` that orchestrates the web server and background scheduler independently.
+
 ## [0.4.0] - Web Dashboard
 - Expanded `webhook.py` into `app.py` functioning as a full Flask web server.
 - Added `templates/layout.html` and `templates/dashboard.html`.

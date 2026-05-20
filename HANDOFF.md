@@ -1,16 +1,16 @@
 # Handoff
 ## In-Depth Analysis
 
-1. **Completed features**: Core Python architecture, sqlite database initialization, abstracted `models.py` Data Access Layer, CLI for daily goal tracking, programmable Twilio/SMTP notifications, quarterly tracking initialization, Flask webhook routing for Twilio SMS/Voice, an APScheduler-based daemon (`scheduler.py`), and a complete Flask + Jinja2 web-based UI Dashboard (`app.py`).
-2. **Partially implemented features**: N/A. All Phase 1, 2, 3, and 4 roadmap items are fully completed.
+1. **Completed features**: Core Python architecture, sqlite database initialization, an abstracted `models.py` Data Access Layer powered by SQLAlchemy ORM, CLI for daily goal tracking, programmable Twilio/SMTP notifications, quarterly tracking initialization, Flask webhook routing for Twilio SMS/Voice, an APScheduler-based daemon (`scheduler.py`), a complete Flask + Jinja2 web-based UI Dashboard (`app.py`), and Docker containerization configuration.
+2. **Partially implemented features**: N/A. All Phase 1, 2, 3, 4, and 5 roadmap items are fully completed.
 3. **Backend features not wired to the frontend**: None. All core DB functionality (add/list/complete goals and initiatives) is connected to both the CLI and the Web UI.
 4. **UI features missing/hidden/unpolished**: The web UI is simple and uses native HTML/CSS. It could be expanded with JavaScript or a UI library (like Bootstrap/Tailwind) for a more modern feel.
-5. **Bugs or fragile areas**: Database currently lives locally (`goals.db`); if containerized, DB persistence will break without mounted volumes.
-6. **Refactor opportunities**: Consider migrating from raw SQLite queries in `models.py` to an ORM (like SQLAlchemy).
+5. **Bugs or fragile areas**: None known. Database persistence within Docker is handled using a named shared volume.
+6. **Refactor opportunities**: Consider migrating from local SQLite to a production-grade database (like PostgreSQL) for large-scale multi-tenant environments.
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
-9. **Deployment/versioning gaps**: The app is ready for local deployment. Could benefit from a `Dockerfile` for easy cross-platform hosting.
-10. **Next highest-impact implementation tasks**: Containerization (Docker) and exploring advanced UI styling (Tailwind CSS) or migration to a single-page React app.
+9. **Deployment/versioning gaps**: None. `docker-compose.yml` provides a production-ready template.
+10. **Next highest-impact implementation tasks**: Exploring advanced UI styling (Tailwind CSS) or migration to a single-page React app.
 
 ## Dependency Inventory
 
@@ -22,6 +22,7 @@
 | `twilio` | 9.0.4 | `venv/` | API wrapper | Handles programmatic SMS/Voice calls. |
 | `Flask` | 3.0.2 | `venv/` | Web server | Handles webhook POST requests and renders the Jinja web UI. |
 | `APScheduler` | 3.10.4 | `venv/` | Job scheduling | Runs the recurring background cron jobs in `scheduler.py`. |
+| `SQLAlchemy` | 2.0.25 | `venv/` | ORM | Abstracts database access, replacing raw SQL in `models.py`. |
 
 ## Execution Log
 
@@ -42,4 +43,8 @@
 ## Phase 4 Update (v0.4.0)
 - **Implemented:** Converted `webhook.py` into a full-scale `app.py` Flask web application. Designed `layout.html` and `dashboard.html` templates using HTML/CSS. Wired up web endpoints (`/goal/add`, `/goal/complete/<id>`, etc.) to reuse `models.py` and trigger the same notifications as the CLI.
 - **Tested:** Overhauled testing suite (`test_app.py`) to verify HTTP response routing and Jinja template flash messages using `Flask.test_client()`.
-- **Next:** Dockerization and UI styling enhancements.
+
+## Phase 5 Update (v0.5.0)
+- **Implemented:** Migrated the backend Data Access Layer (`models.py`) to use `SQLAlchemy` ORM instead of raw `sqlite3` execution, eliminating injection vectors and improving long term scalability. Containerized the application providing a `Dockerfile` and `docker-compose.yml` which handles the background `scheduler.py` alongside the active `app.py` web server.
+- **Tested:** Verified the ORM migration perfectly preserved the API contract by ensuring all 19 Pytests across CLI, Web, and Scheduler pass seamlessly.
+- **Next:** Advanced UI styling enhancements or Single Page App migration.
