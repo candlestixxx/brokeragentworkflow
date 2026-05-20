@@ -10,15 +10,16 @@ goals_bp = Blueprint('goals', __name__, url_prefix='/api/goals')
 @login_required
 def api_get_goals():
     goals = models.list_pending_goals(user_id=current_user.id)
-    return jsonify({"goals": [{"id": g[0], "description": g[1]} for g in goals]})
+    return jsonify({"goals": goals})
 
 @goals_bp.route("", methods=['POST'])
 @login_required
 def api_add_goal():
     data = request.get_json() or {}
     description = data.get("description")
+    parent_id = data.get("parent_id")
     if description:
-        goal_id = models.add_goal(description, user_id=current_user.id)
+        goal_id = models.add_goal(description, user_id=current_user.id, parent_id=parent_id)
         notify_all(
             subject="New Goal Added",
             body=f"You added a new goal: {description}",

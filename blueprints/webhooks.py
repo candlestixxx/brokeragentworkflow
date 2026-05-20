@@ -23,7 +23,9 @@ def sms_reply():
         else:
             msg = "Pending Goals:\n"
             for g in goals:
-                msg += f"[{g[0]}] {g[1]}\n"
+                msg += f"[{g['id']}] {g['description']}\n"
+                for sub in g.get('subgoals', []):
+                    msg += f"    - [{sub['id']}] {sub['description']}\n"
             resp.message(msg)
     else:
         # Determine the right reply for this message

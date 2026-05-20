@@ -31,6 +31,13 @@ def test_sms_reply_list_empty(client):
     rv = client.post('/sms', data=dict(Body='list'))
     assert b"No pending daily goals. Great job!" in rv.data
 
+def test_sms_reply_list_with_goals(client):
+    models.add_goal("Test webhook parent", user_id=1)
+    models.add_goal("Test webhook sub", user_id=1, parent_id=1)
+    rv = client.post('/sms', data=dict(Body='list'))
+    assert b"[1] Test webhook parent" in rv.data
+    assert b"- [2] Test webhook sub" in rv.data
+
 def test_voice_reply(client):
     rv = client.post('/voice')
     assert b"Hello. I am your One-Minute Manager. You are doing great today. Goodbye." in rv.data
@@ -58,6 +65,24 @@ def test_api_add_goal(client):
     assert rv.status_code == 201
     assert rv.json['message'] == "Goal added."
     assert rv.json['id'] is not None
+
+def test_api_add_subgoal(client):
+    login_test_user(client)
+    # Add a parent
+    rv = client.post('/api/goals', json=dict(description='Parent Goal'))
+    parent_id = rv.json['id']
+
+    # Add a sub-goal
+    rv2 = client.post('/api/goals', json=dict(description='Sub Goal', parent_id=parent_id))
+    assert rv2.status_code == 201
+
+    # Check that GET /api/goals returns nested structure
+    rv3 = client.get('/api/goals')
+    goals = rv3.json['goals']
+    assert len(goals) == 1
+    assert goals[0]['description'] == 'Parent Goal'
+    assert len(goals[0]['subgoals']) == 1
+    assert goals[0]['subgoals'][0]['description'] == 'Sub Goal'
 
 def test_api_complete_goal(client):
     login_test_user(client)

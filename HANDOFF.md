@@ -10,7 +10,7 @@
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently. `Dockerfile` uses a multi-stage approach to compile Node.js assets before assembling the Python environment.
-10. **Next highest-impact implementation tasks**: The technical scaling roadmap is complete. Future tasks should focus on feature roadmap development (e.g., adding user avatars, sub-goals, or calendar views).
+10. **Next highest-impact implementation tasks**: The technical scaling roadmap is complete. Future tasks should focus on feature roadmap development (e.g., adding user avatars, or calendar views).
 
 ## Dependency Inventory
 
@@ -92,4 +92,8 @@
 ## Phase 14 Update (v0.14.0)
 - **Implemented:** Created a `frontend/` directory initializing `vite@latest` and `vue@latest`. Migrated the monolithic CDN implementation inside `spa.html` into a compiled Node.js build process. Reconfigured `views.py` and the `Dockerfile` to compile and securely serve the generated `dist/` logic via Flask.
 - **Tested:** Re-ran `test_e2e.py` over the newly compiled Chromium layer and confirmed 100% feature parity.
-- **Next:** The architectural scaling phase is complete. Proceed with net-new feature additions.
+
+## Phase 15 Update (v0.15.0)
+- **Implemented:** Added hierarchical Sub-Goals feature. Updated `models.py` Goal model with `parent_id` foreign key. Updated `/api/goals` to natively fetch recursive structures. Added visual rendering and inline add-forms to the Vue 3 component `App.vue`.
+- **Tested:** Added `test_api_add_subgoal` to `test_app.py`. Validated structural parity recursively across the `cli.py` lists. Handled E2E testing. All tests pass flawlessly.
+- **Next:** User Avatars or Calendar Views.

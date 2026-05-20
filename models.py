@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship, backref
 from sqlalchemy.sql import func
 from dotenv import load_dotenv
 from flask_login import UserMixin
@@ -30,11 +30,13 @@ class Goal(Base):
     __tablename__ = 'goals'
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False, default=1)
+    parent_id = Column(Integer, ForeignKey('goals.id'), nullable=True)
     description = Column(String, nullable=False)
     status = Column(String, nullable=False, default='pending')
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="goals")
+    subgoals = relationship("Goal", backref=backref("parent", remote_side=[id]), cascade="all, delete-orphan")
 
 class QuarterlyInitiative(Base):
     __tablename__ = 'quarterly_initiatives'
@@ -102,9 +104,9 @@ def get_user_by_id(user_id, db_path=None):
     return user
 
 # --- Daily Goals ---
-def add_goal(description, user_id=1, db_path=None):
+def add_goal(description, user_id=1, parent_id=None, db_path=None):
     session = _get_session(db_path)
-    new_goal = Goal(description=description, user_id=user_id)
+    new_goal = Goal(description=description, user_id=user_id, parent_id=parent_id)
     session.add(new_goal)
     session.commit()
     goal_id = new_goal.id
@@ -113,9 +115,17 @@ def add_goal(description, user_id=1, db_path=None):
 
 def list_pending_goals(user_id=1, db_path=None):
     session = _get_session(db_path)
-    # Return as tuples (id, description) to maintain backwards compatibility
-    goals = session.query(Goal).filter(Goal.status == 'pending', Goal.user_id == user_id).all()
-    results = [(g.id, g.description) for g in goals]
+    # Return as list of dictionaries to support nested subgoals natively
+    goals = session.query(Goal).filter(Goal.status == 'pending', Goal.user_id == user_id, Goal.parent_id == None).all()
+
+    def serialize_goal(g):
+        return {
+            "id": g.id,
+            "description": g.description,
+            "subgoals": [serialize_goal(sub) for sub in g.subgoals if sub.status == 'pending']
+        }
+
+    results = [serialize_goal(g) for g in goals]
     session.close()
     return results
 

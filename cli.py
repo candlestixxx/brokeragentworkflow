@@ -43,7 +43,9 @@ def list(user_id):
 
     click.echo("Pending One-Minute Goals:")
     for goal in goals:
-        click.echo(f"[{goal[0]}] {goal[1]}")
+        click.echo(f"[{goal['id']}] {goal['description']}")
+        for sub in goal.get('subgoals', []):
+            click.echo(f"    - [{sub['id']}] {sub['description']}")
 
 @cli.command()
 @click.argument('goal_id', type=int)

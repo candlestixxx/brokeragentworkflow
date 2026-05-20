@@ -1,4 +1,9 @@
 # Changelog
+## [0.15.0] - Hierarchical Sub-Goals
+- Enhanced the Data Model by adding a self-referential `parent_id` to the `Goal` entity.
+- Expanded the `/api/goals` GET payload to serialize and nest sub-goals intrinsically.
+- Added UI inline forms to parent goals on the dashboard allowing "+ Sub-goal" creation and individual completion tracking.
+
 ## [0.14.0] - Vite and Vue 3 Frontend Migration
 - Deprecated monolithic `spa.html` CDN approach.
 - Implemented a structured Node.js frontend pipeline utilizing Vite, Vue 3 Single File Components (SFCs), and TailwindCSS PostCSS bindings.
