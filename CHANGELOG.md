@@ -1,4 +1,9 @@
 # Changelog
+## [0.12.0] - Celery and Redis Task Queue
+- Migrated background daemon methodology from `APScheduler` to a robust `celery` + `redis` worker infrastructure.
+- Replaced `scheduler.py` with `tasks.py` to handle `@celery_app.task` dispatching for daily and weekly prompts.
+- Updated `docker-compose.yml` to orchestrate `redis`, `celery_worker`, and `celery_beat` services simultaneously alongside the Flask API.
+
 ## [0.11.0] - Architecture Scaling with Flask Blueprints
 - Refactored monolithic `app.py` architecture into modular Flask Blueprints.
 - Extracted routing into `/blueprints/views.py`, `auth.py`, `goals.py`, `initiatives.py`, and `webhooks.py`.

@@ -6,11 +6,11 @@
 3. **Backend features not wired to the frontend**: None. All core DB functionality (add/list/complete goals and initiatives) is connected to both the CLI and the Web UI.
 4. **UI features missing/hidden/unpolished**: The UI leverages Vue 3 and Tailwind CSS and refreshes automatically across tabs via WebSockets. Optimistic UI updates could still improve perceived speed further.
 5. **Bugs or fragile areas**: None known. Database persistence within Docker is safely handled via the PostgreSQL container named volume `postgres_data`.
-6. **Refactor opportunities**: The application has been refactored into Flask Blueprints (Phase 11). The next major refactor opportunity would be moving background tasks to a message queue (e.g., Celery) rather than relying on `APScheduler`.
+6. **Refactor opportunities**: The application has been refactored into Flask Blueprints (Phase 11) and decoupled its background jobs into Celery tasks (Phase 12).
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
-9. **Deployment/versioning gaps**: None. `docker-compose.yml` provides a production-ready PostgreSQL template mapped dynamically to the `python app.py` SocketIO execution layer.
-10. **Next highest-impact implementation tasks**: Move from `sqlite`/`postgres` polling via the APScheduler to utilizing database triggers or a robust message queue (e.g., Celery + Redis).
+9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently.
+10. **Next highest-impact implementation tasks**: E2E testing framework integration via Playwright.
 
 ## Dependency Inventory
 
@@ -21,7 +21,8 @@
 | `python-dotenv` | 1.0.1 | `venv/` | Environment config | Safely loads secrets from `.env`. |
 | `twilio` | 9.0.4 | `venv/` | API wrapper | Handles programmatic SMS/Voice calls. |
 | `Flask` | 3.0.2 | `venv/` | Web server | Handles webhook POST requests and renders the Jinja web UI. |
-| `APScheduler` | 3.10.4 | `venv/` | Job scheduling | Runs the recurring background cron jobs in `scheduler.py`. |
+| `celery` | 5.6.3 | `venv/` | Task queue | Executes background jobs (replacing `APScheduler`). |
+| `redis` | 7.4.0 | `venv/` | Message broker | Intermediary for `celery` queues. |
 | `SQLAlchemy` | 2.0.25 | `venv/` | ORM | Abstracts database access, replacing raw SQL in `models.py`. |
 | `psycopg2-binary` | 2.9.9 | `venv/` | Driver | Allows Python to interface directly with PostgreSQL via SQLAlchemy. |
 | `Flask-Login` | 0.6.3 | `venv/` | Authentication | Manages user session state in `app.py`. |
@@ -75,4 +76,8 @@
 ## Phase 11 Update (v0.11.0)
 - **Implemented:** Scaled the Flask architecture by refactoring `app.py` into modular Blueprints. Separated domain logic into `blueprints/views.py`, `blueprints/auth.py`, `blueprints/goals.py`, `blueprints/initiatives.py`, and `blueprints/webhooks.py`. Extracted the `socketio` initialization to a shared `extensions.py` file to avoid circular imports.
 - **Tested:** Ran all `pytest` suites (`test_app.py`, `test_cli.py`, `test_scheduler.py`) to confirm the API routing, WebSocket broadcasting, and testing client function identically under the new modular structure.
-- **Next:** Move background tasks to a robust message queue (e.g., Celery + Redis).
+
+## Phase 12 Update (v0.12.0)
+- **Implemented:** Migrated the background tasks architecture from `APScheduler` over to a distributed `Celery` + `Redis` setup. Replaced `scheduler.py` with `tasks.py` and updated `docker-compose.yml` to orchestrate dedicated worker and beat containers.
+- **Tested:** Overhauled test framework to `test_tasks.py` to validate Celery dispatch. All tests pass.
+- **Next:** Create comprehensive Playwright End-to-End testing.

@@ -37,7 +37,12 @@ services:
     depends_on:
       - db
 
-  scheduler:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  celery_worker:
     build: .
     volumes:
       - data_volume:/app/data
@@ -55,10 +60,24 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
       - TWILIO_TO_NUMBER=${TWILIO_TO_NUMBER}
-    command: ["python", "scheduler.py"]
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: ["celery", "-A", "tasks", "worker", "--loglevel=info"]
     depends_on:
-      - web
       - db
+      - redis
+
+  celery_beat:
+    build: .
+    volumes:
+      - data_volume:/app/data
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: ["celery", "-A", "tasks", "beat", "--loglevel=info"]
+    depends_on:
+      - redis
+      - celery_worker
 
 volumes:
   data_volume:

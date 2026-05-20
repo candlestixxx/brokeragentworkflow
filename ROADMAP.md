@@ -10,4 +10,5 @@
 - **Phase 9:** Migrate the frontend to a Vue.js Single Page Application (SPA), converting the Flask app to a JSON API. (Completed)
 - **Phase 10:** Implement WebSockets for real-time notification push events to the browser to keep multiple tabs/devices synced. (Completed)
 - **Phase 11:** Scale backend architecture by migrating `app.py` logic into modular Flask Blueprints. (Completed)
-- **Phase 12 (Current):** Migrate the `APScheduler` polling methodology to a distributed message queue (e.g., Celery + Redis).
+- **Phase 12:** Migrate the `APScheduler` polling methodology to a distributed message queue (e.g., Celery + Redis). (Completed)
+- **Phase 13 (Current):** Establish comprehensive Playwright End-to-End testing.
