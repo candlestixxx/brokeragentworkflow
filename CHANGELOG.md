@@ -1,4 +1,8 @@
 # Changelog
+## [0.22.0] - Accessible Headless UI Component Replacements
+- Decoupled manual `v-if` toggle behaviors bounding tab/modal logic securely introducing `@headlessui/vue` elements natively capturing proper ARIA DOM rendering.
+- Embedded `@heroicons/vue` integrating visually consistent SVG elements cleanly directly inside Vue execution templates bypassing arbitrary external CSS library queries.
+
 ## [0.21.0] - Frontend Vue-Router Navigation
 - Installed `vue-router@4` introducing exact URL history manipulation directly bypassing implicit DOM reactiveness states.
 - Bound `/login`, `/register`, and `/` explicitly into targeted `DashboardView`, `LoginView`, and `RegisterView` components wrapping conditional navigation layers.

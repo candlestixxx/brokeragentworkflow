@@ -20,27 +20,37 @@
     </nav>
   </header>
 
-  <!-- Avatar Modal -->
-  <div v-if="showAvatarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-      <h3 class="text-xl font-bold mb-4">Update Avatar</h3>
-      <form @submit.prevent="updateAvatar" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Image URL</label>
-          <input v-model="newAvatarUrl" type="url" placeholder="https://example.com/photo.jpg" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+  <!-- Avatar Modal via Headless UI -->
+  <Dialog :open="showAvatarModal" @close="showAvatarModal = false" class="relative z-50">
+    <div class="fixed inset-0 bg-black/50" aria-hidden="true" />
+
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
+        <div class="flex items-center gap-3 mb-4">
+          <UserCircleIcon class="h-6 w-6 text-blue-600" />
+          <DialogTitle class="text-xl font-bold">Update Avatar</DialogTitle>
         </div>
-        <div class="flex justify-end gap-2">
-          <button type="button" @click="showAvatarModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium shadow">Save</button>
-        </div>
-      </form>
+
+        <form @submit.prevent="updateAvatar" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Image URL</label>
+            <input v-model="newAvatarUrl" type="url" placeholder="https://example.com/photo.jpg" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="flex justify-end gap-2 mt-4">
+            <button type="button" @click="showAvatarModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition">Cancel</button>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium shadow transition">Save</button>
+          </div>
+        </form>
+      </DialogPanel>
     </div>
-  </div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import { UserCircleIcon } from '@heroicons/vue/24/outline'
 import { user, logout as storeLogout, showToast } from '../store'
 
 const router = useRouter()
