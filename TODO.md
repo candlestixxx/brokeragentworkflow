@@ -1,4 +1,4 @@
 # TODO
-1. Rewrite `models.py` to use SQLAlchemy instead of raw `sqlite3`.
-2. Write a `Dockerfile` for the Python application.
-3. Write a `docker-compose.yml` to orchestrate the Flask web server and the APScheduler background daemon simultaneously.
+1. Integrate Tailwind CSS via CDN into `layout.html`.
+2. Style the goals and initiatives lists in `dashboard.html`.
+3. Style the input forms and buttons in `dashboard.html`.

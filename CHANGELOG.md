@@ -1,4 +1,7 @@
 # Changelog
+## [0.6.0] - Tailwind CSS UI Overhaul
+- Upgraded the raw HTML/CSS web dashboard to a modern, responsive design using Tailwind CSS.
+
 ## [0.5.0] - ORM Migration and Dockerization
 - Migrated the raw SQLite data access layer in `models.py` to use SQLAlchemy ORM, improving safety and maintainability.
 - Containerized the application using a `Dockerfile` and `docker-compose.yml` that orchestrates the web server and background scheduler independently.
