@@ -1,4 +1,9 @@
 # Changelog
+## [0.17.0] - User Avatars
+- Added an `avatar_url` database column to the `User` model.
+- Established `POST /api/me/avatar` to securely bind profile URLs to authenticated users.
+- Updated the Vue front-end navigation header implementing default user-initial placeholders parsing from `ui-avatars.com` alongside a clean visual hover-modal UI allowing end-users to customize profile pictures seamlessly.
+
 ## [0.16.0] - Completed Goals History
 - Developed a new `list_completed_goals()` data-layer query fetching goals marked `status == 'completed'`.
 - Added the `/api/goals/completed` endpoint to expose goal history payload.

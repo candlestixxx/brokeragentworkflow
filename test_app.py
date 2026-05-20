@@ -47,6 +47,14 @@ def login_test_user(client):
     models.create_user("testuser", "testpassword")
     client.post('/api/login', json=dict(username='testuser', password='testpassword'))
 
+def test_api_update_avatar(client):
+    login_test_user(client)
+    rv = client.post('/api/me/avatar', json=dict(avatar_url='https://example.com/avatar.png'))
+    assert rv.status_code == 200
+
+    rv_me = client.get('/api/me')
+    assert rv_me.json['avatar_url'] == 'https://example.com/avatar.png'
+
 def test_spa_root(client):
     rv = client.get('/')
     assert rv.status_code == 200

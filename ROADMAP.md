@@ -14,4 +14,5 @@
 - **Phase 13:** Establish comprehensive Playwright End-to-End testing. (Completed)
 - **Phase 14:** Migrate the Vue frontend to a modular structured build process (Vite/Webpack). (Completed)
 - **Phase 15:** Implement recursive Sub-Goals to allow breaking down larger daily tasks. (Completed)
-- **Phase 16 (Current):** Build Completed Goals History feature allowing visibility into previously finished tasks.
+- **Phase 16:** Build Completed Goals History feature allowing visibility into previously finished tasks. (Completed)
+- **Phase 17 (Current):** Implement User Avatars to expand upon profile logic.

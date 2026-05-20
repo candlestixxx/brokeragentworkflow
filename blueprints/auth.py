@@ -7,8 +7,25 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/api')
 @auth_bp.route("/me", methods=['GET'])
 def api_me():
     if current_user.is_authenticated:
-        return jsonify({"authenticated": True, "username": current_user.username})
+        return jsonify({
+            "authenticated": True,
+            "username": current_user.username,
+            "avatar_url": current_user.avatar_url
+        })
     return jsonify({"authenticated": False})
+
+@auth_bp.route("/me/avatar", methods=['POST'])
+@login_required
+def api_update_avatar():
+    data = request.get_json() or {}
+    avatar_url = data.get('avatar_url')
+    if not avatar_url:
+        return jsonify({"error": "Avatar URL required."}), 400
+
+    success = models.update_user_avatar(current_user.id, avatar_url)
+    if success:
+        return jsonify({"message": "Avatar updated."})
+    return jsonify({"error": "Update failed."}), 500
 
 @auth_bp.route("/login", methods=['POST'])
 def api_login():

@@ -15,6 +15,7 @@ class User(Base, UserMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(150), unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
+    avatar_url = Column(String(500), nullable=True)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -102,6 +103,17 @@ def get_user_by_id(user_id, db_path=None):
     user = session.get(User, int(user_id))
     session.close()
     return user
+
+def update_user_avatar(user_id, avatar_url, db_path=None):
+    session = _get_session(db_path)
+    user = session.get(User, int(user_id))
+    success = False
+    if user:
+        user.avatar_url = avatar_url
+        session.commit()
+        success = True
+    session.close()
+    return success
 
 # --- Daily Goals ---
 def add_goal(description, user_id=1, parent_id=None, db_path=None):

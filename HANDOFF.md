@@ -10,7 +10,7 @@
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently. `Dockerfile` uses a multi-stage approach to compile Node.js assets before assembling the Python environment.
-10. **Next highest-impact implementation tasks**: Add a user avatar/profile page, or implement a chronological "Calendar View" combining the Active/History goals.
+10. **Next highest-impact implementation tasks**: Add a chronological "Calendar View" combining the Active/History goals, or integrate an external UI library (like Element Plus or Vuetify) to formalize the Vue 3 component suite.
 
 ## Dependency Inventory
 
@@ -100,4 +100,8 @@
 ## Phase 16 Update (v0.16.0)
 - **Implemented:** Developed a Completed Goals History UI logic. Wrote `models.list_completed_goals()`, exported via `GET /api/goals/completed`, and surfaced in `App.vue` using a dual-tab toggle to swap between the pending dashboard and historical views seamlessly.
 - **Tested:** Overhauled `test_app.py` extending logic to assert the completed goals retrieval. Ran Playwright e2e validation testing to ensure identical flow patterns.
-- **Next:** Proceed into avatar profiles or calendar chronologies.
+
+## Phase 17 Update (v0.17.0)
+- **Implemented:** Implemented User Profiles via Avatar tracking. Migrated `User` model to map `avatar_url` database string schemas. Created `POST /api/me/avatar` updating logic, and exposed data out to `App.vue` updating the Navigation bar with hover interaction modalities and `ui-avatars.com` automated API fallbacks.
+- **Tested:** Wrote `test_api_update_avatar` within `test_app.py`. E2E suite succeeds gracefully.
+- **Next:** Calendar specific view mapping.
