@@ -6,4 +6,6 @@
 - **Phase 5:** Migrate raw SQL data access layer to an ORM (SQLAlchemy) and containerize the application with Docker for seamless deployments. (Completed)
 - **Phase 6:** Enhance the Jinja2 Web UI using Tailwind CSS for a modern, responsive design. (Completed)
 - **Phase 7:** Migrate from local SQLite to a production-grade database (PostgreSQL) using Docker-Compose. (Completed)
-- **Phase 8 (Current):** Add User Authentication to support multi-tenant team usage.
+- **Phase 8:** Add User Authentication to support multi-tenant team usage. (Completed)
+- **Phase 9 (Current):** Migrate the frontend to a Vue.js Single Page Application (SPA), converting the Flask app to a JSON API.
+- **Phase 10:** Implement WebSockets for real-time notification push events to the browser.

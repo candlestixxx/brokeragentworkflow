@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.twiml.voice_response import VoiceResponse
@@ -11,7 +11,10 @@ app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return jsonify({"error": "Unauthorized"}), 401
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -28,75 +31,80 @@ def get_app_version():
     except Exception:
         return "unknown"
 
-# Inject version globally into all templates
-@app.context_processor
-def inject_version():
-    return dict(app_version=get_app_version())
-
 def get_db_path():
     """Temporary backwards compatibility function. `models.get_db_url` handles the actual config."""
     return os.getenv("DATABASE_PATH", "goals.db")
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user = models.get_user_by_username(username)
-        if user and user.check_password(password):
-            login_user(user)
-            flash("Logged in successfully.")
-            return redirect(url_for('dashboard'))
-        flash("Invalid username or password.")
-    return render_template("login.html")
-
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if models.get_user_by_username(username):
-            flash("Username already exists.")
-        else:
-            user_id = models.create_user(username, password)
-            if user_id:
-                flash("Registration successful. Please log in.")
-                return redirect(url_for('login'))
-            flash("Registration failed.")
-    return render_template("register.html")
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    flash("You have been logged out.")
-    return redirect(url_for('login'))
-
+# --- SPA Root Route ---
 @app.route("/")
-@login_required
-def dashboard():
-    """Render the main web dashboard."""
-    goals = models.list_pending_goals(user_id=current_user.id)
-    initiatives = models.list_pending_initiatives(user_id=current_user.id)
-    return render_template("dashboard.html", goals=goals, initiatives=initiatives)
+def index():
+    """Serve the single page application."""
+    return render_template("spa.html", app_version=get_app_version())
 
-@app.route("/goal/add", methods=['POST'])
+# --- JSON API Endpoints ---
+
+@app.route("/api/me", methods=['GET'])
+def api_me():
+    if current_user.is_authenticated:
+        return jsonify({"authenticated": True, "username": current_user.username})
+    return jsonify({"authenticated": False})
+
+@app.route("/api/login", methods=['POST'])
+def api_login():
+    data = request.get_json() or {}
+    username = data.get('username')
+    password = data.get('password')
+    user = models.get_user_by_username(username)
+    if user and user.check_password(password):
+        login_user(user)
+        return jsonify({"message": "Logged in successfully."})
+    return jsonify({"error": "Invalid username or password."}), 401
+
+@app.route("/api/register", methods=['POST'])
+def api_register():
+    data = request.get_json() or {}
+    username = data.get('username')
+    password = data.get('password')
+    if not username or not password:
+        return jsonify({"error": "Username and password required."}), 400
+    if models.get_user_by_username(username):
+        return jsonify({"error": "Username already exists."}), 409
+
+    user_id = models.create_user(username, password)
+    if user_id:
+        return jsonify({"message": "Registration successful."}), 201
+    return jsonify({"error": "Registration failed."}), 500
+
+@app.route("/api/logout", methods=['POST'])
 @login_required
-def add_goal_route():
-    description = request.form.get("description")
+def api_logout():
+    logout_user()
+    return jsonify({"message": "Logged out successfully."})
+
+@app.route("/api/goals", methods=['GET'])
+@login_required
+def api_get_goals():
+    goals = models.list_pending_goals(user_id=current_user.id)
+    return jsonify({"goals": [{"id": g[0], "description": g[1]} for g in goals]})
+
+@app.route("/api/goals", methods=['POST'])
+@login_required
+def api_add_goal():
+    data = request.get_json() or {}
+    description = data.get("description")
     if description:
-        models.add_goal(description, user_id=current_user.id)
+        goal_id = models.add_goal(description, user_id=current_user.id)
         notify_all(
             subject="New Goal Added",
             body=f"You added a new goal: {description}",
             speakable_message=f"You added a new goal: {description}"
         )
-        flash(f"Added goal: '{description}'")
-    return redirect(url_for('dashboard'))
+        return jsonify({"message": "Goal added.", "id": goal_id}), 201
+    return jsonify({"error": "Description required."}), 400
 
-@app.route("/goal/complete/<int:goal_id>", methods=['POST'])
+@app.route("/api/goals/<int:goal_id>/complete", methods=['POST'])
 @login_required
-def complete_goal_route(goal_id):
+def api_complete_goal(goal_id):
     success = models.complete_goal(goal_id, user_id=current_user.id)
     if success:
         notify_all(
@@ -104,29 +112,34 @@ def complete_goal_route(goal_id):
             body=f"Excellent work! You completed goal {goal_id}.",
             speakable_message=f"Excellent work! You completed goal {goal_id}."
         )
-        flash(f"Goal {goal_id} marked as completed! Excellent work.")
-    else:
-        flash(f"No goal found with ID {goal_id}.")
-    return redirect(url_for('dashboard'))
+        return jsonify({"message": f"Goal {goal_id} completed."})
+    return jsonify({"error": "Goal not found."}), 404
 
-@app.route("/initiative/add", methods=['POST'])
+@app.route("/api/initiatives", methods=['GET'])
 @login_required
-def add_initiative_route():
-    quarter = request.form.get("quarter")
-    description = request.form.get("description")
+def api_get_initiatives():
+    initiatives = models.list_pending_initiatives(user_id=current_user.id)
+    return jsonify({"initiatives": [{"id": i[0], "quarter": i[1], "description": i[2]} for i in initiatives]})
+
+@app.route("/api/initiatives", methods=['POST'])
+@login_required
+def api_add_initiative():
+    data = request.get_json() or {}
+    quarter = data.get("quarter")
+    description = data.get("description")
     if quarter and description:
-        models.add_initiative(quarter, description, user_id=current_user.id)
+        init_id = models.add_initiative(quarter, description, user_id=current_user.id)
         notify_all(
             subject="New Initiative Added",
             body=f"You added a new initiative for {quarter}: {description}",
             speakable_message=f"You added a new quarterly initiative for {quarter}: {description}"
         )
-        flash(f"Added quarterly initiative for {quarter}: '{description}'")
-    return redirect(url_for('dashboard'))
+        return jsonify({"message": "Initiative added.", "id": init_id}), 201
+    return jsonify({"error": "Quarter and description required."}), 400
 
-@app.route("/initiative/complete/<int:initiative_id>", methods=['POST'])
+@app.route("/api/initiatives/<int:initiative_id>/complete", methods=['POST'])
 @login_required
-def complete_initiative_route(initiative_id):
+def api_complete_initiative(initiative_id):
     success = models.complete_initiative(initiative_id, user_id=current_user.id)
     if success:
         notify_all(
@@ -134,10 +147,9 @@ def complete_initiative_route(initiative_id):
             body=f"Great job completing quarterly initiative {initiative_id}.",
             speakable_message=f"Great job completing quarterly initiative {initiative_id}."
         )
-        flash(f"Initiative {initiative_id} marked as completed!")
-    else:
-        flash(f"No initiative found with ID {initiative_id}.")
-    return redirect(url_for('dashboard'))
+        return jsonify({"message": f"Initiative {initiative_id} completed."})
+    return jsonify({"error": "Initiative not found."}), 404
+
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():

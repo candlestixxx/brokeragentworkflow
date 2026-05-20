@@ -1,5 +1,5 @@
 # TODO
-1. Add `Flask-Login` and `Flask-Bcrypt` to dependencies.
-2. Add a `User` table to `models.py` and link existing tables with `user_id`.
-3. Build `/login` and `/register` views with Tailwind styling.
-4. Update `cli.py` and `scheduler.py` to handle multi-tenancy.
+1. Refactor `app.py` endpoints to return JSON instead of HTML template redirects.
+2. Convert frontend to a Vue.js Single Page Application (`spa.html`).
+3. Update `test_app.py` to assert against JSON endpoints rather than HTML strings.
+4. Clean up obsolete Jinja templates.

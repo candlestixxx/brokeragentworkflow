@@ -1,4 +1,9 @@
 # Changelog
+## [0.9.0] - Vue.js Single Page Application
+- Refactored `app.py` from server-side rendering to a JSON REST API.
+- Created `spa.html` implementing a Vue 3 reactive interface for seamless state updates without page reloading.
+- Removed legacy Jinja templates.
+
 ## [0.8.0] - User Authentication
 - Added `Flask-Login` and `Flask-Bcrypt` to support multi-tenant user authentication.
 - Added `User` data model and linked goals and initiatives via `user_id` foreign keys.

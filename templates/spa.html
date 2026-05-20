@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Minute Manager</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue.js 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans antialiased max-w-4xl mx-auto p-6 mt-8">
+
+    <div id="app">
+        <!-- Header -->
+        <header class="mb-8 border-b-2 border-gray-800 pb-4 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">One-Minute Manager Dashboard</h1>
+                <p class="text-gray-500 mt-2">Manage your daily tasks and quarterly look-aheads seamlessly.</p>
+            </div>
+            <nav class="text-sm font-medium">
+                <div v-if="user.authenticated">
+                    <span class="text-gray-600 mr-4">Hello, {% raw %}{{ user.username }}{% endraw %}</span>
+                    <button @click="logout" class="text-red-600 hover:text-red-800">Logout</button>
+                </div>
+                <div v-else>
+                    <button @click="currentView = 'login'" :class="{'underline': currentView === 'login'}" class="text-blue-600 hover:text-blue-800 mr-4">Login</button>
+                    <button @click="currentView = 'register'" :class="{'underline': currentView === 'register'}" class="text-blue-600 hover:text-blue-800">Register</button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Flash Messages equivalent (Toast) -->
+        <div v-if="toastMessage" class="mb-6 space-y-2">
+            <div :class="toastError ? 'bg-red-100 border-red-500 text-red-700' : 'bg-green-100 border-green-500 text-green-700'" class="border-l-4 p-4 rounded shadow-sm flex justify-between">
+                <p>{% raw %}{{ toastMessage }}{% endraw %}</p>
+                <button @click="toastMessage = ''" class="font-bold">&times;</button>
+            </div>
+        </div>
+
+        <main class="space-y-8">
+            <!-- NOT AUTHENTICATED VIEWS -->
+            <div v-if="!user.authenticated">
+                <!-- Login View -->
+                <div v-if="currentView === 'login'" class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">Login</h2>
+                    <form @submit.prevent="login" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Username</label>
+                            <input v-model="loginForm.username" type="text" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            <input v-model="loginForm.password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow font-medium">Login</button>
+                    </form>
+                </div>
+
+                <!-- Register View -->
+                <div v-if="currentView === 'register'" class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">Register</h2>
+                    <form @submit.prevent="register" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Username</label>
+                            <input v-model="registerForm.username" type="text" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            <input v-model="registerForm.password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow font-medium">Register</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- AUTHENTICATED DASHBOARD VIEW -->
+            <div v-else>
+                <!-- Daily Goals -->
+                <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">Daily One-Minute Goals</h2>
+                    <ul class="divide-y divide-gray-100">
+                        <li v-for="goal in goals" :key="goal.id" class="py-4 flex justify-between items-center group">
+                            <span class="text-gray-700"><span class="text-gray-400 font-mono text-sm mr-2">[{% raw %}{{ goal.id }}{% endraw %}]</span> {% raw %}{{ goal.description }}{% endraw %}</span>
+                            <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow transition duration-150 font-medium">
+                                Complete
+                            </button>
+                        </li>
+                        <li v-if="goals.length === 0" class="py-4 text-gray-500 italic text-center">No pending daily goals. Great job!</li>
+                    </ul>
+
+                    <form @submit.prevent="addGoal" class="mt-6 flex gap-3">
+                        <input v-model="newGoal" type="text" placeholder="New daily goal..." required class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-medium">Add Goal</button>
+                    </form>
+                </section>
+
+                <!-- Quarterly Initiatives -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">Quarterly Initiatives (3-Month Look-Ahead)</h2>
+                    <ul class="divide-y divide-gray-100">
+                        <li v-for="init in initiatives" :key="init.id" class="py-4 flex justify-between items-center group">
+                            <span class="text-gray-700">
+                                <span class="text-gray-400 font-mono text-sm mr-2">[{% raw %}{{ init.id }}{% endraw %}]</span>
+                                <strong class="text-gray-900 bg-gray-100 px-2 py-1 rounded text-sm">{% raw %}{{ init.quarter }}{% endraw %}</strong>: {% raw %}{{ init.description }}{% endraw %}
+                            </span>
+                            <button @click="completeInitiative(init.id)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow transition duration-150 font-medium">
+                                Complete
+                            </button>
+                        </li>
+                        <li v-if="initiatives.length === 0" class="py-4 text-gray-500 italic text-center">No pending quarterly initiatives. Plan ahead!</li>
+                    </ul>
+
+                    <form @submit.prevent="addInitiative" class="mt-6 flex gap-3">
+                        <input v-model="newInitQuarter" type="text" placeholder="Q4" required class="w-20 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-center uppercase">
+                        <input v-model="newInitDesc" type="text" placeholder="Holiday mailers..." required class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-medium whitespace-nowrap">Add Initiative</button>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-500 text-sm border-t border-gray-200 pt-6">
+        <p>One-Minute Manager v{{ app_version }}</p>
+    </footer>
+
+    <!-- Vue.js Application Logic -->
+    <script>
+        const { createApp, ref, reactive, onMounted } = Vue
+
+        createApp({
+            setup() {
+                const user = reactive({ authenticated: false, username: '' })
+                const currentView = ref('login') // 'login' or 'register'
+
+                const loginForm = reactive({ username: '', password: '' })
+                const registerForm = reactive({ username: '', password: '' })
+
+                const goals = ref([])
+                const initiatives = ref([])
+
+                const newGoal = ref('')
+                const newInitQuarter = ref('')
+                const newInitDesc = ref('')
+
+                const toastMessage = ref('')
+                const toastError = ref(false)
+
+                const showToast = (msg, isError=false) => {
+                    toastMessage.value = msg
+                    toastError.value = isError
+                    setTimeout(() => toastMessage.value = '', 4000)
+                }
+
+                const fetchSession = async () => {
+                    try {
+                        const res = await fetch('/api/me')
+                        const data = await res.json()
+                        user.authenticated = data.authenticated
+                        user.username = data.username || ''
+                        if (user.authenticated) {
+                            fetchDashboardData()
+                        }
+                    } catch (e) {
+                        console.error(e)
+                    }
+                }
+
+                const login = async () => {
+                    const res = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(loginForm)
+                    })
+                    const data = await res.json()
+                    if (res.ok) {
+                        showToast(data.message)
+                        loginForm.password = ''
+                        await fetchSession()
+                    } else {
+                        showToast(data.error || "Login failed", true)
+                    }
+                }
+
+                const register = async () => {
+                    const res = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(registerForm)
+                    })
+                    const data = await res.json()
+                    if (res.ok) {
+                        showToast(data.message)
+                        registerForm.username = ''
+                        registerForm.password = ''
+                        currentView.value = 'login'
+                    } else {
+                        showToast(data.error || "Registration failed", true)
+                    }
+                }
+
+                const logout = async () => {
+                    await fetch('/api/logout', { method: 'POST' })
+                    user.authenticated = false
+                    user.username = ''
+                    goals.value = []
+                    initiatives.value = []
+                    showToast("Logged out successfully.")
+                }
+
+                const fetchDashboardData = async () => {
+                    const resG = await fetch('/api/goals')
+                    const dataG = await resG.json()
+                    goals.value = dataG.goals || []
+
+                    const resI = await fetch('/api/initiatives')
+                    const dataI = await resI.json()
+                    initiatives.value = dataI.initiatives || []
+                }
+
+                const addGoal = async () => {
+                    const res = await fetch('/api/goals', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ description: newGoal.value })
+                    })
+                    if (res.ok) {
+                        showToast("Goal added.")
+                        newGoal.value = ''
+                        fetchDashboardData()
+                    }
+                }
+
+                const completeGoal = async (id) => {
+                    const res = await fetch(`/api/goals/${id}/complete`, { method: 'POST' })
+                    if (res.ok) {
+                        showToast("Goal completed! Excellent work.")
+                        fetchDashboardData()
+                    }
+                }
+
+                const addInitiative = async () => {
+                    const res = await fetch('/api/initiatives', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ quarter: newInitQuarter.value, description: newInitDesc.value })
+                    })
+                    if (res.ok) {
+                        showToast("Initiative added.")
+                        newInitQuarter.value = ''
+                        newInitDesc.value = ''
+                        fetchDashboardData()
+                    }
+                }
+
+                const completeInitiative = async (id) => {
+                    const res = await fetch(`/api/initiatives/${id}/complete`, { method: 'POST' })
+                    if (res.ok) {
+                        showToast("Initiative completed!")
+                        fetchDashboardData()
+                    }
+                }
+
+                onMounted(() => {
+                    fetchSession()
+                })
+
+                return {
+                    user, currentView, loginForm, registerForm, toastMessage, toastError,
+                    goals, initiatives, newGoal, newInitQuarter, newInitDesc,
+                    login, register, logout, addGoal, completeGoal, addInitiative, completeInitiative
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
