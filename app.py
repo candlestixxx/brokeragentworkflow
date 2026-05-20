@@ -24,6 +24,10 @@ def get_app_version():
 def inject_version():
     return dict(app_version=get_app_version())
 
+def get_db_path():
+    """Temporary backwards compatibility function. `models.get_db_url` handles the actual config."""
+    return os.getenv("DATABASE_PATH", "goals.db")
+
 @app.route("/")
 def dashboard():
     """Render the main web dashboard."""

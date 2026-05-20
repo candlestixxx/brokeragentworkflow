@@ -1,4 +1,4 @@
 # TODO
-1. Integrate Tailwind CSS via CDN into `layout.html`.
-2. Style the goals and initiatives lists in `dashboard.html`.
-3. Style the input forms and buttons in `dashboard.html`.
+1. Update `models.py` to support dynamic `DATABASE_URL` connections via SQLAlchemy.
+2. Add PostgreSQL service to `docker-compose.yml`.
+3. Add `psycopg2-binary` to dependencies to allow Python -> Postgres connections.

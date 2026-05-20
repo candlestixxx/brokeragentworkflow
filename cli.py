@@ -7,12 +7,17 @@ def cli():
     """One-Minute Manager: Daily Goals CLI."""
     pass
 
+def get_db_path():
+    """Fallback backwards compat function since we removed it from models.py"""
+    import os
+    return os.getenv("DATABASE_PATH", "goals.db")
+
 @cli.command()
 def init():
     """Initialize the goals database."""
-    db_path = models.get_db_path()
-    models.init_db(db_path)
-    click.echo(f"Initialized database at {db_path}")
+    url = models.get_db_url()
+    models.init_db()
+    click.echo(f"Initialized database at {url}")
 
 @cli.command()
 @click.argument('description')

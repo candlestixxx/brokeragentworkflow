@@ -24,22 +24,28 @@ class QuarterlyInitiative(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
-# Helper function to get the current engine / session factory
-def get_db_path():
-    return os.getenv("DATABASE_PATH", "goals.db")
+# Helper function to get the current database URL
+def get_db_url(db_path=None):
+    """Returns the DATABASE_URL if set, otherwise falls back to sqlite via DATABASE_PATH."""
+    url = os.getenv("DATABASE_URL")
+    if url:
+        return url
+
+    # Fallback to local sqlite
+    if db_path is None:
+        db_path = os.getenv("DATABASE_PATH", "goals.db")
+    return f'sqlite:///{db_path}'
 
 def _get_session(db_path=None):
-    if db_path is None:
-        db_path = get_db_path()
-    engine = create_engine(f'sqlite:///{db_path}', echo=False)
+    url = get_db_url(db_path)
+    engine = create_engine(url, echo=False)
     Session = sessionmaker(bind=engine)
     return Session()
 
 def init_db(db_path=None):
     """Initialize the database with required tables using SQLAlchemy."""
-    if db_path is None:
-        db_path = get_db_path()
-    engine = create_engine(f'sqlite:///{db_path}', echo=False)
+    url = get_db_url(db_path)
+    engine = create_engine(url, echo=False)
     Base.metadata.create_all(engine)
 
 # --- Daily Goals ---

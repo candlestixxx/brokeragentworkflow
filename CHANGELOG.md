@@ -1,4 +1,9 @@
 # Changelog
+## [0.7.0] - PostgreSQL Integration
+- Added `psycopg2-binary` to support PostgreSQL.
+- Updated `docker-compose.yml` to orchestrate a dedicated `db` container running `postgres:15-alpine`.
+- Refactored `models.py` logic to seamlessly toggle between PostgreSQL (production) and local SQLite (testing/local CLI).
+
 ## [0.6.0] - Tailwind CSS UI Overhaul
 - Upgraded the raw HTML/CSS web dashboard to a modern, responsive design using Tailwind CSS.
 

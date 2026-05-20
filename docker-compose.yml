@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=goals
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   web:
     build: .
     ports:
@@ -8,6 +19,7 @@ services:
     volumes:
       - data_volume:/app/data
     environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/goals
       - DATABASE_PATH=/app/data/goals.db
       - NOTIFICATIONS_ENABLED=${NOTIFICATIONS_ENABLED:-false}
       - SMTP_HOST=${SMTP_HOST}
@@ -21,12 +33,15 @@ services:
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
       - TWILIO_TO_NUMBER=${TWILIO_TO_NUMBER}
     command: ["flask", "run"]
+    depends_on:
+      - db
 
   scheduler:
     build: .
     volumes:
       - data_volume:/app/data
     environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/goals
       - DATABASE_PATH=/app/data/goals.db
       - NOTIFICATIONS_ENABLED=${NOTIFICATIONS_ENABLED:-false}
       - SMTP_HOST=${SMTP_HOST}
@@ -42,6 +57,8 @@ services:
     command: ["python", "scheduler.py"]
     depends_on:
       - web
+      - db
 
 volumes:
   data_volume:
+  postgres_data:
