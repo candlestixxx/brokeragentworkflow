@@ -1,4 +1,4 @@
 # TODO
-1. Add `Flask-SocketIO` dependency.
-2. Configure SocketIO in `app.py` and broadcast `data_updated` events when goals/initiatives are added or completed.
-3. Update `spa.html` Vue app to listen for SocketIO events and automatically refresh state.
+1. Move background tasks to a robust message queue (e.g., Celery + Redis).
+2. Create complete E2E testing with Playwright.
+3. Migrate the Vue app into a structured build process with Vite/Webpack.

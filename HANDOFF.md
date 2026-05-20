@@ -6,7 +6,7 @@
 3. **Backend features not wired to the frontend**: None. All core DB functionality (add/list/complete goals and initiatives) is connected to both the CLI and the Web UI.
 4. **UI features missing/hidden/unpolished**: The UI leverages Vue 3 and Tailwind CSS and refreshes automatically across tabs via WebSockets. Optimistic UI updates could still improve perceived speed further.
 5. **Bugs or fragile areas**: None known. Database persistence within Docker is safely handled via the PostgreSQL container named volume `postgres_data`.
-6. **Refactor opportunities**: At Phase 10, the application is mature. Breaking `app.py` into Blueprints/Controllers would be the next architectural step.
+6. **Refactor opportunities**: The application has been refactored into Flask Blueprints (Phase 11). The next major refactor opportunity would be moving background tasks to a message queue (e.g., Celery) rather than relying on `APScheduler`.
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` provides a production-ready PostgreSQL template mapped dynamically to the `python app.py` SocketIO execution layer.
@@ -71,4 +71,8 @@
 ## Phase 10 Update (v0.10.0)
 - **Implemented:** Configured `Flask-SocketIO` across `app.py` to emit events anytime an API endpoint modifies the database (`/add` or `/complete`). Updated the `spa.html` Vue app to listen for these `data_updated` signals and automatically re-fetch the dashboard API to maintain instantaneous state synchronization across all connected browser tabs.
 - **Tested:** Re-verified tests against the `SocketIO` wrapped test_client structure.
-- **Next:** Architecture scaling (e.g. Celery / Blueprints).
+
+## Phase 11 Update (v0.11.0)
+- **Implemented:** Scaled the Flask architecture by refactoring `app.py` into modular Blueprints. Separated domain logic into `blueprints/views.py`, `blueprints/auth.py`, `blueprints/goals.py`, `blueprints/initiatives.py`, and `blueprints/webhooks.py`. Extracted the `socketio` initialization to a shared `extensions.py` file to avoid circular imports.
+- **Tested:** Ran all `pytest` suites (`test_app.py`, `test_cli.py`, `test_scheduler.py`) to confirm the API routing, WebSocket broadcasting, and testing client function identically under the new modular structure.
+- **Next:** Move background tasks to a robust message queue (e.g., Celery + Redis).

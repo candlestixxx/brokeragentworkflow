@@ -1,4 +1,9 @@
 # Changelog
+## [0.11.0] - Architecture Scaling with Flask Blueprints
+- Refactored monolithic `app.py` architecture into modular Flask Blueprints.
+- Extracted routing into `/blueprints/views.py`, `auth.py`, `goals.py`, `initiatives.py`, and `webhooks.py`.
+- Improved codebase maintainability while preserving API contracts and WebSocket integrations.
+
 ## [0.10.0] - Real-Time WebSockets
 - Integrated `Flask-SocketIO` to push real-time updates directly to the Vue frontend when backend database modifications occur, keeping multiple browser sessions perfectly synced.
 

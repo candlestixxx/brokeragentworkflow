@@ -8,4 +8,6 @@
 - **Phase 7:** Migrate from local SQLite to a production-grade database (PostgreSQL) using Docker-Compose. (Completed)
 - **Phase 8:** Add User Authentication to support multi-tenant team usage. (Completed)
 - **Phase 9:** Migrate the frontend to a Vue.js Single Page Application (SPA), converting the Flask app to a JSON API. (Completed)
-- **Phase 10 (Current):** Implement WebSockets for real-time notification push events to the browser to keep multiple tabs/devices synced.
+- **Phase 10:** Implement WebSockets for real-time notification push events to the browser to keep multiple tabs/devices synced. (Completed)
+- **Phase 11:** Scale backend architecture by migrating `app.py` logic into modular Flask Blueprints. (Completed)
+- **Phase 12 (Current):** Migrate the `APScheduler` polling methodology to a distributed message queue (e.g., Celery + Redis).
