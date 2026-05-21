@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50 min-h-screen font-sans text-gray-900">
+  <div class="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans text-gray-900 dark:text-gray-100 transition-colors">
     <NavBar />
 
     <main class="max-w-4xl mx-auto px-4 py-8">

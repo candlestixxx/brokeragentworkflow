@@ -1,21 +1,28 @@
 <template>
-  <header class="bg-white shadow-sm sticky top-0 z-10">
+  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10 transition-colors">
     <nav class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-gray-800 tracking-tight">One-Minute Manager</h1>
-      <div v-if="user.authenticated" class="flex items-center gap-4">
-        <div class="flex items-center gap-2 relative group cursor-pointer" @click="showAvatarModal = true">
-          <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=random`" alt="Avatar" class="w-8 h-8 rounded-full shadow-sm object-cover border border-gray-200">
-          <span class="text-gray-600">Hello, {{ user.username }}</span>
-          <!-- Hover overlay -->
-          <div class="absolute inset-0 bg-black bg-opacity-10 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition" style="width: 2rem;">
-            <span class="text-white text-xs font-bold">Edit</span>
+      <h1 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight transition-colors">One-Minute Manager</h1>
+      <div class="flex items-center gap-4">
+        <button @click="toggleTheme" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none" aria-label="Toggle Dark Mode">
+          <SunIcon v-if="isDarkMode" class="w-5 h-5" />
+          <MoonIcon v-else class="w-5 h-5" />
+        </button>
+
+        <div v-if="user.authenticated" class="flex items-center gap-4">
+          <div class="flex items-center gap-2 relative group cursor-pointer" @click="showAvatarModal = true">
+            <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=random`" alt="Avatar" class="w-8 h-8 rounded-full shadow-sm object-cover border border-gray-200 dark:border-gray-600 transition-colors">
+            <span class="text-gray-600 dark:text-gray-300 transition-colors">Hello, {{ user.username }}</span>
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-black bg-opacity-10 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition" style="width: 2rem;">
+              <span class="text-white text-xs font-bold">Edit</span>
+            </div>
           </div>
+          <button @click="logout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition duration-150 font-medium ml-2 border-l border-gray-300 dark:border-gray-600 pl-4">Logout</button>
         </div>
-        <button @click="logout" class="text-red-600 hover:text-red-800 transition duration-150 font-medium ml-2 border-l border-gray-300 pl-4">Logout</button>
-      </div>
-      <div v-else>
-        <router-link to="/login" class="text-blue-600 hover:text-blue-800 mr-4" active-class="underline">Login</router-link>
-        <router-link to="/register" class="text-blue-600 hover:text-blue-800" active-class="underline">Register</router-link>
+        <div v-else class="flex items-center">
+          <router-link to="/login" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4 transition-colors" active-class="underline">Login</router-link>
+          <router-link to="/register" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" active-class="underline">Register</router-link>
+        </div>
       </div>
     </nav>
   </header>
@@ -50,8 +57,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
-import { UserCircleIcon } from '@heroicons/vue/24/outline'
-import { user, logout as storeLogout, showToast } from '../store'
+import { UserCircleIcon, SunIcon, MoonIcon } from '@heroicons/vue/24/outline'
+import { user, logout as storeLogout, showToast, toggleTheme, isDarkMode } from '../store'
 
 const router = useRouter()
 const showAvatarModal = ref(false)

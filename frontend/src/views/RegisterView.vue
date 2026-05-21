@@ -1,16 +1,16 @@
 <template>
-  <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-2xl font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">Register</h2>
+  <div class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700 pb-3 mb-4">Register</h2>
     <form @submit.prevent="register" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Username</label>
-        <input v-model="registerForm.username" type="text" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
+        <input v-model="registerForm.username" type="text" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input v-model="registerForm.password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+        <input v-model="registerForm.password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
-      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow font-medium">Register</button>
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow font-medium transition-colors">Register</button>
     </form>
   </div>
 </template>

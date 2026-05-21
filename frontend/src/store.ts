@@ -27,6 +27,31 @@ export interface UserState {
 
 export const user = reactive<UserState>({ authenticated: false, username: null, avatar_url: null })
 
+// Dark Mode State
+export const isDarkMode = ref<boolean>(false)
+
+export const initTheme = () => {
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    isDarkMode.value = true
+    document.documentElement.classList.add('dark')
+  } else {
+    isDarkMode.value = false
+    document.documentElement.classList.remove('dark')
+  }
+}
+
+export const toggleTheme = () => {
+  isDarkMode.value = !isDarkMode.value
+  if (isDarkMode.value) {
+    document.documentElement.classList.add('dark')
+    localStorage.setItem('theme', 'dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+    localStorage.setItem('theme', 'light')
+  }
+}
+
 export const goals = ref<Goal[]>([])
 export const completedGoals = ref<Goal[]>([])
 export const calendarGoals = ref<Record<string, Goal[]>>({})

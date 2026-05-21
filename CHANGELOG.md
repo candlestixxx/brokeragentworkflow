@@ -1,4 +1,8 @@
 # Changelog
+## [0.24.0] - Tailwind Global Dark Mode
+- Updated `tailwind.config.js` tracking dynamic UI `darkMode` capabilities via native HTML5 bindings structurally explicitly targeting `class` structures natively toggling `document.documentElement` behaviors dynamically.
+- Intercepted HeroIcons SVG interactions integrating dual-action `MoonIcon` and `SunIcon` models explicitly bound to the Vue 3 header component layout efficiently tracking CSS logic cleanly gracefully triggering `.dark:*` overlays inherently.
+
 ## [0.23.0] - Continuous Integration & Ruff Code Quality Standardization
 - Established `.github/workflows/ci.yml` initializing GitHub Actions mapping continuous integration tests natively covering Pytest workflows and Vite compilations recursively.
 - Re-architected backend structures parsing formats utilizing `ruff` explicitly standardizing Python syntactic integrity preventing regressions logically.
