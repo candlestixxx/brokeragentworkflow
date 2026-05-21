@@ -4,6 +4,7 @@ import { user } from '../store'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import SettingsView from '../views/SettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -22,6 +23,12 @@ const router = createRouter({
       path: '/',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsView,
       meta: { requiresAuth: true }
     }
   ]

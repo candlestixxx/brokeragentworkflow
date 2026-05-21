@@ -21,6 +21,10 @@ def trigger_morning_prompt():
     we would iterate through each user. For now, we assume user_id=1 for
     the primary notification receiver, or query it generically.
     """
+    user = models.get_user_by_id(user_id=1)
+    if not user or not user.notifications_enabled:
+        return
+
     goals = models.list_pending_goals(user_id=1)
     if not goals:
         return
@@ -37,6 +41,10 @@ def trigger_morning_prompt():
 @celery_app.task
 def trigger_quarterly_reminder():
     """Trigger a weekly reminder about upcoming quarterly initiatives."""
+    user = models.get_user_by_id(user_id=1)
+    if not user or not user.notifications_enabled:
+        return
+
     initiatives = models.list_pending_initiatives(user_id=1)
     if not initiatives:
         return

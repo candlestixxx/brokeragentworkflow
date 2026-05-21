@@ -70,6 +70,22 @@ def test_api_update_avatar(client):
     assert rv_me.json["avatar_url"] == "https://example.com/avatar.png"
 
 
+def test_api_update_settings(client):
+    login_test_user(client)
+
+    # Check default True
+    rv_me = client.get("/api/me")
+    assert rv_me.json["notifications_enabled"] is True
+
+    # Update to False
+    rv = client.post("/api/me/settings", json=dict(notifications_enabled=False))
+    assert rv.status_code == 200
+
+    # Verify
+    rv_me = client.get("/api/me")
+    assert rv_me.json["notifications_enabled"] is False
+
+
 def test_spa_root(client):
     rv = client.get("/")
     assert rv.status_code == 200

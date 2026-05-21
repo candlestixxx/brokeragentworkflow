@@ -10,7 +10,7 @@
 7. **Documentation gaps**: None.
 8. **Dependency/library gaps**: None currently.
 9. **Deployment/versioning gaps**: None. `docker-compose.yml` orchestrates PostgreSQL, Redis, Celery workers, and the Flask/SocketIO execution layer efficiently. `Dockerfile` uses a multi-stage approach to compile Node.js assets before assembling the Python environment.
-10. **Next highest-impact implementation tasks**: All core architectures spanning Python backend, Typescript frontend, Headless ARIA logic, Global Dark Mode themes, and CI/CD operations are finished dynamically defining the scope.
+10. **Next highest-impact implementation tasks**: Implement "Forgot Password" token workflows mapping emails strictly, or outline data visualizations dynamically logging completed goal volumes via Chart.js dynamically.
 
 ## Dependency Inventory
 
@@ -132,4 +132,8 @@
 ## Phase 24 Update (v0.24.0)
 - **Implemented:** Refactored Vue interface adding a reactive `isDarkMode` state natively mapped out across the Vue UI executing `.dark:*` Tailwind bindings implicitly querying elements structurally toggling `document.documentElement` behaviors dynamically mapping `matchMedia` bindings.
 - **Tested:** Deployed Playwright Chromium evaluations structurally confirming robust headless E2E verification gracefully bypassing DOM UI conflicts actively isolating Pytest runs consistently cleanly.
-- **Next:** Delivery of 0.24.0.
+
+## Phase 25 Update (v0.25.0)
+- **Implemented:** Deployed a dedicated Settings View natively allowing user-level notifications toggling parameters via `Boolean` SQL columns. Re-architected Celery tasks gracefully querying status booleans skipping processes directly upon opt-outs elegantly preventing spam workflows recursively.
+- **Tested:** Evaluated `/api/me/settings` endpoint bounds strictly via Pytest structurally parsing `test_app.py` correctly.
+- **Next:** Final 0.25.0 Hand-off completion sequence.

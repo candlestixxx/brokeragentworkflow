@@ -13,9 +13,24 @@ def api_me():
                 "authenticated": True,
                 "username": current_user.username,
                 "avatar_url": current_user.avatar_url,
+                "notifications_enabled": current_user.notifications_enabled,
             }
         )
     return jsonify({"authenticated": False})
+
+
+@auth_bp.route("/me/settings", methods=["POST"])
+@login_required
+def api_update_settings():
+    data = request.get_json() or {}
+    notifications_enabled = data.get("notifications_enabled")
+    if notifications_enabled is None:
+        return jsonify({"error": "Missing setting parameters."}), 400
+
+    success = models.update_user_settings(current_user.id, bool(notifications_enabled))
+    if success:
+        return jsonify({"message": "Settings updated."})
+    return jsonify({"error": "Update failed."}), 500
 
 
 @auth_bp.route("/me/avatar", methods=["POST"])

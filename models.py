@@ -1,5 +1,13 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    ForeignKey,
+    Boolean,
+)
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, backref
 from sqlalchemy.sql import func
 from dotenv import load_dotenv
@@ -17,6 +25,7 @@ class User(Base, UserMixin):
     username = Column(String(150), unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
     avatar_url = Column(String(500), nullable=True)
+    notifications_enabled = Column(Boolean, nullable=False, default=True)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -122,6 +131,18 @@ def update_user_avatar(user_id, avatar_url, db_path=None):
     success = False
     if user:
         user.avatar_url = avatar_url
+        session.commit()
+        success = True
+    session.close()
+    return success
+
+
+def update_user_settings(user_id, notifications_enabled, db_path=None):
+    session = _get_session(db_path)
+    user = session.get(User, int(user_id))
+    success = False
+    if user:
+        user.notifications_enabled = notifications_enabled
         session.commit()
         success = True
     session.close()

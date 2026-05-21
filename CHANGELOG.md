@@ -1,4 +1,10 @@
 # Changelog
+## [0.25.0] - User Notification Settings Toggle
+- Formatted `models.py` tracking Boolean default values managing active system settings directly across user schema interactions seamlessly.
+- Bound `POST /api/me/settings` natively processing variables securely.
+- Expanded Celery worker functions inside `tasks.py` to pre-emptively query user settings terminating job prompts immediately if users individually opt-out organically.
+- Re-architected `App.vue` providing a new `/settings` Router layout utilizing native `HeadlessUI` Toggle `Switch` elements directly.
+
 ## [0.24.0] - Tailwind Global Dark Mode
 - Updated `tailwind.config.js` tracking dynamic UI `darkMode` capabilities via native HTML5 bindings structurally explicitly targeting `class` structures natively toggling `document.documentElement` behaviors dynamically.
 - Intercepted HeroIcons SVG interactions integrating dual-action `MoonIcon` and `SunIcon` models explicitly bound to the Vue 3 header component layout efficiently tracking CSS logic cleanly gracefully triggering `.dark:*` overlays inherently.

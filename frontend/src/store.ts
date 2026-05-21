@@ -23,9 +23,10 @@ export interface UserState {
   authenticated: boolean;
   username: string | null;
   avatar_url: string | null;
+  notifications_enabled: boolean;
 }
 
-export const user = reactive<UserState>({ authenticated: false, username: null, avatar_url: null })
+export const user = reactive<UserState>({ authenticated: false, username: null, avatar_url: null, notifications_enabled: true })
 
 // Dark Mode State
 export const isDarkMode = ref<boolean>(false)
@@ -98,6 +99,7 @@ export const checkAuth = async () => {
     user.authenticated = data.authenticated
     user.username = data.username
     user.avatar_url = data.avatar_url
+    user.notifications_enabled = data.notifications_enabled ?? true
     if (user.authenticated) {
       await fetchData()
     }
