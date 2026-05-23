@@ -61,3 +61,13 @@ def api_complete_goal(goal_id):
         socketio.emit("data_updated", {"message": "Goal completed"})
         return jsonify({"message": f"Goal {goal_id} completed."})
     return jsonify({"error": "Goal not found."}), 404
+
+
+@goals_bp.route("/<int:goal_id>", methods=["DELETE"])
+@login_required
+def api_delete_goal(goal_id):
+    success = models.delete_goal(goal_id, user_id=current_user.id)
+    if success:
+        socketio.emit("data_updated", {"message": "Goal deleted"})
+        return jsonify({"message": f"Goal {goal_id} deleted."}), 200
+    return jsonify({"error": "Goal not found."}), 404

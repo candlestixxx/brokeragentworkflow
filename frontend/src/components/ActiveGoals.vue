@@ -11,8 +11,11 @@
             <button @click="addSubGoalForm(goal.id)" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 text-gray-700 px-3 py-1 rounded shadow transition font-medium mr-2 text-sm">
               + Sub-goal
             </button>
-            <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-1 rounded shadow transition font-medium text-sm">
+            <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-1 rounded shadow transition font-medium text-sm mr-2">
               Complete
+            </button>
+            <button @click="deleteGoal(goal.id)" class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-4 py-1 rounded shadow transition font-medium text-sm">
+              Delete
             </button>
           </div>
         </div>
@@ -24,9 +27,14 @@
               <span class="text-gray-400 dark:text-gray-500 font-mono text-xs mr-2 transition-colors">[{{ sub.id }}]</span>
               {{ sub.description }}
             </span>
-            <button @click="completeGoal(sub.id)" class="bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-600 text-white px-3 py-1 rounded shadow transition font-medium text-xs">
-              Complete
-            </button>
+            <div>
+              <button @click="completeGoal(sub.id)" class="bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-600 text-white px-3 py-1 rounded shadow transition font-medium text-xs mr-2">
+                Complete
+              </button>
+              <button @click="deleteGoal(sub.id)" class="bg-red-400 hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-600 text-white px-3 py-1 rounded shadow transition font-medium text-xs">
+                Delete
+              </button>
+            </div>
           </li>
         </ul>
 
@@ -59,6 +67,13 @@ const completeGoal = async (id: number) => {
   const res = await fetch(`/api/goals/${id}/complete`, { method: 'POST' })
   if (res.ok) {
     showToast("Goal completed! Excellent work.")
+  }
+}
+
+const deleteGoal = async (id: number) => {
+  const res = await fetch(`/api/goals/${id}`, { method: 'DELETE' })
+  if (res.ok) {
+    showToast("Goal deleted.")
   }
 }
 

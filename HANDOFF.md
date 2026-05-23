@@ -136,4 +136,8 @@
 ## Phase 25 Update (v0.25.0)
 - **Implemented:** Deployed a dedicated Settings View natively allowing user-level notifications toggling parameters via `Boolean` SQL columns. Re-architected Celery tasks gracefully querying status booleans skipping processes directly upon opt-outs elegantly preventing spam workflows recursively.
 - **Tested:** Evaluated `/api/me/settings` endpoint bounds strictly via Pytest structurally parsing `test_app.py` correctly.
-- **Next:** Final 0.25.0 Hand-off completion sequence.
+
+## Phase 26 Update (v0.26.0)
+- **Implemented:** Created MEMORY.md and IDEAS.md for structured internal reflection. Implemented goal deletion capabilities via new backend `models.py` function and `DELETE /api/goals/<id>` route utilizing SocketIO broadcasts. Extended `ActiveGoals.vue` and `CompletedGoals.vue` with "Delete" buttons linked dynamically natively updating the Vue interface.
+- **Tested:** Executed Pytest validating endpoint deletion successfully ensuring database schemas clear properly. Type-checked Vue logic ensuring TS payload structures mirror backend correctly.
+- **Next:** Final 0.26.0 Hand-off completion sequence.

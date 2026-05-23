@@ -249,6 +249,20 @@ def complete_goal(goal_id, user_id=1, db_path=None):
     return success
 
 
+def delete_goal(goal_id, user_id=1, db_path=None):
+    session = _get_session(db_path)
+    goal = (
+        session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()
+    )
+    success = False
+    if goal:
+        session.delete(goal)
+        session.commit()
+        success = True
+    session.close()
+    return success
+
+
 # --- Quarterly Initiatives ---
 def add_initiative(quarter, description, user_id=1, db_path=None):
     session = _get_session(db_path)

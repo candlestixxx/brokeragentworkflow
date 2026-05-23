@@ -1,4 +1,8 @@
 # Changelog
+## [0.26.0] - Goal Deletion
+- Added goal deletion capabilities via new `models.py` function and `DELETE /api/goals/<id>` route.
+- Expanded Vue components `ActiveGoals.vue` and `CompletedGoals.vue` with "Delete" buttons linked dynamically to the store.
+
 ## [0.25.0] - User Notification Settings Toggle
 - Formatted `models.py` tracking Boolean default values managing active system settings directly across user schema interactions seamlessly.
 - Bound `POST /api/me/settings` natively processing variables securely.

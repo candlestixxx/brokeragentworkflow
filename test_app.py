@@ -137,6 +137,18 @@ def test_api_complete_goal(client):
     assert rv.json["message"] == "Goal 1 completed."
 
 
+def test_api_delete_goal(client):
+    login_test_user(client)
+    models.add_goal("To be deleted", user_id=1)
+    rv = client.delete("/api/goals/1")
+    assert rv.status_code == 200
+    assert rv.json["message"] == "Goal 1 deleted."
+
+    # Verify it is deleted
+    rv = client.get("/api/goals")
+    assert len(rv.json["goals"]) == 0
+
+
 def test_api_get_completed_goals(client):
     login_test_user(client)
     models.add_goal("Done goal", user_id=1)

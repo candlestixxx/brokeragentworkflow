@@ -11,4 +11,10 @@ The project contains a CLI, a web dashboard, and an automated background schedul
 ## Running the Application
 - **Web Dashboard & Webhooks:** Run `flask run` (or `python app.py` if configured) to start the web UI on `http://127.0.0.1:5000`.
 - **Command Line Interface:** Run `python cli.py --help` to see CLI commands.
-- **Background Scheduler:** Run `python scheduler.py` in a separate terminal to start the background daemon that handles automated prompts and reminders.
+- **Background Scheduler:** Run `celery -A tasks worker --loglevel=info` and `celery -A tasks beat --loglevel=info` (or via docker-compose) for background notifications and reminders instead of `scheduler.py`.
+
+## Docker Production Deployment
+To spin up the entire application stack including PostgreSQL, Redis, Celery beat/worker, and the Flask API serving the compiled Vue SPA:
+1. Ensure Docker and Docker Compose are installed.
+2. Run `docker-compose up -d --build`.
+3. The app will be running and available on port `5000`.
