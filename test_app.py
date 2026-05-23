@@ -191,3 +191,29 @@ def test_api_complete_initiative(client):
     rv = client.post("/api/initiatives/1/complete")
     assert rv.status_code == 200
     assert rv.json["message"] == "Initiative 1 completed."
+
+def test_api_habit_tracking(client):
+    login_test_user(client)
+
+    # Add a Habit
+    rv = client.post("/api/habits", json=dict(description="Drink Water"))
+    assert rv.status_code == 201
+
+    # List Habits
+    rv = client.get("/api/habits")
+    habits = rv.json["habits"]
+    assert len(habits) == 1
+    assert habits[0]["description"] == "Drink Water"
+    habit_id = habits[0]["id"]
+
+    # Complete Habit
+    rv = client.post(f"/api/habits/{habit_id}/complete")
+    assert rv.status_code == 200
+
+    # Delete Habit
+    rv = client.delete(f"/api/habits/{habit_id}")
+    assert rv.status_code == 200
+
+    # List Habits again to verify deletion
+    rv = client.get("/api/habits")
+    assert len(rv.json["habits"]) == 0

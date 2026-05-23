@@ -18,6 +18,9 @@
               <Tab as="template" v-slot="{ selected }">
                 <button :class="[selected ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200', 'px-3 py-1 rounded font-medium text-sm transition outline-none']">Calendar</button>
               </Tab>
+              <Tab as="template" v-slot="{ selected }">
+                <button :class="[selected ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200', 'px-3 py-1 rounded font-medium text-sm transition outline-none']">Habits</button>
+              </Tab>
             </TabList>
           </div>
 
@@ -25,6 +28,7 @@
             <TabPanel><ActiveGoals /></TabPanel>
             <TabPanel><CompletedGoals /></TabPanel>
             <TabPanel><CalendarGoals /></TabPanel>
+            <TabPanel><HabitsTracker /></TabPanel>
           </TabPanels>
         </TabGroup>
       </section>
@@ -43,4 +47,5 @@ import ActiveGoals from '../components/ActiveGoals.vue'
 import CompletedGoals from '../components/CompletedGoals.vue'
 import CalendarGoals from '../components/CalendarGoals.vue'
 import QuarterlyInitiatives from '../components/QuarterlyInitiatives.vue'
+import HabitsTracker from '../components/HabitsTracker.vue'
 </script>

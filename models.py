@@ -66,6 +66,19 @@ class QuarterlyInitiative(Base):
     user = relationship("User", back_populates="initiatives")
 
 
+class Habit(Base):
+    __tablename__ = "habits"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, default=1)
+    description = Column(String, nullable=False)
+    current_streak = Column(Integer, nullable=False, default=0)
+    highest_streak = Column(Integer, nullable=False, default=0)
+    last_completed_date = Column(String, nullable=True)  # Format YYYY-MM-DD
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User")
+
+
 # Helper function to get the current database URL
 def get_db_url(db_path=None):
     """Returns the DATABASE_URL if set, otherwise falls back to sqlite via DATABASE_PATH."""
@@ -131,6 +144,84 @@ def update_user_avatar(user_id, avatar_url, db_path=None):
     success = False
     if user:
         user.avatar_url = avatar_url
+        session.commit()
+        success = True
+    session.close()
+    return success
+
+
+# --- Habits ---
+def add_habit(description, user_id=1, db_path=None):
+    session = _get_session(db_path)
+    new_habit = Habit(description=description, user_id=user_id)
+    session.add(new_habit)
+    session.commit()
+    habit_id = new_habit.id
+    session.close()
+    return habit_id
+
+
+def list_habits(user_id=1, db_path=None):
+    session = _get_session(db_path)
+    habits = (
+        session.query(Habit)
+        .filter(Habit.user_id == user_id)
+        .order_by(Habit.id.asc())
+        .all()
+    )
+    results = [
+        {
+            "id": h.id,
+            "description": h.description,
+            "current_streak": h.current_streak,
+            "highest_streak": h.highest_streak,
+            "last_completed_date": h.last_completed_date,
+        }
+        for h in habits
+    ]
+    session.close()
+    return results
+
+
+def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
+    from datetime import datetime, timedelta
+    session = _get_session(db_path)
+    habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+    success = False
+    if habit:
+        if habit.last_completed_date == completed_date:
+            # Already completed today, do nothing
+            pass
+        else:
+            if habit.last_completed_date:
+                last_date = datetime.strptime(habit.last_completed_date, "%Y-%m-%d").date()
+                curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
+                if curr_date - last_date == timedelta(days=1):
+                    # Streak continues
+                    habit.current_streak += 1
+                else:
+                    # Streak broken
+                    habit.current_streak = 1
+            else:
+                # First completion
+                habit.current_streak = 1
+
+            if habit.current_streak > habit.highest_streak:
+                habit.highest_streak = habit.current_streak
+
+            habit.last_completed_date = completed_date
+            session.commit()
+            success = True
+    session.close()
+    return success
+
+
+def delete_habit(habit_id, user_id=1, db_path=None):
+    session = _get_session(db_path)
+    habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+    success = False
+    if habit:
+        session.delete(habit)
         session.commit()
         success = True
     session.close()

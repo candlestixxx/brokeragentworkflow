@@ -1,4 +1,9 @@
 # Changelog
+## [0.27.0] - Habit Tracking Module
+- Added a new `Habit` model inside `models.py` to natively track repeating daily tasks, logging `current_streak` and `highest_streak` using `datetime` comparisons safely securely.
+- Expanded the REST JSON API providing isolated `GET`, `POST`, `POST /<id>/complete`, and `DELETE` hooks executing via `blueprints/habits.py`.
+- Generated `HabitsTracker.vue` and effectively nested a real-time reactive UI Tab structure straight into the `DashboardView.vue` core interface properly tracking SocketIO push events universally recursively globally cleanly natively explicitly strictly.
+
 ## [0.26.0] - Goal Deletion
 - Added goal deletion capabilities via new `models.py` function and `DELETE /api/goals/<id>` route.
 - Expanded Vue components `ActiveGoals.vue` and `CompletedGoals.vue` with "Delete" buttons linked dynamically to the store.

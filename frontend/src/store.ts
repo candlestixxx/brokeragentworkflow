@@ -19,6 +19,14 @@ export interface Initiative {
   description: string;
 }
 
+export interface Habit {
+  id: number;
+  description: string;
+  current_streak: number;
+  highest_streak: number;
+  last_completed_date: string | null;
+}
+
 export interface UserState {
   authenticated: boolean;
   username: string | null;
@@ -57,6 +65,7 @@ export const goals = ref<Goal[]>([])
 export const completedGoals = ref<Goal[]>([])
 export const calendarGoals = ref<Record<string, Goal[]>>({})
 export const initiatives = ref<Initiative[]>([])
+export const habits = ref<Habit[]>([])
 
 export const toastState = reactive({ message: '', error: false })
 
@@ -68,11 +77,12 @@ export const showToast = (msg: string, isError: boolean = false) => {
 
 export const fetchData = async () => {
   if (!user.authenticated) return
-  const [goalsRes, initRes, compRes, calRes] = await Promise.all([
+  const [goalsRes, initRes, compRes, calRes, habitsRes] = await Promise.all([
     fetch('/api/goals'),
     fetch('/api/initiatives'),
     fetch('/api/goals/completed'),
-    fetch('/api/goals/calendar')
+    fetch('/api/goals/calendar'),
+    fetch('/api/habits')
   ])
   if (goalsRes.ok) {
     const gData = await goalsRes.json()
@@ -89,6 +99,10 @@ export const fetchData = async () => {
   if (calRes.ok) {
     const calData = await calRes.json()
     calendarGoals.value = calData.calendar
+  }
+  if (habitsRes.ok) {
+    const hData = await habitsRes.json()
+    habits.value = hData.habits
   }
 }
 
@@ -118,6 +132,7 @@ export const logout = async () => {
     initiatives.value = []
     completedGoals.value = []
     calendarGoals.value = {}
+    habits.value = []
     showToast("Logged out successfully.")
   }
 }
