@@ -1,4 +1,5 @@
 import { reactive, ref } from 'vue'
+import { io } from 'socket.io-client'
 
 export interface SubGoal {
   id: number;
@@ -117,8 +118,6 @@ export const fetchData = async () => {
     analytics.value = await analyticsRes.json()
   }
 }
-
-import { io } from 'socket.io-client'
 
 let socketInstance: any = null
 

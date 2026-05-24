@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 from sqlalchemy import (
     create_engine,
     Column,
@@ -184,7 +185,6 @@ def list_habits(user_id=1, db_path=None):
 
 
 def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
-    from datetime import datetime, timedelta
     session = _get_session(db_path)
     habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
     success = False

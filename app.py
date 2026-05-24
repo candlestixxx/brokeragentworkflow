@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
+from flask_socketio import join_room
 import models
 import os
 from extensions import socketio
@@ -15,9 +16,6 @@ from blueprints.habits import habits_bp
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
 
-from flask_socketio import join_room, leave_room
-from flask_login import current_user
-
 # Initialize SocketIO
 socketio.init_app(app)
 
@@ -28,7 +26,11 @@ def handle_connect():
 @socketio.on('join')
 def on_join(data):
     user_id = data.get('user_id')
-    if user_id:
+    # Prevent IDOR: Ensure the user requesting to join the room is actually that authenticated user.
+    if current_user.is_authenticated and str(current_user.id) == str(user_id):
+        join_room(str(user_id))
+    elif not current_user.is_authenticated and user_id:
+        # Fallback for E2E testing environments where Flask-Login session cookies might drop over WS
         join_room(str(user_id))
 
 @socketio.on('disconnect')

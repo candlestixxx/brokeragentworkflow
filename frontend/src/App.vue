@@ -30,6 +30,14 @@ onMounted(async () => {
     fetchData()
   })
 
+  // When socket connects, force a join emission using existing state if possible.
+  // This covers the case where the socket connects/reconnects after authentication.
+  socket.on('connect', () => {
+    if (store.user && store.user.authenticated && store.user.user_id) {
+      socket.emit('join', { user_id: store.user.user_id })
+    }
+  })
+
   // Granular handlers
   socket.on('goal_added', (data: any) => {
     console.log("Goal added:", data)
