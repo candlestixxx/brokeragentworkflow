@@ -71,3 +71,26 @@ def api_delete_goal(goal_id):
         socketio.emit("data_updated", {"message": "Goal deleted"})
         return jsonify({"message": f"Goal {goal_id} deleted."}), 200
     return jsonify({"error": "Goal not found."}), 404
+
+
+@goals_bp.route("/breakdown", methods=["POST"])
+@login_required
+def api_breakdown_goal():
+    """
+    Simulates an AI service parsing a high-level goal description
+    and returning a list of granular one-minute sub-goals.
+    """
+    data = request.get_json() or {}
+    description = data.get("description", "")
+
+    if not description:
+        return jsonify({"error": "Description required."}), 400
+
+    # Simulate an AI response by echoing back string splits or generic chunks
+    sub_goals = [
+        f"Research best approaches for: {description[:20]}...",
+        f"Draft initial outline for: {description[:20]}...",
+        f"Execute and review first steps of: {description[:20]}..."
+    ]
+
+    return jsonify({"subgoals": sub_goals}), 200

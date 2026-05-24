@@ -1,4 +1,8 @@
 # Changelog
+## [0.28.0] - AI-Powered Goal Breakdown
+- Implemented `POST /api/goals/breakdown` mocking simulated AI responses gracefully fragmenting arbitrary parent strings efficiently.
+- Deployed "AI Spark" contextual actions natively into `ActiveGoals.vue` dynamically binding sub-goal injection mappings sequentially across the DOM effectively.
+
 ## [0.27.0] - Habit Tracking Module
 - Added a new `Habit` model inside `models.py` to natively track repeating daily tasks, logging `current_streak` and `highest_streak` using `datetime` comparisons safely securely.
 - Expanded the REST JSON API providing isolated `GET`, `POST`, `POST /<id>/complete`, and `DELETE` hooks executing via `blueprints/habits.py`.

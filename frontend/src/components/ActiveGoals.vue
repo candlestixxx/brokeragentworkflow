@@ -8,6 +8,9 @@
             {{ goal.description }}
           </span>
           <div>
+            <button @click="aiBreakdown(goal.id, goal.description)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-purple-200 px-3 py-1 rounded shadow transition font-medium mr-2 text-sm">
+              ✨ AI Spark
+            </button>
             <button @click="addSubGoalForm(goal.id)" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 text-gray-700 px-3 py-1 rounded shadow transition font-medium mr-2 text-sm">
               + Sub-goal
             </button>
@@ -74,6 +77,30 @@ const deleteGoal = async (id: number) => {
   const res = await fetch(`/api/goals/${id}`, { method: 'DELETE' })
   if (res.ok) {
     showToast("Goal deleted.")
+  }
+}
+
+const aiBreakdown = async (parentId: number, description: string) => {
+  showToast("Consulting AI...")
+  const res = await fetch('/api/goals/breakdown', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ description: description })
+  })
+
+  if (res.ok) {
+    const data = await res.json()
+    // Add subgoals sequentially
+    for (const subDesc of data.subgoals) {
+      await fetch('/api/goals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: subDesc, parent_id: parentId })
+      })
+    }
+    showToast("AI Spark added new sub-goals!")
+  } else {
+    showToast("AI Spark failed.", true)
   }
 }
 

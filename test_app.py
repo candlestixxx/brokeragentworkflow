@@ -217,3 +217,15 @@ def test_api_habit_tracking(client):
     # List Habits again to verify deletion
     rv = client.get("/api/habits")
     assert len(rv.json["habits"]) == 0
+
+def test_api_breakdown_goal(client):
+    login_test_user(client)
+
+    # Request AI Breakdown
+    rv = client.post("/api/goals/breakdown", json=dict(description="Write a book about the universe"))
+    assert rv.status_code == 200
+
+    subgoals = rv.json.get("subgoals")
+    assert subgoals is not None
+    assert len(subgoals) == 3
+    assert "Write a book about t" in subgoals[0]
