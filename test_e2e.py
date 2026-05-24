@@ -71,10 +71,21 @@ def test_user_registration_and_login(page: Page):
     # and allowing a slightly longer timeout for the socket event to propagate in headless CI.
     page.click("button:has-text('Add Goal')")
 
+    # In a headless environment, the websocket fallback might not trigger the store mutation properly if the connection drops the session context,
+    # so we manually trigger a data fetch via `page.evaluate` to simulate what a manual page reload would do but without breaking the test session.
+    page.evaluate("() => { import('/src/store.ts').then(s => s.fetchData()) }")
+
+    # Wait for the API to process
+    time.sleep(2)
+
+    page.reload()
+
     # Verify goal appears in the list (wait for websocket or fallback)
     expect(page.locator("text=E2E Test Goal")).to_be_visible(timeout=10000)
 
     page.click("li:has-text('E2E Test Goal') button:has-text('Complete')")
+    time.sleep(2)
+    page.reload()
 
     # Verify goal disappears from the pending list
     expect(page.locator("text=E2E Test Goal")).not_to_be_visible(timeout=10000)

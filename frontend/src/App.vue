@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { toastState, checkAuth, fetchData, goals, getSocket } from './store'
+import { toastState, checkAuth, fetchData, goals, user, getSocket } from './store'
 import NavBar from './components/NavBar.vue'
 
 const socket = getSocket() // Automatically connects and is globally tracked
@@ -33,8 +33,8 @@ onMounted(async () => {
   // When socket connects, force a join emission using existing state if possible.
   // This covers the case where the socket connects/reconnects after authentication.
   socket.on('connect', () => {
-    if (store.user && store.user.authenticated && store.user.user_id) {
-      socket.emit('join', { user_id: store.user.user_id })
+    if (user && user.authenticated && user.user_id) {
+      socket.emit('join', { user_id: user.user_id })
     }
   })
 

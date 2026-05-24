@@ -29,8 +29,8 @@ def on_join(data):
     # Prevent IDOR: Ensure the user requesting to join the room is actually that authenticated user.
     if current_user.is_authenticated and str(current_user.id) == str(user_id):
         join_room(str(user_id))
-    elif not current_user.is_authenticated and user_id:
-        # Fallback for E2E testing environments where Flask-Login session cookies might drop over WS
+    elif not current_user.is_authenticated and user_id and app.config.get("TESTING"):
+        # Fallback ONLY for E2E testing environments where Flask-Login session cookies might drop over WS
         join_room(str(user_id))
 
 @socketio.on('disconnect')
