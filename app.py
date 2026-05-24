@@ -15,8 +15,25 @@ from blueprints.habits import habits_bp
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
 
+from flask_socketio import join_room, leave_room
+from flask_login import current_user
+
 # Initialize SocketIO
 socketio.init_app(app)
+
+@socketio.on('connect')
+def handle_connect():
+    pass
+
+@socketio.on('join')
+def on_join(data):
+    user_id = data.get('user_id')
+    if user_id:
+        join_room(str(user_id))
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    pass
 
 # Initialize Login Manager
 login_manager = LoginManager()

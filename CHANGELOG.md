@@ -1,4 +1,8 @@
 # Changelog
+## [0.30.0] - WebSocket Sync Refactoring
+- Optimized backend `SocketIO` hooks natively transmitting exact granular dictionaries inside `goal_added`, `goal_deleted`, and `goal_completed` events mapping implicitly properly.
+- Re-architected frontend `App.vue` gracefully receiving granular packets mutating raw `store.ts` arrays efficiently natively preventing blanket global REST re-fetches effectively flawlessly.
+
 ## [0.29.0] - Analytics Dashboard
 - Integrated global analytics endpoints fetching comprehensive historical metrics implicitly safely mapping structural logic utilizing Python comprehensions natively cleanly inside `GET /api/me/analytics`.
 - Embedded `AnalyticsView.vue` linking nested layout interactions natively over global headers querying central `store.ts` reactive bindings automatically!

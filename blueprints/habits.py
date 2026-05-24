@@ -19,7 +19,7 @@ def api_add_habit():
     description = data.get("description")
     if description:
         habit_id = models.add_habit(description, user_id=current_user.id)
-        socketio.emit("data_updated", {"message": "Habit added"})
+        socketio.emit("data_updated", {"message": "Habit added"}, to=str(current_user.id))
         return jsonify({"message": "Habit added.", "id": habit_id}), 201
     return jsonify({"error": "Description required."}), 400
 
@@ -29,7 +29,7 @@ def api_complete_habit(habit_id):
     today = datetime.now().strftime("%Y-%m-%d")
     success = models.complete_habit(habit_id, today, user_id=current_user.id)
     if success:
-        socketio.emit("data_updated", {"message": "Habit completed"})
+        socketio.emit("data_updated", {"message": "Habit completed"}, to=str(current_user.id))
         return jsonify({"message": f"Habit {habit_id} completed for today."})
     return jsonify({"error": "Habit not found or already completed today."}), 400
 
@@ -38,6 +38,6 @@ def api_complete_habit(habit_id):
 def api_delete_habit(habit_id):
     success = models.delete_habit(habit_id, user_id=current_user.id)
     if success:
-        socketio.emit("data_updated", {"message": "Habit deleted"})
+        socketio.emit("data_updated", {"message": "Habit deleted"}, to=str(current_user.id))
         return jsonify({"message": f"Habit {habit_id} deleted."}), 200
     return jsonify({"error": "Habit not found."}), 404

@@ -246,9 +246,16 @@ def add_goal(description, user_id=1, parent_id=None, db_path=None):
     new_goal = Goal(description=description, user_id=user_id, parent_id=parent_id)
     session.add(new_goal)
     session.commit()
-    goal_id = new_goal.id
+
+    # Return fully serialized goal
+    goal_data = {
+        "id": new_goal.id,
+        "description": new_goal.description,
+        "parent_id": new_goal.parent_id,
+        "subgoals": []
+    }
     session.close()
-    return goal_id
+    return goal_data
 
 
 def list_pending_goals(user_id=1, db_path=None):

@@ -1,0 +1,24 @@
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [24/May/2026 04:00:29] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:29] "GET /assets/index-BUj_6_Z-.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:29] "GET /assets/index-C9lmIDN0.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:29] "GET /api/me HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:30] "GET /socket.io/?EIO=4&transport=polling&t=91vl94v0 HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:30] "POST /socket.io/?EIO=4&transport=polling&t=91vm5dor&sid=zkcgscsyrM0lXawXAAAA HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:30] "GET /socket.io/?EIO=4&transport=polling&t=91vm8w9j&sid=zkcgscsyrM0lXawXAAAA HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:30] "GET /socket.io/?EIO=4&transport=polling&t=91vn0lni&sid=zkcgscsyrM0lXawXAAAA HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:30] "[35m[1mPOST /api/register HTTP/1.1[0m" 201 -
+127.0.0.1 - - [24/May/2026 04:00:31] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/me HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/goals/calendar HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/goals HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/habits HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/goals/completed HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/initiatives HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "GET /api/me/analytics HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:31] "[35m[1mPOST /api/goals HTTP/1.1[0m" 201 -
+127.0.0.1 - - [24/May/2026 04:00:31] "POST /api/goals/20/complete HTTP/1.1" 200 -
+127.0.0.1 - - [24/May/2026 04:00:32] "GET /socket.io/?EIO=4&transport=websocket&sid=zkcgscsyrM0lXawXAAAA HTTP/1.1" 200 -

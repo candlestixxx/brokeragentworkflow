@@ -28,6 +28,7 @@ def api_me():
         return jsonify(
             {
                 "authenticated": True,
+                "user_id": current_user.id,
                 "username": current_user.username,
                 "avatar_url": current_user.avatar_url,
                 "notifications_enabled": current_user.notifications_enabled,
