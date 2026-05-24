@@ -67,6 +67,13 @@ export const calendarGoals = ref<Record<string, Goal[]>>({})
 export const initiatives = ref<Initiative[]>([])
 export const habits = ref<Habit[]>([])
 
+export const analytics = ref<Record<string, number>>({
+  completed_goals: 0,
+  active_initiatives: 0,
+  total_habits: 0,
+  longest_streak: 0
+})
+
 export const toastState = reactive({ message: '', error: false })
 
 export const showToast = (msg: string, isError: boolean = false) => {
@@ -77,12 +84,13 @@ export const showToast = (msg: string, isError: boolean = false) => {
 
 export const fetchData = async () => {
   if (!user.authenticated) return
-  const [goalsRes, initRes, compRes, calRes, habitsRes] = await Promise.all([
+  const [goalsRes, initRes, compRes, calRes, habitsRes, analyticsRes] = await Promise.all([
     fetch('/api/goals'),
     fetch('/api/initiatives'),
     fetch('/api/goals/completed'),
     fetch('/api/goals/calendar'),
-    fetch('/api/habits')
+    fetch('/api/habits'),
+    fetch('/api/me/analytics')
   ])
   if (goalsRes.ok) {
     const gData = await goalsRes.json()
@@ -103,6 +111,9 @@ export const fetchData = async () => {
   if (habitsRes.ok) {
     const hData = await habitsRes.json()
     habits.value = hData.habits
+  }
+  if (analyticsRes.ok) {
+    analytics.value = await analyticsRes.json()
   }
 }
 

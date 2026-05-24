@@ -229,3 +229,15 @@ def test_api_breakdown_goal(client):
     assert subgoals is not None
     assert len(subgoals) == 3
     assert "Write a book about t" in subgoals[0]
+
+def test_api_analytics(client):
+    login_test_user(client)
+
+    rv = client.get("/api/me/analytics")
+    assert rv.status_code == 200
+
+    data = rv.json
+    assert "completed_goals" in data
+    assert "active_initiatives" in data
+    assert "total_habits" in data
+    assert "longest_streak" in data

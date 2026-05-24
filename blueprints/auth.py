@@ -5,6 +5,23 @@ import models
 auth_bp = Blueprint("auth", __name__, url_prefix="/api")
 
 
+@auth_bp.route("/me/analytics", methods=["GET"])
+@login_required
+def api_me_analytics():
+    completed_goals = len(models.list_completed_goals(user_id=current_user.id))
+    active_initiatives = len(models.list_pending_initiatives(user_id=current_user.id))
+    habits = models.list_habits(user_id=current_user.id)
+    total_habits = len(habits)
+    longest_streak = max([h["highest_streak"] for h in habits]) if habits else 0
+
+    return jsonify({
+        "completed_goals": completed_goals,
+        "active_initiatives": active_initiatives,
+        "total_habits": total_habits,
+        "longest_streak": longest_streak
+    })
+
+
 @auth_bp.route("/me", methods=["GET"])
 def api_me():
     if current_user.is_authenticated:

@@ -1,4 +1,8 @@
 # Changelog
+## [0.29.0] - Analytics Dashboard
+- Integrated global analytics endpoints fetching comprehensive historical metrics implicitly safely mapping structural logic utilizing Python comprehensions natively cleanly inside `GET /api/me/analytics`.
+- Embedded `AnalyticsView.vue` linking nested layout interactions natively over global headers querying central `store.ts` reactive bindings automatically!
+
 ## [0.28.0] - AI-Powered Goal Breakdown
 - Implemented `POST /api/goals/breakdown` mocking simulated AI responses gracefully fragmenting arbitrary parent strings efficiently.
 - Deployed "AI Spark" contextual actions natively into `ActiveGoals.vue` dynamically binding sub-goal injection mappings sequentially across the DOM effectively.
