@@ -27,6 +27,7 @@ class User(Base, UserMixin):
     password_hash = Column(String(128), nullable=False)
     avatar_url = Column(String(500), nullable=True)
     notifications_enabled = Column(Boolean, nullable=False, default=True)
+    is_public = Column(Boolean, nullable=False, default=False)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -228,12 +229,15 @@ def delete_habit(habit_id, user_id=1, db_path=None):
     return success
 
 
-def update_user_settings(user_id, notifications_enabled, db_path=None):
+def update_user_settings(user_id, notifications_enabled, is_public=None, db_path=None):
     session = _get_session(db_path)
     user = session.get(User, int(user_id))
     success = False
     if user:
-        user.notifications_enabled = notifications_enabled
+        if notifications_enabled is not None:
+            user.notifications_enabled = notifications_enabled
+        if is_public is not None:
+            user.is_public = is_public
         session.commit()
         success = True
     session.close()
@@ -407,3 +411,17 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
         success = True
     session.close()
     return success
+
+def list_public_users(db_path=None):
+    session = _get_session(db_path)
+    try:
+        users = session.query(User).filter(User.is_public == True).all()
+        return [{"id": u.id, "username": u.username, "avatar_url": u.avatar_url} for u in users]
+    finally:
+        session.close()
+
+def get_user_by_id(user_id, db_path=None):
+    session = _get_session(db_path)
+    user = session.get(User, int(user_id))
+    session.close()
+    return user

@@ -6,6 +6,7 @@ import RegisterView from '../views/RegisterView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
+import SocialView from '../views/SocialView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -36,6 +37,12 @@ const router = createRouter({
       path: '/analytics',
       name: 'analytics',
       component: AnalyticsView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/community',
+      name: 'community',
+      component: SocialView,
       meta: { requiresAuth: true }
     }
   ]

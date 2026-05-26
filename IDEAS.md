@@ -5,7 +5,8 @@
 - Migrate Flask Blueprints over to FastAPI for automated Swagger documentation and enhanced async performance capabilities.
 
 ## Ideas for Feature Expansions
-- **Habit Tracking Module:** An extension of One-Minute Goals that specifically tracks streaks for daily repeated tasks.
-- **AI-Powered Goal Breakdown:** An integration with LLMs to automatically break down a high-level Initiative into granular one-minute sub-goals.
-- **Social Accountability:** Allow users to connect with teammates to share their completed goals history or calendar progress visually.
-- **Analytics Dashboard:** A comprehensive visualization displaying metrics such as goal completion rate, average completion time, and most active days using chart libraries (e.g., Chart.js or D3).
+- **Habit Tracking Module:** An extension of One-Minute Goals that specifically tracks streaks for daily repeated tasks. (Implemented)
+- **AI-Powered Goal Breakdown:** An integration with LLMs to automatically break down a high-level Initiative into granular one-minute sub-goals. (Implemented)
+- **Social Accountability:** Allow users to connect with teammates to share their completed goals history or calendar progress visually. (In Progress)
+- **Analytics Dashboard:** A comprehensive visualization displaying metrics such as goal completion rate, average completion time, and most active days using chart libraries (e.g., Chart.js or D3). (Implemented)
+- **Gamification & Badges:** Award users specific dynamic badge icons when reaching continuous 7-day, 30-day, or 100-goal streaks.

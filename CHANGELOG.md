@@ -1,4 +1,8 @@
 # Changelog
+## [0.31.0] - Social Accountability
+- Added `is_public` user privacy property, accessible via Settings.
+- Created `SocialView.vue` and `Community` tab to list users who have their accounts marked as public, along with their recent goals.
+
 ## [0.30.0] - WebSocket Sync Refactoring
 - Optimized backend `SocketIO` hooks natively transmitting exact granular dictionaries inside `goal_added`, `goal_deleted`, and `goal_completed` events mapping implicitly properly.
 - Re-architected frontend `App.vue` gracefully receiving granular packets mutating raw `store.ts` arrays efficiently natively preventing blanket global REST re-fetches effectively flawlessly.
