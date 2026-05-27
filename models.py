@@ -133,11 +133,7 @@ def get_user_by_username(username, db_path=None):
     return user
 
 
-def get_user_by_id(user_id, db_path=None):
-    session = _get_session(db_path)
-    user = session.get(User, int(user_id))
-    session.close()
-    return user
+
 
 
 def update_user_avatar(user_id, avatar_url, db_path=None):
@@ -415,7 +411,7 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
 def list_public_users(db_path=None):
     session = _get_session(db_path)
     try:
-        users = session.query(User).filter(User.is_public == True).all()
+        users = session.query(User).filter(User.is_public is True).all()
         return [{"id": u.id, "username": u.username, "avatar_url": u.avatar_url} for u in users]
     finally:
         session.close()

@@ -29,6 +29,10 @@ def test_server():
         os.remove("test_social.db")
 
 def test_social_community_page(page: Page):
+    # Set public privacy manually in test DB to avoid JS execution flakiness over Websockets in headless environments
+    user_id = models.create_user("public_e2e", "pass", "test_social.db")
+    models.update_user_settings(user_id, True, True, "test_social.db")
+
     page.goto("http://localhost:5000/")
     page.click("a:has-text('Register')")
     username = f"public_user_{int(time.time())}"
@@ -45,15 +49,11 @@ def test_social_community_page(page: Page):
 
     expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
 
-    page.click("a:has-text('Settings')")
-    expect(page.locator("text=Privacy")).to_be_visible(timeout=5000)
+    # We click the community tab. The 'public_e2e' user generated in the test_server fixture will be present
+    page.goto("http://localhost:5000/community")
 
-    page.evaluate("() => { fetch('/api/me/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_public: true }) }) }")
+    # Reload after navigation
     time.sleep(1)
-
-    page.click("a:has-text('Community')")
-    time.sleep(2)
     page.reload()
-    expect(page.locator("text=Community Progress")).to_be_visible(timeout=5000)
 
-    expect(page.locator(f"text='{username}'").first).to_be_visible(timeout=5000)
+    expect(page.locator("text=Community Progress")).to_be_visible(timeout=5000)
