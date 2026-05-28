@@ -133,7 +133,11 @@ def get_user_by_username(username, db_path=None):
     return user
 
 
-
+def get_user_by_id(user_id, db_path=None):
+    session = _get_session(db_path)
+    user = session.get(User, int(user_id))
+    session.close()
+    return user
 
 
 def update_user_avatar(user_id, avatar_url, db_path=None):
@@ -183,7 +187,11 @@ def list_habits(user_id=1, db_path=None):
 
 def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
     session = _get_session(db_path)
-    habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+    habit = (
+        session.query(Habit)
+        .filter(Habit.id == habit_id, Habit.user_id == user_id)
+        .first()
+    )
     success = False
     if habit:
         if habit.last_completed_date == completed_date:
@@ -191,7 +199,9 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
             pass
         else:
             if habit.last_completed_date:
-                last_date = datetime.strptime(habit.last_completed_date, "%Y-%m-%d").date()
+                last_date = datetime.strptime(
+                    habit.last_completed_date, "%Y-%m-%d"
+                ).date()
                 curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
                 if curr_date - last_date == timedelta(days=1):
                     # Streak continues
@@ -215,7 +225,11 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
 
 def delete_habit(habit_id, user_id=1, db_path=None):
     session = _get_session(db_path)
-    habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+    habit = (
+        session.query(Habit)
+        .filter(Habit.id == habit_id, Habit.user_id == user_id)
+        .first()
+    )
     success = False
     if habit:
         session.delete(habit)
@@ -252,7 +266,7 @@ def add_goal(description, user_id=1, parent_id=None, db_path=None):
         "id": new_goal.id,
         "description": new_goal.description,
         "parent_id": new_goal.parent_id,
-        "subgoals": []
+        "subgoals": [],
     }
     session.close()
     return goal_data
@@ -408,16 +422,46 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
     session.close()
     return success
 
+
 def list_public_users(db_path=None):
     session = _get_session(db_path)
     try:
-        users = session.query(User).filter(User.is_public is True).all()
-        return [{"id": u.id, "username": u.username, "avatar_url": u.avatar_url} for u in users]
+        users = session.query(User).filter(User.is_public.is_(True)).all()
+        return [
+            {"id": u.id, "username": u.username, "avatar_url": u.avatar_url}
+            for u in users
+        ]
     finally:
         session.close()
 
-def get_user_by_id(user_id, db_path=None):
+
+def get_user_badges(user_id, db_path=None):
+    """Calculates and returns a list of badge strings based on user activity."""
     session = _get_session(db_path)
-    user = session.get(User, int(user_id))
-    session.close()
-    return user
+    badges = []
+
+    try:
+        # Check Total Completed Goals
+        completed_count = (
+            session.query(Goal)
+            .filter(Goal.user_id == user_id, Goal.status == "completed")
+            .count()
+        )
+
+        if completed_count >= 1:
+            badges.append("First Step")
+        if completed_count >= 10:
+            badges.append("Achiever")
+        if completed_count >= 100:
+            badges.append("Master")
+
+        # Check Habits
+        habits = session.query(Habit).filter(Habit.user_id == user_id).all()
+        if any(h.highest_streak >= 7 for h in habits):
+            badges.append("7-Day Streak")
+        if any(h.highest_streak >= 30 for h in habits):
+            badges.append("30-Day Streak")
+
+        return badges
+    finally:
+        session.close()

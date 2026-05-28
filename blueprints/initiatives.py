@@ -33,7 +33,9 @@ def api_add_initiative():
             body=f"You added a new initiative for {quarter}: {description}",
             speakable_message=f"You added a new quarterly initiative for {quarter}: {description}",
         )
-        socketio.emit("data_updated", {"message": "Initiative added"}, to=str(current_user.id))
+        socketio.emit(
+            "data_updated", {"message": "Initiative added"}, to=str(current_user.id)
+        )
         return jsonify({"message": "Initiative added.", "id": init_id}), 201
     return jsonify({"error": "Quarter and description required."}), 400
 
@@ -48,6 +50,8 @@ def api_complete_initiative(initiative_id):
             body=f"Great job completing quarterly initiative {initiative_id}.",
             speakable_message=f"Great job completing quarterly initiative {initiative_id}.",
         )
-        socketio.emit("data_updated", {"message": "Initiative completed"}, to=str(current_user.id))
+        socketio.emit(
+            "data_updated", {"message": "Initiative completed"}, to=str(current_user.id)
+        )
         return jsonify({"message": f"Initiative {initiative_id} completed."})
     return jsonify({"error": "Initiative not found."}), 404

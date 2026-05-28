@@ -14,17 +14,20 @@ def api_me_analytics():
     total_habits = len(habits)
     longest_streak = max([h["highest_streak"] for h in habits]) if habits else 0
 
-    return jsonify({
-        "completed_goals": completed_goals,
-        "active_initiatives": active_initiatives,
-        "total_habits": total_habits,
-        "longest_streak": longest_streak
-    })
+    return jsonify(
+        {
+            "completed_goals": completed_goals,
+            "active_initiatives": active_initiatives,
+            "total_habits": total_habits,
+            "longest_streak": longest_streak,
+        }
+    )
 
 
 @auth_bp.route("/me", methods=["GET"])
 def api_me():
     if current_user.is_authenticated:
+        badges = models.get_user_badges(current_user.id)
         return jsonify(
             {
                 "authenticated": True,
@@ -32,6 +35,8 @@ def api_me():
                 "username": current_user.username,
                 "avatar_url": current_user.avatar_url,
                 "notifications_enabled": current_user.notifications_enabled,
+                "is_public": current_user.is_public,
+                "badges": badges,
             }
         )
     return jsonify({"authenticated": False})
@@ -46,7 +51,9 @@ def api_update_settings():
     if notifications_enabled is None and is_public is None:
         return jsonify({"error": "Missing setting parameters."}), 400
 
-    notif_val = bool(notifications_enabled) if notifications_enabled is not None else None
+    notif_val = (
+        bool(notifications_enabled) if notifications_enabled is not None else None
+    )
     pub_val = bool(is_public) if is_public is not None else None
 
     success = models.update_user_settings(current_user.id, notif_val, pub_val)

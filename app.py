@@ -20,13 +20,15 @@ app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
 # Initialize SocketIO
 socketio.init_app(app)
 
-@socketio.on('connect')
+
+@socketio.on("connect")
 def handle_connect():
     pass
 
-@socketio.on('join')
+
+@socketio.on("join")
 def on_join(data):
-    user_id = data.get('user_id')
+    user_id = data.get("user_id")
     # Prevent IDOR: Ensure the user requesting to join the room is actually that authenticated user.
     if current_user.is_authenticated and str(current_user.id) == str(user_id):
         join_room(str(user_id))
@@ -34,9 +36,11 @@ def on_join(data):
         # Fallback ONLY for E2E testing environments where Flask-Login session cookies might drop over WS
         join_room(str(user_id))
 
-@socketio.on('disconnect')
+
+@socketio.on("disconnect")
 def handle_disconnect():
     pass
+
 
 # Initialize Login Manager
 login_manager = LoginManager()

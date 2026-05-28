@@ -5,6 +5,7 @@ import pytest
 from playwright.sync_api import Page, expect
 import models
 
+
 @pytest.fixture(scope="session", autouse=True)
 def test_server():
     """Start the Flask server in a subprocess for E2E tests."""
@@ -30,6 +31,7 @@ def test_server():
     process.wait()
     if os.path.exists("test_e2e.db"):
         os.remove("test_e2e.db")
+
 
 def test_user_registration_and_login(page: Page):
     """Test the full flow of registering, logging in, and creating a goal."""

@@ -7,6 +7,6 @@
 ## Ideas for Feature Expansions
 - **Habit Tracking Module:** An extension of One-Minute Goals that specifically tracks streaks for daily repeated tasks. (Implemented)
 - **AI-Powered Goal Breakdown:** An integration with LLMs to automatically break down a high-level Initiative into granular one-minute sub-goals. (Implemented)
-- **Social Accountability:** Allow users to connect with teammates to share their completed goals history or calendar progress visually. (In Progress)
+- **Social Accountability:** Allow users to connect with teammates to share their completed goals history or calendar progress visually. (Implemented)
 - **Analytics Dashboard:** A comprehensive visualization displaying metrics such as goal completion rate, average completion time, and most active days using chart libraries (e.g., Chart.js or D3). (Implemented)
-- **Gamification & Badges:** Award users specific dynamic badge icons when reaching continuous 7-day, 30-day, or 100-goal streaks.
+- **Gamification & Badges:** Award users specific dynamic badge icons when reaching continuous 7-day, 30-day, or 100-goal streaks. (In Progress)

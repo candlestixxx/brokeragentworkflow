@@ -90,7 +90,7 @@ def api_breakdown_goal():
     sub_goals = [
         f"Research best approaches for: {description[:20]}...",
         f"Draft initial outline for: {description[:20]}...",
-        f"Execute and review first steps of: {description[:20]}..."
+        f"Execute and review first steps of: {description[:20]}...",
     ]
 
     return jsonify({"subgoals": sub_goals}), 200

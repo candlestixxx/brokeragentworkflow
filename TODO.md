@@ -1,9 +1,7 @@
 # TODO
-1. Execute Phase 31: Social Accountability.
+1. Execute Phase 32: Gamification & Badges.
 
-## Immediate Tasks (Phase 31)
-- [ ] Add `is_public` column to the `User` model in `models.py`.
-- [ ] Implement `blueprints/social.py` with endpoints `/api/social/users` and `/api/social/users/<id>`.
-- [ ] Implement Vue.js components (`SocialView.vue`) and update `router/index.ts`.
-- [ ] Integrate into global navigation `NavBar.vue`.
-- [ ] Create tests.
+## Immediate Tasks (Phase 32)
+- [ ] Add badge calculation logic in `models.py` based on goal completion stats.
+- [ ] Inject badges into user serializers within `auth.py` and `social.py`.
+- [ ] Render badge SVG loops inside `SocialView.vue` and `DashboardView.vue`.
