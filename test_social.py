@@ -60,6 +60,7 @@ def test_social_community_page(page: Page):
     expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
 
     page.click("a:has-text('Settings')")
+    time.sleep(2)
     page.reload()
     expect(page.locator("text=Privacy")).to_be_visible(timeout=5000)
 

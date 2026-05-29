@@ -2,7 +2,7 @@
 
 ## Ideas for Refactoring
 - Implement a fully generic data synchronization mechanism over WebSocket to send granular diffs rather than triggering a full re-fetch of all user goals.
-- Migrate Flask Blueprints over to FastAPI for automated Swagger documentation and enhanced async performance capabilities. (In Progress)
+- Migrate Flask Blueprints over to FastAPI for automated Swagger documentation and enhanced async performance capabilities. (In Progress) (In Progress)
 
 ## Ideas for Feature Expansions
 - **Habit Tracking Module:** An extension of One-Minute Goals that specifically tracks streaks for daily repeated tasks. (Implemented)

@@ -18,6 +18,7 @@ interface SocialProfile {
   username: string
   avatar_url: string | null
   recent_completed_goals: CompletedGoal[]
+  badges?: string[]
 }
 
 const users = ref<SocialUser[]>([])
@@ -86,7 +87,12 @@ onMounted(() => {
                 <img v-if="selectedProfile.avatar_url" :src="selectedProfile.avatar_url" class="w-full h-full object-cover" />
                 <span v-else>{{ selectedProfile.username.charAt(0).toUpperCase() }}</span>
               </div>
-            <h3 class="text-2xl font-bold dark:text-white">{{ selectedProfile.username }}</h3>
+            <div>
+              <h3 class="text-2xl font-bold dark:text-white mb-2">{{ selectedProfile.username }}</h3>
+              <div class="flex space-x-1" v-if="selectedProfile.badges && selectedProfile.badges.length > 0">
+                 <span v-for="badge in selectedProfile.badges" :key="badge" class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full border border-yellow-300" :title="badge">🏆 {{badge}}</span>
+              </div>
+            </div>
           </div>
 
           <h4 class="text-lg font-semibold mb-3 dark:text-gray-200">Recent Completed Goals</h4>
