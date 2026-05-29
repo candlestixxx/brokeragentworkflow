@@ -54,4 +54,7 @@ jobs:
     - name: Run Pytest & E2E Tests
       env:
         PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      run: pytest
+      run: pytest test_app.py test_badges.py test_tasks.py test_cli.py
+
+    - name: Run E2E Tests
+      run: pytest test_e2e.py test_social.py

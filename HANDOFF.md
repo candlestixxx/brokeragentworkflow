@@ -4,7 +4,7 @@
 - Implemented robust `get_user_badges` calculator in `models.py`.
 - Pushed gamification arrays out through JSON APIs on `auth_bp` and `social_bp`.
 - Verified UI mapping over `DashboardView.vue` and `SocialView.vue`.
-- Test flakiness around Playwright Websockets handling headless interactions continues to appear slightly temperamental. Added explicit wait behaviors inside `test_social.py` via `page.reload()` and `time.sleep` to guarantee DOM stability on GitHub Actions workers.
+- Test flakiness around Playwright Websockets handling headless interactions continues to appear slightly temperamental. Added explicit wait behaviors inside `test_social.py` via `page.reload()` and `time.sleep` to guarantee DOM stability on GitHub Actions workers. Separated Playwright UI E2E test runs out of the base `pytest` list inside Github CI.
 
 ## Current State
 - Gamification is completely done, built, and tested.
