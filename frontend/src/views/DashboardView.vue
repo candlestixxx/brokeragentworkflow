@@ -1,5 +1,10 @@
 <template>
-  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8 text-center transition-colors">One-Minute Manager Dashboard</h2>
+  <div class="flex items-center justify-center space-x-4 mb-8">
+    <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 transition-colors">One-Minute Manager Dashboard</h2>
+    <div class="flex space-x-1" v-if="user.badges && user.badges.length > 0">
+       <span v-for="badge in user.badges" :key="badge" class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full border border-yellow-300" :title="badge">🏆 {{badge}}</span>
+    </div>
+  </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     <!-- Daily Goals Column -->
@@ -18,6 +23,9 @@
               <Tab as="template" v-slot="{ selected }">
                 <button :class="[selected ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200', 'px-3 py-1 rounded font-medium text-sm transition outline-none']">Calendar</button>
               </Tab>
+              <Tab as="template" v-slot="{ selected }">
+                <button :class="[selected ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200', 'px-3 py-1 rounded font-medium text-sm transition outline-none']">Habits</button>
+              </Tab>
             </TabList>
           </div>
 
@@ -25,6 +33,7 @@
             <TabPanel><ActiveGoals /></TabPanel>
             <TabPanel><CompletedGoals /></TabPanel>
             <TabPanel><CalendarGoals /></TabPanel>
+            <TabPanel><HabitsTracker /></TabPanel>
           </TabPanels>
         </TabGroup>
       </section>
@@ -43,4 +52,6 @@ import ActiveGoals from '../components/ActiveGoals.vue'
 import CompletedGoals from '../components/CompletedGoals.vue'
 import CalendarGoals from '../components/CalendarGoals.vue'
 import QuarterlyInitiatives from '../components/QuarterlyInitiatives.vue'
+import HabitsTracker from '../components/HabitsTracker.vue'
+import { user } from '../store'
 </script>

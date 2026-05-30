@@ -5,15 +5,38 @@ import models
 auth_bp = Blueprint("auth", __name__, url_prefix="/api")
 
 
+@auth_bp.route("/me/analytics", methods=["GET"])
+@login_required
+def api_me_analytics():
+    completed_goals = len(models.list_completed_goals(user_id=current_user.id))
+    active_initiatives = len(models.list_pending_initiatives(user_id=current_user.id))
+    habits = models.list_habits(user_id=current_user.id)
+    total_habits = len(habits)
+    longest_streak = max([h["highest_streak"] for h in habits]) if habits else 0
+
+    return jsonify(
+        {
+            "completed_goals": completed_goals,
+            "active_initiatives": active_initiatives,
+            "total_habits": total_habits,
+            "longest_streak": longest_streak,
+        }
+    )
+
+
 @auth_bp.route("/me", methods=["GET"])
 def api_me():
     if current_user.is_authenticated:
+        badges = models.get_user_badges(current_user.id)
         return jsonify(
             {
                 "authenticated": True,
+                "user_id": current_user.id,
                 "username": current_user.username,
                 "avatar_url": current_user.avatar_url,
                 "notifications_enabled": current_user.notifications_enabled,
+                "is_public": current_user.is_public,
+                "badges": badges,
             }
         )
     return jsonify({"authenticated": False})
@@ -24,10 +47,16 @@ def api_me():
 def api_update_settings():
     data = request.get_json() or {}
     notifications_enabled = data.get("notifications_enabled")
-    if notifications_enabled is None:
+    is_public = data.get("is_public")
+    if notifications_enabled is None and is_public is None:
         return jsonify({"error": "Missing setting parameters."}), 400
 
-    success = models.update_user_settings(current_user.id, bool(notifications_enabled))
+    notif_val = (
+        bool(notifications_enabled) if notifications_enabled is not None else None
+    )
+    pub_val = bool(is_public) if is_public is not None else None
+
+    success = models.update_user_settings(current_user.id, notif_val, pub_val)
     if success:
         return jsonify({"message": "Settings updated."})
     return jsonify({"error": "Update failed."}), 500

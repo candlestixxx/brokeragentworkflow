@@ -137,6 +137,18 @@ def test_api_complete_goal(client):
     assert rv.json["message"] == "Goal 1 completed."
 
 
+def test_api_delete_goal(client):
+    login_test_user(client)
+    models.add_goal("To be deleted", user_id=1)
+    rv = client.delete("/api/goals/1")
+    assert rv.status_code == 200
+    assert rv.json["message"] == "Goal 1 deleted."
+
+    # Verify it is deleted
+    rv = client.get("/api/goals")
+    assert len(rv.json["goals"]) == 0
+
+
 def test_api_get_completed_goals(client):
     login_test_user(client)
     models.add_goal("Done goal", user_id=1)
@@ -179,3 +191,58 @@ def test_api_complete_initiative(client):
     rv = client.post("/api/initiatives/1/complete")
     assert rv.status_code == 200
     assert rv.json["message"] == "Initiative 1 completed."
+
+
+def test_api_habit_tracking(client):
+    login_test_user(client)
+
+    # Add a Habit
+    rv = client.post("/api/habits", json=dict(description="Drink Water"))
+    assert rv.status_code == 201
+
+    # List Habits
+    rv = client.get("/api/habits")
+    habits = rv.json["habits"]
+    assert len(habits) == 1
+    assert habits[0]["description"] == "Drink Water"
+    habit_id = habits[0]["id"]
+
+    # Complete Habit
+    rv = client.post(f"/api/habits/{habit_id}/complete")
+    assert rv.status_code == 200
+
+    # Delete Habit
+    rv = client.delete(f"/api/habits/{habit_id}")
+    assert rv.status_code == 200
+
+    # List Habits again to verify deletion
+    rv = client.get("/api/habits")
+    assert len(rv.json["habits"]) == 0
+
+
+def test_api_breakdown_goal(client):
+    login_test_user(client)
+
+    # Request AI Breakdown
+    rv = client.post(
+        "/api/goals/breakdown", json=dict(description="Write a book about the universe")
+    )
+    assert rv.status_code == 200
+
+    subgoals = rv.json.get("subgoals")
+    assert subgoals is not None
+    assert len(subgoals) == 3
+    assert "Write a book about t" in subgoals[0]
+
+
+def test_api_analytics(client):
+    login_test_user(client)
+
+    rv = client.get("/api/me/analytics")
+    assert rv.status_code == 200
+
+    data = rv.json
+    assert "completed_goals" in data
+    assert "active_initiatives" in data
+    assert "total_habits" in data
+    assert "longest_streak" in data
