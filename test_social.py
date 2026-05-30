@@ -31,9 +31,7 @@ def test_server():
 
 
 def test_social_community_page(page: Page):
-    time.sleep(2)
     page.goto("http://localhost:5000/")
-    time.sleep(1)
     page.click("a:has-text('Register')")
     username = f"public_user_{int(time.time())}"
 
@@ -62,9 +60,8 @@ def test_social_community_page(page: Page):
     expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
 
     page.click("a:has-text('Settings')")
-    time.sleep(2)
     page.reload()
-    expect(page.locator("text=Privacy")).to_be_visible(timeout=5000)
+    expect(page.locator("text=Privacy")).to_be_visible(timeout=10000)
 
     page.evaluate(
         "() => { fetch('/api/me/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_public: true }) }) }"
