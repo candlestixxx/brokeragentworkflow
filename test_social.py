@@ -31,9 +31,7 @@ def test_server():
 
 
 def test_social_community_page(page: Page):
-    time.sleep(2)
-    page.goto("http://127.0.0.1:5000/")
-    time.sleep(1)
+    page.goto("http://localhost:5000/")
     page.click("a:has-text('Register')")
     username = f"public_user_{int(time.time())}"
 
@@ -46,7 +44,7 @@ def test_social_community_page(page: Page):
     page.locator(
         "div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']"
     ).click()
-    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=10000)
+    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
 
     page.click("a:has-text('Login')")
     page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(
