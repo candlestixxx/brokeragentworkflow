@@ -35,8 +35,11 @@ def test_server():
 
 def test_user_registration_and_login(page: Page):
     """Test the full flow of registering, logging in, and creating a goal."""
-    page.goto("http://localhost:5000/")
+    time.sleep(2)
+    page.goto("http://127.0.0.1:5000/")
+    time.sleep(1)
     page.click("a:has-text('Register')")
+    time.sleep(1)
 
     username = f"e2e_user_{int(time.time())}"
 
