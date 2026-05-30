@@ -15,11 +15,3 @@ playwright==1.42.0
 pytest-playwright==0.4.4
 
 ruff==0.1.6
-fastapi==0.110.0
-uvicorn==0.48.0
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-python-multipart==0.0.9
-pydantic==2.6.3
-httpx>=0.23.0
-starlette==0.36.3
