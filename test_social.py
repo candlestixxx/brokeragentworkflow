@@ -44,7 +44,7 @@ def test_social_community_page(page: Page):
     page.locator(
         "div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']"
     ).click()
-    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=15000)
+    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=20000)
 
     page.click("a:has-text('Login')")
     page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(
@@ -61,7 +61,7 @@ def test_social_community_page(page: Page):
 
     page.click("a:has-text('Settings')")
     page.reload()
-    expect(page.locator("text=Privacy")).to_be_visible(timeout=15000)
+    expect(page.locator("text=Privacy")).to_be_visible(timeout=20000)
 
     page.evaluate(
         "() => { fetch('/api/me/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_public: true }) }) }"

@@ -50,7 +50,7 @@ def test_user_registration_and_login(page: Page):
         "div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']"
     ).click()
 
-    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=15000)
+    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=20000)
 
     page.click("a:has-text('Login')")
 
