@@ -1,2 +1,9 @@
-# Vision
-To provide a highly efficient, 3-month look-ahead management framework that integrates seamlessly with daily operations. The system aims to eliminate reactive behavior by ensuring key activities are planned 90 days in advance while keeping daily tracking concise (The "One-Minute Manager" approach). The project focuses on a deeply satisfying user design, incorporating multi-tenant architecture, rapid real-time multi-device synchronization with granular optimized WebSocket payloads, chronological visualization, habit streak tracking, AI-powered goal breakdown tools, dynamic analytic dashboards, customizable notifications, and robust deployment protocols for resilient background task management.
+# Project Vision
+The One-Minute Manager is a lightning-fast, zero-friction goal tracking system. It aims to eliminate reactive behavior by providing a highly efficient, 3-month look-ahead management framework that integrates seamlessly with daily operations.
+
+The architecture focuses on:
+- **Real-time Reactivity:** Leveraging WebSockets for multi-device synchronization with optimized granular payloads.
+- **Offline Capability:** Ensuring the Vue SPA remains functional even without a persistent connection.
+- **Scalability:** Using a multi-tenant PostgreSQL/SQLAlchemy backend capable of supporting large team usage.
+- **Rich Experience:** Incorporating AI-powered breakdown tools, habit streak tracking, and dynamic analytics dashboards.
+- **Reliability:** Comprehensive testing and resilient background task management with Celery.

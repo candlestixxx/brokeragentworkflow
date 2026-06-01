@@ -14,3 +14,4 @@
 - Adopts the class strategy for Tailwind dark mode (`darkMode: 'class'`).
 - Testability is key. Features must be supported with backend pytest suites and frontend E2E playwright checks.
 - Changes require documentation synchronization (VISION.md, ROADMAP.md, DEPLOY.md, CHANGELOG.md, HANDOFF.md) and strict versioning rules via VERSION.md.
+- Strict modularity, minimal external dependencies where possible, reactive UI without page reloads.
