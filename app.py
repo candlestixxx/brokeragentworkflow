@@ -1,6 +1,5 @@
 from flask import Flask, jsonify
-from flask_login import LoginManager, current_user
-from flask_socketio import join_room
+from flask_login import LoginManager
 import models
 import os
 from extensions import socketio
@@ -11,36 +10,12 @@ from blueprints.auth import auth_bp
 from blueprints.goals import goals_bp
 from blueprints.initiatives import initiatives_bp
 from blueprints.webhooks import webhooks_bp
-from blueprints.habits import habits_bp
-from blueprints.social import social_bp
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
 
 # Initialize SocketIO
 socketio.init_app(app)
-
-
-@socketio.on("connect")
-def handle_connect():
-    pass
-
-
-@socketio.on("join")
-def on_join(data):
-    user_id = data.get("user_id")
-    # Prevent IDOR: Ensure the user requesting to join the room is actually that authenticated user.
-    if current_user.is_authenticated and str(current_user.id) == str(user_id):
-        join_room(str(user_id))
-    elif not current_user.is_authenticated and user_id and app.config.get("TESTING"):
-        # Fallback ONLY for E2E testing environments where Flask-Login session cookies might drop over WS
-        join_room(str(user_id))
-
-
-@socketio.on("disconnect")
-def handle_disconnect():
-    pass
-
 
 # Initialize Login Manager
 login_manager = LoginManager()
@@ -63,8 +38,6 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(goals_bp)
 app.register_blueprint(initiatives_bp)
 app.register_blueprint(webhooks_bp)
-app.register_blueprint(habits_bp)
-app.register_blueprint(social_bp)
 
 # Ensure DB is initialized before first request
 with app.app_context():

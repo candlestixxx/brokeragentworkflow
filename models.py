@@ -1,5 +1,4 @@
 import os
-from datetime import datetime, timedelta
 from sqlalchemy import (
     create_engine,
     Column,
@@ -27,7 +26,6 @@ class User(Base, UserMixin):
     password_hash = Column(String(128), nullable=False)
     avatar_url = Column(String(500), nullable=True)
     notifications_enabled = Column(Boolean, nullable=False, default=True)
-    is_public = Column(Boolean, nullable=False, default=False)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -66,19 +64,6 @@ class QuarterlyInitiative(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="initiatives")
-
-
-class Habit(Base):
-    __tablename__ = "habits"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, default=1)
-    description = Column(String, nullable=False)
-    current_streak = Column(Integer, nullable=False, default=0)
-    highest_streak = Column(Integer, nullable=False, default=0)
-    last_completed_date = Column(String, nullable=True)  # Format YYYY-MM-DD
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    user = relationship("User")
 
 
 # Helper function to get the current database URL
@@ -152,102 +137,12 @@ def update_user_avatar(user_id, avatar_url, db_path=None):
     return success
 
 
-# --- Habits ---
-def add_habit(description, user_id=1, db_path=None):
-    session = _get_session(db_path)
-    new_habit = Habit(description=description, user_id=user_id)
-    session.add(new_habit)
-    session.commit()
-    habit_id = new_habit.id
-    session.close()
-    return habit_id
-
-
-def list_habits(user_id=1, db_path=None):
-    session = _get_session(db_path)
-    habits = (
-        session.query(Habit)
-        .filter(Habit.user_id == user_id)
-        .order_by(Habit.id.asc())
-        .all()
-    )
-    results = [
-        {
-            "id": h.id,
-            "description": h.description,
-            "current_streak": h.current_streak,
-            "highest_streak": h.highest_streak,
-            "last_completed_date": h.last_completed_date,
-        }
-        for h in habits
-    ]
-    session.close()
-    return results
-
-
-def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
-    session = _get_session(db_path)
-    habit = (
-        session.query(Habit)
-        .filter(Habit.id == habit_id, Habit.user_id == user_id)
-        .first()
-    )
-    success = False
-    if habit:
-        if habit.last_completed_date == completed_date:
-            # Already completed today, do nothing
-            pass
-        else:
-            if habit.last_completed_date:
-                last_date = datetime.strptime(
-                    habit.last_completed_date, "%Y-%m-%d"
-                ).date()
-                curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
-                if curr_date - last_date == timedelta(days=1):
-                    # Streak continues
-                    habit.current_streak += 1
-                else:
-                    # Streak broken
-                    habit.current_streak = 1
-            else:
-                # First completion
-                habit.current_streak = 1
-
-            if habit.current_streak > habit.highest_streak:
-                habit.highest_streak = habit.current_streak
-
-            habit.last_completed_date = completed_date
-            session.commit()
-            success = True
-    session.close()
-    return success
-
-
-def delete_habit(habit_id, user_id=1, db_path=None):
-    session = _get_session(db_path)
-    habit = (
-        session.query(Habit)
-        .filter(Habit.id == habit_id, Habit.user_id == user_id)
-        .first()
-    )
-    success = False
-    if habit:
-        session.delete(habit)
-        session.commit()
-        success = True
-    session.close()
-    return success
-
-
-def update_user_settings(user_id, notifications_enabled, is_public=None, db_path=None):
+def update_user_settings(user_id, notifications_enabled, db_path=None):
     session = _get_session(db_path)
     user = session.get(User, int(user_id))
     success = False
     if user:
-        if notifications_enabled is not None:
-            user.notifications_enabled = notifications_enabled
-        if is_public is not None:
-            user.is_public = is_public
+        user.notifications_enabled = notifications_enabled
         session.commit()
         success = True
     session.close()
@@ -260,16 +155,9 @@ def add_goal(description, user_id=1, parent_id=None, db_path=None):
     new_goal = Goal(description=description, user_id=user_id, parent_id=parent_id)
     session.add(new_goal)
     session.commit()
-
-    # Return fully serialized goal
-    goal_data = {
-        "id": new_goal.id,
-        "description": new_goal.description,
-        "parent_id": new_goal.parent_id,
-        "subgoals": [],
-    }
+    goal_id = new_goal.id
     session.close()
-    return goal_data
+    return goal_id
 
 
 def list_pending_goals(user_id=1, db_path=None):
@@ -361,20 +249,6 @@ def complete_goal(goal_id, user_id=1, db_path=None):
     return success
 
 
-def delete_goal(goal_id, user_id=1, db_path=None):
-    session = _get_session(db_path)
-    goal = (
-        session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()
-    )
-    success = False
-    if goal:
-        session.delete(goal)
-        session.commit()
-        success = True
-    session.close()
-    return success
-
-
 # --- Quarterly Initiatives ---
 def add_initiative(quarter, description, user_id=1, db_path=None):
     session = _get_session(db_path)
@@ -421,47 +295,3 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
         success = True
     session.close()
     return success
-
-
-def list_public_users(db_path=None):
-    session = _get_session(db_path)
-    try:
-        users = session.query(User).filter(User.is_public.is_(True)).all()
-        return [
-            {"id": u.id, "username": u.username, "avatar_url": u.avatar_url}
-            for u in users
-        ]
-    finally:
-        session.close()
-
-
-def get_user_badges(user_id, db_path=None):
-    """Calculates and returns a list of badge strings based on user activity."""
-    session = _get_session(db_path)
-    badges = []
-
-    try:
-        # Check Total Completed Goals
-        completed_count = (
-            session.query(Goal)
-            .filter(Goal.user_id == user_id, Goal.status == "completed")
-            .count()
-        )
-
-        if completed_count >= 1:
-            badges.append("First Step")
-        if completed_count >= 10:
-            badges.append("Achiever")
-        if completed_count >= 100:
-            badges.append("Master")
-
-        # Check Habits
-        habits = session.query(Habit).filter(Habit.user_id == user_id).all()
-        if any(h.highest_streak >= 7 for h in habits):
-            badges.append("7-Day Streak")
-        if any(h.highest_streak >= 30 for h in habits):
-            badges.append("30-Day Streak")
-
-        return badges
-    finally:
-        session.close()

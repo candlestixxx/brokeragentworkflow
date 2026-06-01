@@ -8,17 +8,11 @@
             {{ goal.description }}
           </span>
           <div>
-            <button @click="aiBreakdown(goal.id, goal.description)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-900 dark:hover:bg-purple-800 dark:text-purple-200 px-3 py-1 rounded shadow transition font-medium mr-2 text-sm">
-              ✨ AI Spark
-            </button>
             <button @click="addSubGoalForm(goal.id)" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 text-gray-700 px-3 py-1 rounded shadow transition font-medium mr-2 text-sm">
               + Sub-goal
             </button>
-            <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-1 rounded shadow transition font-medium text-sm mr-2">
+            <button @click="completeGoal(goal.id)" class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-1 rounded shadow transition font-medium text-sm">
               Complete
-            </button>
-            <button @click="deleteGoal(goal.id)" class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-4 py-1 rounded shadow transition font-medium text-sm">
-              Delete
             </button>
           </div>
         </div>
@@ -30,14 +24,9 @@
               <span class="text-gray-400 dark:text-gray-500 font-mono text-xs mr-2 transition-colors">[{{ sub.id }}]</span>
               {{ sub.description }}
             </span>
-            <div>
-              <button @click="completeGoal(sub.id)" class="bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-600 text-white px-3 py-1 rounded shadow transition font-medium text-xs mr-2">
-                Complete
-              </button>
-              <button @click="deleteGoal(sub.id)" class="bg-red-400 hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-600 text-white px-3 py-1 rounded shadow transition font-medium text-xs">
-                Delete
-              </button>
-            </div>
+            <button @click="completeGoal(sub.id)" class="bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-600 text-white px-3 py-1 rounded shadow transition font-medium text-xs">
+              Complete
+            </button>
           </li>
         </ul>
 
@@ -70,37 +59,6 @@ const completeGoal = async (id: number) => {
   const res = await fetch(`/api/goals/${id}/complete`, { method: 'POST' })
   if (res.ok) {
     showToast("Goal completed! Excellent work.")
-  }
-}
-
-const deleteGoal = async (id: number) => {
-  const res = await fetch(`/api/goals/${id}`, { method: 'DELETE' })
-  if (res.ok) {
-    showToast("Goal deleted.")
-  }
-}
-
-const aiBreakdown = async (parentId: number, description: string) => {
-  showToast("Consulting AI...")
-  const res = await fetch('/api/goals/breakdown', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ description: description })
-  })
-
-  if (res.ok) {
-    const data = await res.json()
-    // Add subgoals sequentially
-    for (const subDesc of data.subgoals) {
-      await fetch('/api/goals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: subDesc, parent_id: parentId })
-      })
-    }
-    showToast("AI Spark added new sub-goals!")
-  } else {
-    showToast("AI Spark failed.", true)
   }
 }
 

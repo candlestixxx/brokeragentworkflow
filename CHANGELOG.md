@@ -1,29 +1,4 @@
 # Changelog
-## [0.31.0] - Social Accountability
-- Added `is_public` user privacy property, accessible via Settings.
-- Created `SocialView.vue` and `Community` tab to list users who have their accounts marked as public, along with their recent goals.
-
-## [0.30.0] - WebSocket Sync Refactoring
-- Optimized backend `SocketIO` hooks natively transmitting exact granular dictionaries inside `goal_added`, `goal_deleted`, and `goal_completed` events mapping implicitly properly.
-- Re-architected frontend `App.vue` gracefully receiving granular packets mutating raw `store.ts` arrays efficiently natively preventing blanket global REST re-fetches effectively flawlessly.
-
-## [0.29.0] - Analytics Dashboard
-- Integrated global analytics endpoints fetching comprehensive historical metrics implicitly safely mapping structural logic utilizing Python comprehensions natively cleanly inside `GET /api/me/analytics`.
-- Embedded `AnalyticsView.vue` linking nested layout interactions natively over global headers querying central `store.ts` reactive bindings automatically!
-
-## [0.28.0] - AI-Powered Goal Breakdown
-- Implemented `POST /api/goals/breakdown` mocking simulated AI responses gracefully fragmenting arbitrary parent strings efficiently.
-- Deployed "AI Spark" contextual actions natively into `ActiveGoals.vue` dynamically binding sub-goal injection mappings sequentially across the DOM effectively.
-
-## [0.27.0] - Habit Tracking Module
-- Added a new `Habit` model inside `models.py` to natively track repeating daily tasks, logging `current_streak` and `highest_streak` using `datetime` comparisons safely securely.
-- Expanded the REST JSON API providing isolated `GET`, `POST`, `POST /<id>/complete`, and `DELETE` hooks executing via `blueprints/habits.py`.
-- Generated `HabitsTracker.vue` and effectively nested a real-time reactive UI Tab structure straight into the `DashboardView.vue` core interface properly tracking SocketIO push events universally recursively globally cleanly natively explicitly strictly.
-
-## [0.26.0] - Goal Deletion
-- Added goal deletion capabilities via new `models.py` function and `DELETE /api/goals/<id>` route.
-- Expanded Vue components `ActiveGoals.vue` and `CompletedGoals.vue` with "Delete" buttons linked dynamically to the store.
-
 ## [0.25.0] - User Notification Settings Toggle
 - Formatted `models.py` tracking Boolean default values managing active system settings directly across user schema interactions seamlessly.
 - Bound `POST /api/me/settings` natively processing variables securely.

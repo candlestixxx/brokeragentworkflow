@@ -1,5 +1,4 @@
 import { reactive, ref } from 'vue'
-import { io } from 'socket.io-client'
 
 export interface SubGoal {
   id: number;
@@ -20,25 +19,14 @@ export interface Initiative {
   description: string;
 }
 
-export interface Habit {
-  id: number;
-  description: string;
-  current_streak: number;
-  highest_streak: number;
-  last_completed_date: string | null;
-}
-
 export interface UserState {
   authenticated: boolean;
-  user_id: number | null;
   username: string | null;
   avatar_url: string | null;
   notifications_enabled: boolean;
-  is_public: boolean;
-  badges?: string[];
 }
 
-export const user = reactive<UserState>({ authenticated: false, user_id: null, username: null, avatar_url: null, notifications_enabled: true, is_public: false, badges: [] })
+export const user = reactive<UserState>({ authenticated: false, username: null, avatar_url: null, notifications_enabled: true })
 
 // Dark Mode State
 export const isDarkMode = ref<boolean>(false)
@@ -69,14 +57,6 @@ export const goals = ref<Goal[]>([])
 export const completedGoals = ref<Goal[]>([])
 export const calendarGoals = ref<Record<string, Goal[]>>({})
 export const initiatives = ref<Initiative[]>([])
-export const habits = ref<Habit[]>([])
-
-export const analytics = ref<Record<string, number>>({
-  completed_goals: 0,
-  active_initiatives: 0,
-  total_habits: 0,
-  longest_streak: 0
-})
 
 export const toastState = reactive({ message: '', error: false })
 
@@ -88,13 +68,11 @@ export const showToast = (msg: string, isError: boolean = false) => {
 
 export const fetchData = async () => {
   if (!user.authenticated) return
-  const [goalsRes, initRes, compRes, calRes, habitsRes, analyticsRes] = await Promise.all([
+  const [goalsRes, initRes, compRes, calRes] = await Promise.all([
     fetch('/api/goals'),
     fetch('/api/initiatives'),
     fetch('/api/goals/completed'),
-    fetch('/api/goals/calendar'),
-    fetch('/api/habits'),
-    fetch('/api/me/analytics')
+    fetch('/api/goals/calendar')
   ])
   if (goalsRes.ok) {
     const gData = await goalsRes.json()
@@ -112,22 +90,6 @@ export const fetchData = async () => {
     const calData = await calRes.json()
     calendarGoals.value = calData.calendar
   }
-  if (habitsRes.ok) {
-    const hData = await habitsRes.json()
-    habits.value = hData.habits
-  }
-  if (analyticsRes.ok) {
-    analytics.value = await analyticsRes.json()
-  }
-}
-
-let socketInstance: any = null
-
-export const getSocket = () => {
-  if (!socketInstance) {
-    socketInstance = io()
-  }
-  return socketInstance
 }
 
 export const checkAuth = async () => {
@@ -135,17 +97,11 @@ export const checkAuth = async () => {
     const res = await fetch('/api/me')
     const data = await res.json()
     user.authenticated = data.authenticated
-    user.user_id = data.user_id
     user.username = data.username
     user.avatar_url = data.avatar_url
     user.notifications_enabled = data.notifications_enabled ?? true
-    user.is_public = data.is_public ?? false
-    user.badges = data.badges ?? []
     if (user.authenticated) {
       await fetchData()
-      // Once authenticated natively globally, notify the socket manager we are ready for a specific room mapping
-      const socket = getSocket()
-      socket.emit('join', { user_id: user.user_id })
     }
   } catch (err) {
     console.error("Auth check failed", err)
@@ -162,7 +118,6 @@ export const logout = async () => {
     initiatives.value = []
     completedGoals.value = []
     calendarGoals.value = {}
-    habits.value = []
     showToast("Logged out successfully.")
   }
 }
