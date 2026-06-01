@@ -295,3 +295,48 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
         success = True
     session.close()
     return success
+
+# --- Analytics ---
+def get_user_analytics(user_id=1, db_path=None):
+    session = _get_session(db_path)
+
+    total_goals = session.query(Goal).filter_by(user_id=user_id).count()
+    completed_goals = session.query(Goal).filter_by(user_id=user_id, status="completed").count()
+    pending_goals = session.query(Goal).filter_by(user_id=user_id, status="pending").count()
+
+    completion_percentage = 0
+    if total_goals > 0:
+        completion_percentage = round((completed_goals / total_goals) * 100)
+
+    # Calculate streak (simplified: consecutive days with at least one completed goal)
+    completed_dates = session.query(func.date(Goal.created_at)).filter_by(user_id=user_id, status="completed").group_by(func.date(Goal.created_at)).order_by(func.date(Goal.created_at).desc()).all()
+
+    streak = 0
+    import datetime
+    current_date = datetime.date.today()
+
+    for date_tuple in completed_dates:
+        # Check SQLite or Postgres format gracefully
+        try:
+            d_obj = datetime.datetime.strptime(str(date_tuple[0]), "%Y-%m-%d").date()
+        except ValueError:
+            break
+
+        if d_obj == current_date:
+            streak += 1
+            current_date -= datetime.timedelta(days=1)
+        elif d_obj == current_date - datetime.timedelta(days=1):
+            streak += 1
+            current_date -= datetime.timedelta(days=2) # Account for yesterday
+        else:
+            break
+
+    session.close()
+
+    return {
+        "total_goals": total_goals,
+        "completed_goals": completed_goals,
+        "pending_goals": pending_goals,
+        "completion_percentage": completion_percentage,
+        "streak": streak
+    }

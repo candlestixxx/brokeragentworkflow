@@ -1,2 +1,2 @@
-# Vision
-To provide a highly efficient, 3-month look-ahead management framework that integrates seamlessly with daily operations. The system aims to eliminate reactive behavior by ensuring key activities are planned 90 days in advance while keeping daily tracking concise (The "One-Minute Manager" approach).
+# Project Vision
+The One-Minute Manager is a lightning-fast, zero-friction goal tracking system. It prioritizes speed, ease of use, and immediate gratification to help users break down and accomplish their daily tasks. The architecture focuses on real-time reactivity (WebSockets), offline-capable client-side rendering (Vue SPA), and strict data integrity (PostgreSQL/SQLAlchemy), scaling easily for multi-tenant team usage.

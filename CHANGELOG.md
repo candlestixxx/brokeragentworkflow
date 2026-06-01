@@ -117,3 +117,10 @@
 
 ## [0.0.0] - Initial Setup
 - Initialized core project documentation.
+
+## 0.26.0
+- **Feature**: Implemented Phase 26 Analytics Dashboard.
+  - Added new `/api/analytics` backend endpoint using `blueprints/analytics.py` and `models.get_user_analytics()`.
+  - Added frontend `AnalyticsView.vue` with responsive charts tracking Total Goals, Completed Goals, Completion Rate, and Day Streak.
+  - Updated Vue Router and NavBar to support the new Analytics route.
+  - Tested logic extensively via `test_analytics.py` and E2E `test_playwright_analytics.py`.

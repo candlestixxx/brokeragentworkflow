@@ -4,6 +4,7 @@ import { user } from '../store'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import AnalyticsView from "../views/AnalyticsView.vue"
 import SettingsView from '../views/SettingsView.vue'
 
 const router = createRouter({
@@ -23,6 +24,12 @@ const router = createRouter({
       path: '/',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/analytics',
+      name: 'analytics',
+      component: AnalyticsView,
       meta: { requiresAuth: true }
     },
     {

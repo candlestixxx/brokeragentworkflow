@@ -1,26 +1,5 @@
 # Roadmap
-- **Phase 1:** Setup initial project structure, core documentation, and implement the daily "One-Minute Goals" CLI tracker. (Completed)
-- **Phase 2:** Integrate quarterly tracking for 3-month look-ahead setup. Build webhook response handlers for twilio. (Completed)
-- **Phase 3:** Refactor database logic into a dedicated module and develop automated prompts (email/scheduler triggers) as described in the blueprint. (Completed)
-- **Phase 4:** Expand into a full web-based dashboard to supplement the CLI using Flask and Jinja templates. (Completed)
-- **Phase 5:** Migrate raw SQL data access layer to an ORM (SQLAlchemy) and containerize the application with Docker for seamless deployments. (Completed)
-- **Phase 6:** Enhance the Jinja2 Web UI using Tailwind CSS for a modern, responsive design. (Completed)
-- **Phase 7:** Migrate from local SQLite to a production-grade database (PostgreSQL) using Docker-Compose. (Completed)
-- **Phase 8:** Add User Authentication to support multi-tenant team usage. (Completed)
-- **Phase 9:** Migrate the frontend to a Vue.js Single Page Application (SPA), converting the Flask app to a JSON API. (Completed)
-- **Phase 10:** Implement WebSockets for real-time notification push events to the browser to keep multiple tabs/devices synced. (Completed)
-- **Phase 11:** Scale backend architecture by migrating `app.py` logic into modular Flask Blueprints. (Completed)
-- **Phase 12:** Migrate the `APScheduler` polling methodology to a distributed message queue (e.g., Celery + Redis). (Completed)
-- **Phase 13:** Establish comprehensive Playwright End-to-End testing. (Completed)
-- **Phase 14:** Migrate the Vue frontend to a modular structured build process (Vite/Webpack). (Completed)
-- **Phase 15:** Implement recursive Sub-Goals to allow breaking down larger daily tasks. (Completed)
-- **Phase 16:** Build Completed Goals History feature allowing visibility into previously finished tasks. (Completed)
-- **Phase 17:** Implement User Avatars to expand upon profile logic. (Completed)
-- **Phase 18:** Establish a Chronological Calendar View. (Completed)
-- **Phase 19:** Modularize Vue framework state orchestration into structured Single File Components and `store.js` abstractions. (Completed)
-- **Phase 20:** Migrate to strict TypeScript compiler definitions to protect component states. (Completed)
-- **Phase 21:** Setup Frontend Router mapping single-page HTML5 history arrays recursively over views. (Completed)
-- **Phase 22:** Implement external ARIA-compliant UI component logic explicitly separating layout mapping. (Completed)
-- **Phase 23:** Add automated pipelines validating lint bounds utilizing modern frameworks like Ruff or GitHub Actions. (Completed)
-- **Phase 24:** Implement Global Dark Mode integrating `.dark` Tailwind behaviors intrinsically mapping out OS-level parameters actively tracking storage interactions effectively explicitly. (Completed)
-- **Phase 25 (Current):** Generate dynamic settings dashboards explicitly allowing isolated user notification control structures mapping strictly.
+- **Phase 1-25:** (Completed) Initial setup, CRUD, Web UI, ORM, Docker, Vue SPA, WebSockets, Blueprints, Celery, Playwright E2E, Vite build, Sub-goals, History, Avatars, Calendar View, Vue store, TypeScript, Vue Router, Tailwind dark mode, Settings view.
+- **Phase 26:** Implement Analytics Dashboard to track user progress and goal completion rates over time.
+- **Phase 27:** Gamification & Badges. Reward users for hitting milestones (e.g. 7-day streak, 100 goals).
+- **Phase 28:** FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact.
