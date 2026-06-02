@@ -53,12 +53,25 @@ def api_add_goal():
 def api_complete_goal(goal_id):
     success = models.complete_goal(goal_id, user_id=current_user.id)
     if success:
+        # Evaluate badges after completion
+        new_badges = models.evaluate_badges(current_user.id)
+
         notify_all(
             subject="Goal Completed!",
             body=f"Excellent work! You completed goal {goal_id}.",
             speakable_message=f"Excellent work! You completed goal {goal_id}.",
         )
+
+        # Emit goal completed event
         socketio.emit("goal_completed", {"id": goal_id}, to=str(current_user.id))
+        
+        # Emit data updated event for general UI refresh
+        socketio.emit("data_updated", {"message": "Goal completed"}, to=str(current_user.id))
+
+        # If new badges were awarded, notify the user
+        for badge in new_badges:
+            socketio.emit("badge_awarded", {"name": badge["name"], "icon": badge["icon"]}, to=str(current_user.id))
+
         return jsonify({"message": f"Goal {goal_id} completed."})
     return jsonify({"error": "Goal not found."}), 404
 

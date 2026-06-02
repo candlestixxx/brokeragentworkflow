@@ -1,4 +1,5 @@
 import os
+
 from sqlalchemy import (
     create_engine,
     Column,
@@ -7,7 +8,9 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Boolean,
+    Table
 )
+
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, backref
 from sqlalchemy.sql import func
 from dotenv import load_dotenv
@@ -19,6 +22,23 @@ load_dotenv()
 Base = declarative_base()
 
 
+
+user_badges = Table(
+    'user_badges', Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('badge_id', Integer, ForeignKey('badges.id'), primary_key=True),
+    Column('awarded_at', DateTime(timezone=True), server_default=func.now())
+)
+
+class Badge(Base):
+    __tablename__ = "badges"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), unique=True, nullable=False)
+    description = Column(String(250), nullable=False)
+    icon = Column(String(50), nullable=False, default="StarIcon")
+
+    users = relationship("User", secondary=user_badges, back_populates="badges")
+
 class User(Base, UserMixin):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -29,6 +49,7 @@ class User(Base, UserMixin):
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
+    badges = relationship("Badge", secondary=user_badges, back_populates="users")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password).decode("utf8")
@@ -91,6 +112,7 @@ def init_db(db_path=None):
     url = get_db_url(db_path)
     engine = create_engine(url, echo=False)
     Base.metadata.create_all(engine)
+    seed_badges(db_path)
 
 
 # --- Users ---
@@ -340,3 +362,66 @@ def get_user_analytics(user_id=1, db_path=None):
         "completion_percentage": completion_percentage,
         "streak": streak
     }
+
+# --- Gamification / Badges ---
+def seed_badges(db_path=None):
+    session = _get_session(db_path)
+    default_badges = [
+        {"name": "First Step", "description": "Complete your first goal", "icon": "StarIcon"},
+        {"name": "On a Roll", "description": "Complete 5 goals", "icon": "FireIcon"},
+        {"name": "Goal Crusher", "description": "Complete 20 goals", "icon": "TrophyIcon"},
+        {"name": "Consistent", "description": "Achieve a 3-day streak", "icon": "CheckBadgeIcon"}
+    ]
+
+    for b_data in default_badges:
+        existing = session.query(Badge).filter_by(name=b_data["name"]).first()
+        if not existing:
+            new_badge = Badge(**b_data)
+            session.add(new_badge)
+
+    session.commit()
+    session.close()
+
+def evaluate_badges(user_id, db_path=None):
+    session = _get_session(db_path)
+    user = session.get(User, int(user_id))
+    if not user:
+        session.close()
+        return []
+
+    stats = get_user_analytics(user_id, db_path)
+    newly_awarded = []
+
+    badges_by_name = {b.name: b for b in session.query(Badge).all()}
+    user_badge_names = [b.name for b in user.badges]
+
+    rules = [
+        ("First Step", lambda s: s["completed_goals"] >= 1),
+        ("On a Roll", lambda s: s["completed_goals"] >= 5),
+        ("Goal Crusher", lambda s: s["completed_goals"] >= 20),
+        ("Consistent", lambda s: s["streak"] >= 3)
+    ]
+
+    for b_name, condition in rules:
+        if b_name not in user_badge_names and condition(stats):
+            badge = badges_by_name.get(b_name)
+            if badge:
+                user.badges.append(badge)
+                newly_awarded.append({"name": badge.name, "description": badge.description, "icon": badge.icon})
+
+    if newly_awarded:
+        session.commit()
+
+    session.close()
+    return newly_awarded
+
+def get_user_badges(user_id, db_path=None):
+    session = _get_session(db_path)
+    user = session.get(User, int(user_id))
+    if not user:
+        session.close()
+        return []
+
+    badges = [{"id": b.id, "name": b.name, "description": b.description, "icon": b.icon} for b in user.badges]
+    session.close()
+    return badges

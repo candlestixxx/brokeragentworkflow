@@ -32,10 +32,11 @@ def api_me():
                 "username": current_user.username,
                 "avatar_url": current_user.avatar_url,
                 "notifications_enabled": current_user.notifications_enabled,
+                "is_public": getattr(current_user, 'is_public', False),
+                "badges": models.get_user_badges(current_user.id)
             }
         )
     return jsonify({"authenticated": False})
-
 
 @auth_bp.route("/me/settings", methods=["POST"])
 @login_required
