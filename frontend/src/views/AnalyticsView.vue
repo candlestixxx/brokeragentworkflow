@@ -53,13 +53,46 @@
         </div>
 
       </div>
+
+      <!-- Badges Section -->
+      <div class="mt-10 border-t border-gray-100 dark:border-gray-700 pt-8">
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
+          <StarIcon class="w-6 h-6 text-yellow-500" />
+          Earned Badges
+        </h3>
+
+        <div v-if="user.badges.length === 0" class="text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+          No badges earned yet. Complete goals to unlock them!
+        </div>
+
+        <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div v-for="badge in user.badges" :key="badge.id" class="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800/30 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md transition-shadow relative group">
+            <div class="absolute inset-0 bg-yellow-400/10 dark:bg-yellow-400/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+            <div class="bg-white dark:bg-gray-800 p-3 rounded-full shadow-sm mb-3 z-10 border border-yellow-100 dark:border-gray-700">
+              <component :is="iconMap[badge.icon]" class="w-8 h-8 text-yellow-500 dark:text-yellow-400" />
+            </div>
+
+            <span class="font-bold text-gray-800 dark:text-gray-100 z-10">{{ badge.name }}</span>
+            <span class="text-xs text-gray-600 dark:text-gray-400 mt-1 z-10">{{ badge.description }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ChartBarIcon, ClipboardDocumentListIcon, CheckCircleIcon, ChartPieIcon, FireIcon } from '@heroicons/vue/24/outline'
+import { ChartBarIcon, ClipboardDocumentListIcon, CheckCircleIcon, ChartPieIcon, FireIcon, StarIcon, TrophyIcon, CheckBadgeIcon } from '@heroicons/vue/24/outline'
+import { user } from '../store'
+
+const iconMap: Record<string, any> = {
+  'StarIcon': StarIcon,
+  'FireIcon': FireIcon,
+  'TrophyIcon': TrophyIcon,
+  'CheckBadgeIcon': CheckBadgeIcon
+}
 
 interface AnalyticsStats {
   total_goals: number
