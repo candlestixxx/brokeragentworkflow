@@ -34,7 +34,7 @@
         </div>
 
         <div v-else class="space-y-3">
-          <div v-for="[id, quarter, description] in initiatives" :key="id" class="group bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 hover:border-brand-calm/30 transition-all">
+          <div v-for="{id, quarter, description} in initiatives" :key="id" class="group bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 hover:border-brand-calm/30 transition-all">
             <div class="flex items-start justify-between gap-3">
               <div class="flex-1 min-w-0">
                 <span class="inline-block px-2 py-0.5 bg-brand-calm text-white text-[10px] font-black rounded-md mb-2">{{ quarter }}</span>

@@ -1,17 +1,17 @@
 # TODO
 
-## Current Tasks (Phase 31: Social Accountability)
-- [ ] Add `is_public` column to the `User` model in `models.py`.
-- [ ] Implement `blueprints/social.py` with endpoints `/api/social/users` and `/api/social/users/<id>`.
-- [ ] Implement Vue.js components (`SocialView.vue`) and update `router/index.ts`.
-- [ ] Integrate into global navigation `NavBar.vue`.
-- [ ] Create tests.
+## Current Tasks (Phase 32: FastAPI Backend Migration)
+- [ ] Initialize FastAPI application in `main.py`.
+- [ ] Port `auth.py` logic to FastAPI dependencies.
+- [ ] Port `goals.py` and `habits.py` endpoints.
+- [ ] Port `social.py` and `analytics.py` endpoints.
+- [ ] Update frontend to point to FastAPI backend (if port changes).
 
-## Other Tasks
+## Completed Tasks
+- [x] Phase 31: Social Accountability.
+  - [x] Add `is_public` column to the `User` model in `models.py`.
+  - [x] Implement `blueprints/social.py` with endpoints `/api/social/users` and `/api/social/users/<id>`.
+  - [x] Implement Vue.js components (`SocialView.vue`) and update `router/index.ts`.
+  - [x] Integrate into global navigation `NavBar.vue`.
+  - [x] Create tests.
 - [x] Phase 26: Implement Analytics Dashboard.
-  - [x] Create `models.py` queries for user stats.
-  - [x] Create a new Flask blueprint `analytics.py`.
-  - [x] Create `AnalyticsView.vue` and add route in `router/index.ts`.
-  - [x] Add link to Nav bar.
-  - [x] Write Pytest and Playwright tests.
-- [ ] Review UI and ensure responsiveness.

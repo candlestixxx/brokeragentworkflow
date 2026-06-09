@@ -163,4 +163,11 @@
 - **Implemented:** Deployed Gamification layer generating Badges natively. Migrated `models.py` appending an isolated `Badge` declarative tracking secondary associations natively across `user_badges` Table mappings. Programmed dynamic rulesets checking thresholds dynamically upon `POST /api/goals/<id>/complete` bounds dynamically dispatching realtime SocketIO notification overlays dynamically pushing arrays directly to the browser.
 - **Frontend:** Configured `AnalyticsView.vue` arrays visualizing acquired Badges inherently mapping SVG components gracefully bridging TS models implicitly parsing responses out from `auth.py`.
 - **Tested:** Maintained headless Playwright configurations natively bounding strict isolated endpoints utilizing dedicated transient testing paths.
-- **Next:** Proceed to Phase 32 (FastAPI Backend Migration)
+- **Next:** Proceed to Phase 32 (Social Accountability)
+
+## Phase 32 Update (v0.32.0)
+- **Implemented:** Deployed Social Accountability layer. Users can now share their progress publicly and view others in the new "Community" tab.
+- **Backend:** Added `is_public` to `User` model. Implemented `blueprints/social.py` with endpoints for listing public users and their recent progress. Updated `models.py` with robust engine and session management (using `NullPool` for SQLite to fix file locking on Windows).
+- **Frontend:** Integrated "Community" link in `NavBar.vue`. Implemented `SocialView.vue` with responsive user cards. Fixed several TypeScript errors in the store and components to support the new features and ensure successful Vite builds.
+- **Tested:** Verified with Pytest (backend integration) and Playwright (E2E flows). All tests passing.
+- **Next:** Proceed to Phase 33 (FastAPI Backend Migration).

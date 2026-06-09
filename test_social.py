@@ -33,20 +33,21 @@ def test_social_community_page(page: Page):
     page.click("a:has-text('Register')")
     username = f"public_user_{int(time.time())}"
 
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> input[type='text']").fill(username)
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> input[type='password']").fill("secret123")
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']").click()
+    page.locator("div.max-w-md:has(h2:has-text('Start Winning')) >> input[type='text']").fill(username)
+    page.locator("div.max-w-md:has(h2:has-text('Start Winning')) >> input[type='password']").fill("secret123")
+    page.locator("div.max-w-md:has(h2:has-text('Start Winning')) >> button[type='submit']").click()
     expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
 
     page.click("a:has-text('Login')")
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(username)
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='password']").fill("secret123")
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> button[type='submit']").click()
+    page.locator("div.max-w-md:has(h2:has-text('Welcome Back')) >> input[type='text']").fill(username)
+    page.locator("div.max-w-md:has(h2:has-text('Welcome Back')) >> input[type='password']").fill("secret123")
+    page.locator("div.max-w-md:has(h2:has-text('Welcome Back')) >> button[type='submit']").click()
 
     expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
 
     page.click("a:has-text('Settings')")
-    expect(page.locator("text=Privacy")).to_be_visible(timeout=5000)
+    page.wait_for_url("**/settings")
+    expect(page.locator("text=Privacy")).to_be_visible(timeout=10000)
 
     page.evaluate("() => { fetch('/api/me/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_public: true }) }) }")
     time.sleep(1)
@@ -54,6 +55,6 @@ def test_social_community_page(page: Page):
     page.click("a:has-text('Community')")
     time.sleep(2)
     page.reload()
-    expect(page.locator("text=Community Progress")).to_be_visible(timeout=5000)
+    expect(page.locator("text=Shared Momentum")).to_be_visible(timeout=5000)
 
     expect(page.locator(f"text='{username}'").first).to_be_visible(timeout=5000)

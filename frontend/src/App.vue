@@ -109,8 +109,9 @@ onMounted(async () => {
       })
 
       if (targetGoal) {
+         const goalToMove = targetGoal as any
          import('./store').then(store => {
-             store.completedGoals.value.unshift(targetGoal)
+             store.completedGoals.value.unshift(goalToMove)
              store.analytics.value.completed_goals += 1
          })
       }

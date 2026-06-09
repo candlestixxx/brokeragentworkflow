@@ -11,6 +11,8 @@ from blueprints.goals import goals_bp
 from blueprints.initiatives import initiatives_bp
 from blueprints.webhooks import webhooks_bp
 from blueprints.analytics import analytics_bp
+from blueprints.social import social_bp
+from blueprints.habits import habits_bp
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-default-key-for-flashes")
@@ -40,6 +42,8 @@ app.register_blueprint(goals_bp)
 app.register_blueprint(initiatives_bp)
 app.register_blueprint(webhooks_bp)
 app.register_blueprint(analytics_bp)
+app.register_blueprint(social_bp)
+app.register_blueprint(habits_bp)
 
 # Ensure DB is initialized before first request
 with app.app_context():

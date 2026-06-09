@@ -20,6 +20,7 @@
           <div class="ml-2 border-l border-gray-300 dark:border-gray-600 pl-4 flex gap-4">
             <router-link to="/" class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition duration-150 font-medium" active-class="text-blue-600 dark:text-blue-400">Dashboard</router-link>
             <router-link to="/analytics" class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition duration-150 font-medium" active-class="text-blue-600 dark:text-blue-400">Analytics</router-link>
+            <router-link to="/community" class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition duration-150 font-medium" active-class="text-blue-600 dark:text-blue-400">Community</router-link>
             <router-link to="/settings" class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition duration-150 font-medium" active-class="text-blue-600 dark:text-blue-400">Settings</router-link>
             <button @click="logout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition duration-150 font-medium">Logout</button>
           </div>
