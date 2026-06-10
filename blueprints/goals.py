@@ -86,20 +86,50 @@ def api_delete_goal(goal_id):
     return jsonify({"error": "Goal not found."}), 404
 
 
-@goals_bp.route("/breakdown", methods=["POST"])
+@goals_bp.route("/<int:goal_id>/breakdown", methods=["POST"])
 @login_required
-def api_breakdown_goal():
+def api_breakdown_goal(goal_id):
     """
     Simulates an AI service parsing a high-level goal description
     and returning a list of granular one-minute sub-goals.
     """
+    goal = models.get_user_by_id(current_user.id).goals
+    # Find the specific goal
+    target_goal = None
+    for g in goal:
+        if g.id == goal_id:
+            target_goal = g
+            break
+    
+    if not target_goal:
+        return jsonify({"error": "Goal not found."}), 404
+
+    description = target_goal.description
+
+    # Simulate an AI response by echoing back string splits or generic chunks
+    sub_goals = [
+        f"Research best approaches for: {description[:20]}...",
+        f"Draft initial outline for: {description[:20]}...",
+        f"Execute and review first steps of: {description[:20]}..."
+    ]
+
+    # Automatically add them as subgoals
+    for sub_desc in sub_goals:
+        models.add_goal(sub_desc, user_id=current_user.id, parent_id=goal_id)
+
+    return jsonify({"subgoals": sub_goals}), 200
+
+
+@goals_bp.route("/breakdown", methods=["POST"])
+@login_required
+def api_breakdown_goal_legacy():
+    """Legacy endpoint for tests or other callers."""
     data = request.get_json() or {}
     description = data.get("description", "")
 
     if not description:
         return jsonify({"error": "Description required."}), 400
 
-    # Simulate an AI response by echoing back string splits or generic chunks
     sub_goals = [
         f"Research best approaches for: {description[:20]}...",
         f"Draft initial outline for: {description[:20]}...",

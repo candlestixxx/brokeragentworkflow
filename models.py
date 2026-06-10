@@ -49,6 +49,7 @@ class User(Base, UserMixin):
     avatar_url = Column(String(500), nullable=True)
     notifications_enabled = Column(Boolean, nullable=False, default=True)
     is_public = Column(Boolean, nullable=False, default=False)
+    has_completed_onboarding = Column(Boolean, nullable=False, default=False)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")

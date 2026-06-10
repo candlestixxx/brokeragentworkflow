@@ -1,58 +1,61 @@
 <template>
-  <div class="space-y-12 animate-fade-in">
-    <div class="text-center max-w-2xl mx-auto space-y-4">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-calm/10 rounded-full text-brand-calm font-black text-xs uppercase tracking-widest">
+  <div class="space-y-16 animate-fade-in">
+    
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-6">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-calm/10 rounded-full text-brand-calm font-black text-xs uppercase tracking-[0.2em]">
         <UsersIcon class="h-4 w-4" />
-        Focus Community
+        Collective Intelligence
       </div>
-      <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Shared Momentum</h2>
-      <p class="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-        Connect with other high-performers. Accountability is the bridge between goals and accomplishment.
+      <h2 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
+        Shared <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-calm to-brand-accent">Momentum</span>
+      </h2>
+      <p class="text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+        See how your teammates are winning the minute. Accountability is the ultimate performance multiplier.
       </p>
     </div>
 
+    <!-- Users Grid -->
     <div v-if="loading" class="flex justify-center py-20">
-      <ArrowPathIcon class="h-12 w-12 text-brand-calm animate-spin opacity-20" />
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-brand-calm border-t-transparent opacity-20"></div>
     </div>
 
-    <div v-else-if="publicUsers.length === 0" class="py-20 text-center bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-xl">
-      <SparklesIcon class="h-16 w-12 text-slate-200 mx-auto mb-4" />
-      <h3 class="text-xl font-bold text-slate-400">The community is just starting.</h3>
-      <p class="text-slate-400 mt-2">Be the first to <router-link to="/settings" class="text-brand-calm underline font-bold">go public</router-link>.</p>
+    <div v-else-if="publicUsers.length === 0" class="py-20 text-center bg-slate-50/50 dark:bg-slate-900/30 rounded-[3rem] border-2 border-dashed border-slate-100 dark:border-slate-800">
+      <SparklesIcon class="h-20 w-20 text-slate-200 dark:text-slate-700 mx-auto mb-6" />
+      <h4 class="text-2xl font-black text-slate-400 uppercase tracking-tighter">No public profiles found</h4>
+      <p class="text-slate-400 mt-2 font-medium italic">Encourage your team to <router-link to="/settings" class="text-brand-calm underline font-bold">go public</router-link> in Settings!</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div v-for="user in publicUsers" :key="user.id" class="group bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 hover:border-brand-calm transition-all duration-300 relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-          <RocketLaunchIcon class="h-24 w-24 text-brand-calm -rotate-12" />
-        </div>
-        
-        <div class="flex flex-col items-center text-center relative z-10">
-          <div class="relative">
-            <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=2563eb&color=fff`" alt="Avatar" class="w-24 h-24 rounded-full shadow-2xl border-4 border-white dark:border-slate-700 object-cover group-hover:scale-105 transition-transform duration-500">
-            <div class="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-white dark:border-slate-800 shadow-sm"></div>
-          </div>
+      <div v-for="user in publicUsers" :key="user.id" class="group relative">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-brand-calm to-brand-accent rounded-[2.5rem] blur opacity-10 group-hover:opacity-30 transition duration-500"></div>
+        <div class="relative bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl transition-all duration-500">
           
-          <h3 class="mt-6 text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ user.username }}</h3>
-          <div class="mt-2 flex items-center gap-1.5 text-[10px] font-black text-brand-calm bg-brand-calm/10 px-3 py-1 rounded-full uppercase tracking-widest">
-            Elite Performer
+          <div class="flex items-center gap-5 mb-8 border-b border-slate-50 dark:border-slate-700 pb-8">
+            <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=2563eb&color=fff`" class="w-16 h-16 rounded-2xl object-cover shadow-lg group-hover:scale-110 transition-transform duration-500">
+            <div class="min-w-0">
+              <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{{ user.username }}</h3>
+              <span class="inline-flex items-center gap-1 text-[10px] font-black text-brand-calm uppercase tracking-widest bg-brand-calm/5 px-2 py-0.5 rounded-md mt-1 shrink-0">
+                Verified Performer
+              </span>
+            </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 w-full mt-8 pt-8 border-t border-slate-50 dark:border-slate-700/50">
-            <div class="text-center">
-              <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Wins</p>
-              <p class="text-xl font-black text-slate-800 dark:text-slate-100">{{ Math.floor(Math.random() * 50) + 10 }}</p>
+          <div class="grid grid-cols-2 gap-4 w-full">
+            <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Wins</p>
+              <p class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ Math.floor(Math.random() * 50) + 10 }}</p>
             </div>
-            <div class="text-center">
-              <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Streak</p>
+            <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Streak</p>
               <div class="flex items-center justify-center gap-1">
                 <FireIcon class="h-4 w-4 text-orange-500" />
-                <p class="text-xl font-black text-slate-800 dark:text-slate-100">{{ Math.floor(Math.random() * 15) + 2 }}</p>
+                <p class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ Math.floor(Math.random() * 15) + 2 }}</p>
               </div>
             </div>
           </div>
 
-          <button class="mt-8 w-full bg-slate-50 dark:bg-slate-900 hover:bg-brand-calm hover:text-white text-slate-600 dark:text-slate-400 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
+          <button class="mt-8 w-full bg-slate-50 dark:bg-slate-900 hover:bg-brand-calm hover:text-white text-slate-600 dark:text-slate-400 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95">
             View Journey
           </button>
         </div>

@@ -33,10 +33,23 @@ def api_me():
                 "avatar_url": current_user.avatar_url,
                 "notifications_enabled": current_user.notifications_enabled,
                 "is_public": getattr(current_user, 'is_public', False),
+                "has_completed_onboarding": getattr(current_user, 'has_completed_onboarding', False),
                 "badges": models.get_user_badges(current_user.id)
             }
         )
     return jsonify({"authenticated": False})
+
+
+@auth_bp.route("/me/onboarding", methods=["POST"])
+@login_required
+def api_complete_onboarding():
+    with models.session_scope() as session:
+        user = session.get(models.User, current_user.id)
+        if user:
+            user.has_completed_onboarding = True
+            return jsonify({"message": "Onboarding completed."})
+    return jsonify({"error": "Update failed."}), 500
+
 
 @auth_bp.route("/me/settings", methods=["POST"])
 @login_required

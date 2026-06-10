@@ -1,90 +1,82 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-6">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
-      <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
-        <ChartBarIcon class="w-6 h-6 text-blue-500" />
-        Analytics Dashboard
+  <div class="space-y-16 animate-fade-in">
+    
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-6">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-accent/10 rounded-full text-brand-calm dark:text-brand-accent font-black text-xs uppercase tracking-[0.2em]">
+        <ChartBarIcon class="h-4 w-4" />
+        Performance Analytics
+      </div>
+      <h2 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
+        Victory <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-calm to-brand-accent">Insights</span>
       </h2>
+      <p class="text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+        Your progress, quantified. We track the micro-wins that lead to macro transformations.
+      </p>
+    </div>
 
-      <div v-if="loading" class="text-center py-10 text-gray-500 dark:text-gray-400">
-        Loading analytics...
-      </div>
+    <!-- Stats Grid -->
+    <div v-if="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-brand-calm border-t-transparent opacity-20"></div>
+    </div>
+    
+    <div v-else-if="error" class="text-center py-20 text-red-500 font-bold uppercase tracking-widest">
+      {{ error }}
+    </div>
 
-      <div v-else-if="error" class="text-center py-10 text-red-500">
-        {{ error }}
-      </div>
-
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
-        <!-- Total Goals -->
-        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800 flex flex-col items-center justify-center text-center transition-colors">
-          <span class="text-blue-500 dark:text-blue-400 mb-1">
-            <ClipboardDocumentListIcon class="w-8 h-8 mx-auto" />
-          </span>
-          <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ stats?.total_goals || 0 }}</span>
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-1">Total Goals</span>
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div v-for="stat in statsCards" :key="stat.label" class="group bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+        <div :class="['absolute -right-4 -bottom-4 h-24 w-24 opacity-5 group-hover:opacity-10 transition-opacity', stat.colorClass]">
+          <component :is="stat.icon" class="h-full w-full" />
         </div>
-
-        <!-- Completed Goals -->
-        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-100 dark:border-green-800 flex flex-col items-center justify-center text-center transition-colors">
-          <span class="text-green-500 dark:text-green-400 mb-1">
-            <CheckCircleIcon class="w-8 h-8 mx-auto" />
-          </span>
-          <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ stats?.completed_goals || 0 }}</span>
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-1">Completed</span>
-        </div>
-
-        <!-- Completion Rate -->
-        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800 flex flex-col items-center justify-center text-center transition-colors">
-          <span class="text-purple-500 dark:text-purple-400 mb-1">
-            <ChartPieIcon class="w-8 h-8 mx-auto" />
-          </span>
-          <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ stats?.completion_percentage || 0 }}%</span>
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-1">Completion Rate</span>
-        </div>
-
-        <!-- Daily Streak -->
-        <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-100 dark:border-orange-800 flex flex-col items-center justify-center text-center transition-colors">
-          <span class="text-orange-500 dark:text-orange-400 mb-1">
-            <FireIcon class="w-8 h-8 mx-auto" />
-          </span>
-          <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ stats?.streak || 0 }}</span>
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-1">Day Streak</span>
-        </div>
-
-      </div>
-
-      <!-- Badges Section -->
-      <div class="mt-10 border-t border-gray-100 dark:border-gray-700 pt-8">
-        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
-          <StarIcon class="w-6 h-6 text-yellow-500" />
-          Earned Badges
-        </h3>
-
-        <div v-if="user.badges.length === 0" class="text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
-          No badges earned yet. Complete goals to unlock them!
-        </div>
-
-        <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div v-for="badge in user.badges" :key="badge.id" class="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800/30 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md transition-shadow relative group">
-            <div class="absolute inset-0 bg-yellow-400/10 dark:bg-yellow-400/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-            <div class="bg-white dark:bg-gray-800 p-3 rounded-full shadow-sm mb-3 z-10 border border-yellow-100 dark:border-gray-700">
-              <component :is="iconMap[badge.icon]" class="w-8 h-8 text-yellow-500 dark:text-yellow-400" />
-            </div>
-
-            <span class="font-bold text-gray-800 dark:text-gray-100 z-10">{{ badge.name }}</span>
-            <span class="text-xs text-gray-600 dark:text-gray-400 mt-1 z-10">{{ badge.description }}</span>
-          </div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ stat.label }}</p>
+        <div class="flex items-baseline gap-2">
+          <h4 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{{ stat.value }}</h4>
+          <span v-if="stat.suffix" class="text-sm font-black text-slate-400 uppercase tracking-widest">{{ stat.suffix }}</span>
         </div>
       </div>
     </div>
+
+    <!-- Trophy Case -->
+    <section class="space-y-10">
+      <div class="flex items-center gap-4">
+        <div class="w-3 h-8 bg-brand-accent rounded-full"></div>
+        <h3 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Trophy Case</h3>
+      </div>
+
+      <div v-if="user.badges.length === 0" class="py-20 text-center bg-slate-50/50 dark:bg-slate-900/30 rounded-[3rem] border-2 border-dashed border-slate-100 dark:border-slate-800">
+        <TrophyIcon class="h-20 w-20 text-slate-200 dark:text-slate-700 mx-auto mb-6" />
+        <h4 class="text-2xl font-black text-slate-400 uppercase tracking-tighter">No Badges Earned</h4>
+        <p class="text-slate-400 mt-2 font-medium italic">Complete goals and maintain streaks to unlock rewards.</p>
+      </div>
+
+      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div v-for="badge in user.badges" :key="badge.id" class="group bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl transition-all duration-500 text-center">
+          <div class="w-20 h-20 bg-brand-calm/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 group-hover:rotate-6">
+            <component :is="iconMap[badge.icon]" class="h-10 w-10 text-brand-calm" />
+          </div>
+          <h5 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ badge.name }}</h5>
+          <p class="text-xs font-medium text-slate-400 mt-2 leading-relaxed">{{ badge.description }}</p>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ChartBarIcon, ClipboardDocumentListIcon, CheckCircleIcon, ChartPieIcon, FireIcon, StarIcon, TrophyIcon, CheckBadgeIcon } from '@heroicons/vue/24/outline'
+import { ref, onMounted, computed } from 'vue'
+import { 
+  ChartBarIcon, 
+  ClipboardDocumentListIcon, 
+  CheckCircleIcon, 
+  ChartPieIcon, 
+  FireIcon, 
+  StarIcon, 
+  TrophyIcon, 
+  CheckBadgeIcon,
+  RocketLaunchIcon,
+  BoltIcon
+} from '@heroicons/vue/24/outline'
 import { user } from '../store'
 
 const iconMap: Record<string, any> = {
@@ -105,6 +97,13 @@ interface AnalyticsStats {
 const stats = ref<AnalyticsStats | null>(null)
 const loading = ref(true)
 const error = ref('')
+
+const statsCards = computed(() => [
+  { label: 'Completed Goals', value: stats.value?.completed_goals || 0, icon: CheckCircleIcon, colorClass: 'text-green-500' },
+  { label: 'Total Tracked', value: stats.value?.total_goals || 0, icon: ClipboardDocumentListIcon, colorClass: 'text-brand-calm' },
+  { label: 'Completion Rate', value: stats.value?.completion_percentage || 0, icon: ChartPieIcon, colorClass: 'text-purple-500', suffix: '%' },
+  { label: 'Daily Streak', value: stats.value?.streak || 0, icon: FireIcon, colorClass: 'text-orange-600', suffix: 'Days' }
+])
 
 onMounted(async () => {
   try {

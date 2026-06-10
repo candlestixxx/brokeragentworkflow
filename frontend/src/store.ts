@@ -36,6 +36,7 @@ export interface UserState {
   notifications_enabled: boolean;
   is_public: boolean;
   badges: Badge[];
+  has_completed_onboarding: boolean;
 }
 
 export interface Badge {
@@ -52,7 +53,8 @@ export const user = reactive<UserState>({
   avatar_url: null, 
   notifications_enabled: true, 
   is_public: false,
-  badges: []
+  badges: [],
+  has_completed_onboarding: false
 })
 
 // Dark Mode State
@@ -156,6 +158,7 @@ export const checkAuth = async () => {
     user.notifications_enabled = data.notifications_enabled ?? true
     user.is_public = data.is_public ?? false
     user.badges = data.badges || []
+    user.has_completed_onboarding = data.has_completed_onboarding ?? false
     if (user.authenticated) {
       await fetchData()
       // Once authenticated natively globally, notify the socket manager we are ready for a specific room mapping
@@ -180,12 +183,21 @@ export const login = async (username: string, password: string): Promise<boolean
   return false
 }
 
+export const completeOnboarding = async () => {
+  const res = await fetch('/api/me/onboarding', { method: 'POST' })
+  if (res.ok) {
+    user.has_completed_onboarding = true
+  }
+}
+
 export const logout = async () => {
   const res = await fetch('/api/logout', { method: 'POST' })
   if (res.ok) {
     user.authenticated = false
+    user.user_id = null
     user.username = null
     user.avatar_url = null
+    user.has_completed_onboarding = false
     goals.value = []
     initiatives.value = []
     completedGoals.value = []

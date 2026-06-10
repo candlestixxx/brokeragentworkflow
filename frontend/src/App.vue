@@ -1,33 +1,24 @@
 <template>
   <div class="bg-brand-neutral dark:bg-brand-neutral-dark min-h-screen font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
     <NavBar />
+    <OnboardingGuide />
 
     <main class="max-w-6xl mx-auto px-4 py-8">
-      <!-- Flash Messages equivalent (Toast) -->
-      <transition enter-active-class="transform ease-out duration-300 transition" enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2" enter-to-class="translate-y-0 opacity-100 sm:translate-x-0" leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
-        <div v-if="toastState.message" class="fixed top-20 right-4 z-50 w-full max-w-sm overflow-hidden rounded-lg bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black ring-opacity-5">
-          <div class="p-4">
-            <div class="flex items-start">
-              <div class="flex-shrink-0">
-                <CheckCircleIcon v-if="!toastState.error" class="h-6 w-6 text-green-400" aria-hidden="true" />
-                <XCircleIcon v-else class="h-6 w-6 text-red-400" aria-hidden="true" />
-              </div>
-              <div class="ml-3 w-0 flex-1 pt-0.5">
-                <p class="text-sm font-medium text-slate-900 dark:text-slate-100">
-                  {{ toastState.error ? 'Error' : 'Success' }}
-                </p>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  {{ toastState.message }}
-                </p>
-              </div>
-              <div class="ml-4 flex flex-shrink-0">
-                <button type="button" @click="toastState.message = ''" class="inline-flex rounded-md bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-calm focus:ring-offset-2">
-                  <span class="sr-only">Close</span>
-                  <XMarkIcon class="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          </div>
+      <!-- Global Toast Notifications -->
+      <transition 
+        enter-active-class="transform ease-out duration-300 transition" 
+        enter-from-class="translate-y-8 opacity-0" 
+        enter-to-class="translate-y-0 opacity-100" 
+        leave-active-class="transition ease-in duration-200" 
+        leave-from-class="opacity-100 translate-y-0" 
+        leave-to-class="opacity-0 translate-y-8"
+      >
+        <div v-if="toastState.message" :class="['fixed bottom-8 right-8 px-6 py-4 rounded-2xl shadow-2xl z-50 flex items-center gap-3 border transition-all duration-300', toastState.error ? 'bg-red-500 border-red-400 text-white' : 'bg-slate-900 border-slate-700 text-white']">
+          <div :class="['w-2 h-2 rounded-full animate-pulse', toastState.error ? 'bg-white' : 'bg-brand-calm']" />
+          <span class="font-bold text-sm uppercase tracking-widest">{{ toastState.message }}</span>
+          <button @click="toastState.message = ''" class="ml-2 hover:opacity-70 transition-opacity">
+            <XMarkIcon class="h-4 w-4" />
+          </button>
         </div>
       </transition>
 
@@ -44,6 +35,7 @@
 import { onMounted } from 'vue'
 import { toastState, checkAuth, fetchData, goals, user, getSocket } from './store'
 import NavBar from './components/NavBar.vue'
+import OnboardingGuide from './components/OnboardingGuide.vue'
 import { CheckCircleIcon, XCircleIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const socket = getSocket()
