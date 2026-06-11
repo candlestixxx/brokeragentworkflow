@@ -46,6 +46,7 @@ class User(Base, UserMixin):
     password_hash = Column(String(128), nullable=False)
     avatar_url = Column(String(500), nullable=True)
     notifications_enabled = Column(Boolean, nullable=False, default=True)
+    is_public = Column(Boolean, nullable=False, default=False)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -425,3 +426,90 @@ def get_user_badges(user_id, db_path=None):
     badges = [{"id": b.id, "name": b.name, "description": b.description, "icon": b.icon} for b in user.badges]
     session.close()
     return badges
+
+def list_users_for_notifications(db_path=None):
+    session = _get_session(db_path)
+    users = session.query(User).filter_by(notifications_enabled=True).all()
+    results = [{"id": u.id, "username": u.username} for u in users]
+    session.close()
+    return results
+
+def list_public_users(db_path=None):
+    session = _get_session(db_path)
+    users = session.query(User).filter_by(is_public=True).all()
+    results = [{"id": u.id, "username": u.username, "avatar_url": u.avatar_url} for u in users]
+    session.close()
+    return results
+
+class Habit(Base):
+    __tablename__ = "habits"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    current_streak = Column(Integer, default=0)
+    highest_streak = Column(Integer, default=0)
+    last_completed_date = Column(String(50), nullable=True)
+
+    user = relationship("User", back_populates="habits")
+
+User.habits = relationship("Habit", order_by=Habit.id, back_populates="user")
+
+def list_habits(user_id, db_path=None):
+    session = _get_session(db_path)
+    habits = session.query(Habit).filter_by(user_id=user_id).all()
+    results = [
+        {
+            "id": h.id,
+            "description": h.description,
+            "current_streak": h.current_streak,
+            "highest_streak": h.highest_streak,
+            "last_completed_date": h.last_completed_date
+        }
+        for h in habits
+    ]
+    session.close()
+    return results
+
+def delete_goal(goal_id, user_id, db_path=None):
+    session = _get_session(db_path)
+    goal = session.query(Goal).filter_by(id=goal_id, user_id=user_id).first()
+    if goal:
+        session.delete(goal)
+        session.commit()
+        session.close()
+        return True
+    session.close()
+    return False
+
+def complete_habit(habit_id, user_id, db_path=None):
+    session = _get_session(db_path)
+    habit = session.query(Habit).filter_by(id=habit_id, user_id=user_id).first()
+    if habit:
+        habit.current_streak += 1
+        if habit.current_streak > habit.highest_streak:
+            habit.highest_streak = habit.current_streak
+        session.commit()
+        session.close()
+        return True
+    session.close()
+    return False
+
+def add_habit(description, user_id, db_path=None):
+    session = _get_session(db_path)
+    habit = Habit(description=description, user_id=user_id, current_streak=0, highest_streak=0)
+    session.add(habit)
+    session.commit()
+    habit_id = habit.id
+    session.close()
+    return habit_id
+
+def delete_habit(habit_id, user_id, db_path=None):
+    session = _get_session(db_path)
+    habit = session.query(Habit).filter_by(id=habit_id, user_id=user_id).first()
+    if habit:
+        session.delete(habit)
+        session.commit()
+        session.close()
+        return True
+    session.close()
+    return False

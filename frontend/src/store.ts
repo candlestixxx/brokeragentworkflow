@@ -35,9 +35,10 @@ export interface UserState {
   avatar_url: string | null;
   notifications_enabled: boolean;
   is_public: boolean;
+  badges: any[];
 }
 
-export const user = reactive<UserState>({ authenticated: false, user_id: null, username: null, avatar_url: null, notifications_enabled: true, is_public: false })
+export const user = reactive<UserState>({ authenticated: false, user_id: null, username: null, avatar_url: null, notifications_enabled: true, is_public: false, badges: [] })
 
 // Dark Mode State
 export const isDarkMode = ref<boolean>(false)
@@ -139,6 +140,7 @@ export const checkAuth = async () => {
     user.avatar_url = data.avatar_url
     user.notifications_enabled = data.notifications_enabled ?? true
     user.is_public = data.is_public ?? false
+    user.badges = data.badges ?? []
     if (user.authenticated) {
       await fetchData()
       // Once authenticated natively globally, notify the socket manager we are ready for a specific room mapping

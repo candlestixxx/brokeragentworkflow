@@ -34,13 +34,13 @@
         </div>
 
         <div v-else class="space-y-3">
-          <div v-for="[id, quarter, description] in initiatives" :key="id" class="group bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 hover:border-brand-calm/30 transition-all">
+          <div v-for="initiative in initiatives" :key="initiative.id" class="group bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50 hover:border-brand-calm/30 transition-all">
             <div class="flex items-start justify-between gap-3">
               <div class="flex-1 min-w-0">
-                <span class="inline-block px-2 py-0.5 bg-brand-calm text-white text-[10px] font-black rounded-md mb-2">{{ quarter }}</span>
-                <p class="text-sm font-bold text-slate-800 dark:text-slate-200 leading-relaxed">{{ description }}</p>
+                <span class="inline-block px-2 py-0.5 bg-brand-calm text-white text-[10px] font-black rounded-md mb-2">{{ initiative.quarter }}</span>
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-200 leading-relaxed">{{ initiative.description }}</p>
               </div>
-              <button @click="completeInitiative(id)" class="p-1.5 text-slate-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-all" title="Complete">
+              <button @click="completeInitiative(initiative.id)" class="p-1.5 text-slate-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-all" title="Complete">
                 <CheckCircleIcon class="h-5 w-5" />
               </button>
             </div>

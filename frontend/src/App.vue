@@ -110,7 +110,7 @@ onMounted(async () => {
 
       if (targetGoal) {
          import('./store').then(store => {
-             store.completedGoals.value.unshift(targetGoal)
+             store.completedGoals.value.unshift(targetGoal as any)
              store.analytics.value.completed_goals += 1
          })
       }

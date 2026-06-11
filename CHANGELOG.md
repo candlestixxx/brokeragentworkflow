@@ -1,4 +1,11 @@
 # Changelog
+
+## [0.32.1] - 2026-06-11
+### Fixed
+- Resolved Vue 3 TypeScript compilation errors preventing frontend build
+- Restored missing `Habit` model and related logic wiped during upstream merge
+- Fixed End-to-End UI test timeouts and stale selectors for reliable pipeline execution
+
 ## [0.31.0] - Social Accountability
 - Added `is_public` user privacy property, accessible via Settings.
 - Created `SocialView.vue` and `Community` tab to list users who have their accounts marked as public, along with their recent goals.

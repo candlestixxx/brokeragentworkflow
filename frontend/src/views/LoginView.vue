@@ -60,15 +60,20 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { RocketLaunchIcon, UserIcon, KeyIcon } from '@heroicons/vue/24/outline'
-import { login as storeLogin, showToast, fetchData } from '../store'
+import { checkAuth, showToast, fetchData } from '../store'
 
 const router = useRouter()
 const loginForm = reactive({ username: '', password: '' })
 
 const login = async () => {
-  const success = await storeLogin(loginForm.username, loginForm.password)
-  if (success) {
-    await fetchData()
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(loginForm)
+  })
+
+  if (res.ok) {
+    await checkAuth()
     router.push({ name: 'dashboard' })
   } else {
     showToast("Invalid credentials", true)
