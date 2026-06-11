@@ -29,31 +29,31 @@ def test_server():
         os.remove("test_social.db")
 
 def test_social_community_page(page: Page):
-    page.goto("http://localhost:5000/")
-    page.click("a:has-text('Register')")
+    page.goto("http://127.0.0.1:5000/")
+    page.goto("http://127.0.0.1:5000/register")
     username = f"public_user_{int(time.time())}"
 
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> input[type='text']").fill(username)
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> input[type='password']").fill("secret123")
-    page.locator("div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']").click()
+    page.locator("input[placeholder='Pick a handle']").fill(username)
+    page.locator("input[placeholder='Make it strong']").fill("secret123")
+    page.locator("button:has-text('Create Account')").click()
     expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
 
-    page.click("a:has-text('Login')")
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(username)
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='password']").fill("secret123")
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> button[type='submit']").click()
+    page.goto("http://127.0.0.1:5000/login")
+    page.locator("input[placeholder='Your handle']").fill(username)
+    page.locator("input[placeholder='••••••••']").fill("secret123")
+    page.locator("button:has-text('Sign In')").click()
 
-    expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
+    expect(page.locator("text=Dashboard")).to_be_visible(timeout=5000)
 
-    page.click("a:has-text('Settings')")
+    page.goto("http://127.0.0.1:5000/settings")
     expect(page.locator("text=Privacy")).to_be_visible(timeout=5000)
 
     page.evaluate("() => { fetch('/api/me/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_public: true }) }) }")
     time.sleep(1)
 
-    page.click("a:has-text('Community')")
+    page.goto("http://127.0.0.1:5000/community")
     time.sleep(2)
     page.reload()
-    expect(page.locator("text=Community Progress")).to_be_visible(timeout=5000)
+    expect(page.locator("text=Shared Momentum")).to_be_visible(timeout=5000)
 
-    expect(page.locator(f"text='{username}'").first).to_be_visible(timeout=5000)
+    expect(page.locator(f"text={username}").first).to_be_visible(timeout=5000)

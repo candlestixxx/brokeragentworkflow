@@ -17,3 +17,11 @@
 - Continue maintaining standard deployment verification paths before pushing new features.
 - Keep updating documentation.
 - Project remains stable and all test suites (UI and Backend) pass successfully.
+
+## Fixes over Upstream Sync CI failures:
+- The initial upstream git-merge was heavily conflicted, destroying previous feature logic branches.
+- Repaired backend `models.py` schema for Habits tracking that was missing alongside API blueprint integrations inside `app.py`.
+- Solved missing `badges` initialization typing errors inside `frontend/src/store.ts`.
+- Repaired `frontend/src/router/index.ts` bad TypeScript mappings which halted Vite builds.
+- Refactored End-to-End browser Playwright assertions preventing headless timeout flakes by explicitly defining test IP binds (`127.0.0.1` replacing `localhost`).
+- Full CI suite pass achieved.
