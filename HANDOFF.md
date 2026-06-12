@@ -9,6 +9,7 @@
 
 ## Notable Code Modifications
 - `models.py`: Added `Habit` ORM block, `list_users_for_notifications()`, `list_public_users()`, and `delete_goal()`.
+- `models.py`: Updated `update_user_settings()` with `is_public` override capability allowing correct API endpoint schema resolution.
 - `app.py`: Registered `habits_bp` blueprint properly.
 - `frontend/src/store.ts`: Added `badges` to generic `UserState` interface for static typing.
 - Tests: updated all Playwright locator calls to match standard Tailwind implementations in the current components.
@@ -24,4 +25,6 @@
 - Solved missing `badges` initialization typing errors inside `frontend/src/store.ts`.
 - Repaired `frontend/src/router/index.ts` bad TypeScript mappings which halted Vite builds.
 - Refactored End-to-End browser Playwright assertions preventing headless timeout flakes by explicitly defining test IP binds (`127.0.0.1` replacing `localhost`).
+- Corrected Node 24 Action deprecation limits in Github CI `yaml` file.
+- Addressed Python `ruff` style checks explicitly failing tests (unused variables/imports).
 - Full CI suite pass achieved.

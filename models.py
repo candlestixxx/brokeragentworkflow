@@ -160,12 +160,15 @@ def update_user_avatar(user_id, avatar_url, db_path=None):
     return success
 
 
-def update_user_settings(user_id, notifications_enabled, db_path=None):
+def update_user_settings(user_id, notifications_enabled, is_public=None, db_path=None):
     session = _get_session(db_path)
     user = session.get(User, int(user_id))
     success = False
     if user:
-        user.notifications_enabled = notifications_enabled
+        if notifications_enabled is not None:
+            user.notifications_enabled = notifications_enabled
+        if is_public is not None:
+            user.is_public = is_public
         session.commit()
         success = True
     session.close()
