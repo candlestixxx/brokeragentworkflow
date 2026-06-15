@@ -214,7 +214,7 @@ def update_user_settings(user_id, notifications_enabled=None, is_public=None, db
 def list_users_for_notifications(db_path=None):
     """Retrieve all users who have notifications enabled."""
     with session_scope(db_path) as session:
-        users = session.query(User).filter(User.notifications_enabled == True).all()
+        users = session.query(User).filter(User.notifications_enabled.is_(True)).all()
         return [{"id": u.id, "username": u.username} for u in users]
 
 
