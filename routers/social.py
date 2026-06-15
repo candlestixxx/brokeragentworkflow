@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 import models
 from routers.auth_deps import get_current_user
 
@@ -12,7 +12,7 @@ def get_public_users(user=Depends(get_current_user)):
 @router.get("/users/{user_id}/profile")
 def get_user_profile(user_id: int, user=Depends(get_current_user)):
     target_user = models.get_user_by_id(user_id)
-    if not target_user or getattr(target_user, 'is_public', False) == False:
+    if not target_user or getattr(target_user, 'is_public', False) is False:
         raise HTTPException(status_code=404, detail="User not found or is private")
 
     recent_completed = models.list_completed_goals(user_id=target_user.id)

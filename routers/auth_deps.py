@@ -1,5 +1,4 @@
-from fastapi import Depends, HTTPException, status, Request
-from fastapi.security import APIKeyCookie
+from fastapi import Depends, HTTPException, Request
 import os
 import models
 

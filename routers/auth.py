@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from pydantic import BaseModel
 import models
 from routers.auth_deps import manager, get_current_user
