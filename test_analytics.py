@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 import models
 import os
 
+
 @pytest.fixture
 def client():
     if os.path.exists("test_analytics.db"):
@@ -18,18 +19,17 @@ def client():
     if os.path.exists("test_analytics.db"):
         os.remove("test_analytics.db")
 
+
 def test_analytics_api(client):
     # Register user
     res = client.post(
-        "/api/register",
-        json={"username": "analytics_user_2", "password": "password"}
+        "/api/register", json={"username": "analytics_user_2", "password": "password"}
     )
     assert res.status_code == 201
 
     # Login
     client.post(
-        "/api/login",
-        json={"username": "analytics_user_2", "password": "password"}
+        "/api/login", json={"username": "analytics_user_2", "password": "password"}
     )
 
     # Add goals

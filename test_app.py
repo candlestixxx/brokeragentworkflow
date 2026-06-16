@@ -27,7 +27,10 @@ def client():
 
 def test_sms_reply_generic(client):
     rv = client.post("/sms", data={"Body": "Hello"})
-    assert b"Welcome to One-Minute Manager. Reply 'list' to see pending goals." in rv.content
+    assert (
+        b"Welcome to One-Minute Manager. Reply 'list' to see pending goals."
+        in rv.content
+    )
 
 
 def test_sms_reply_list_empty(client):
@@ -45,7 +48,10 @@ def test_sms_reply_list_with_goals(client):
 
 def test_voice_reply(client):
     rv = client.post("/voice")
-    assert b"Hello. I am your One-Minute Manager. You are doing great today. Goodbye." in rv.content
+    assert (
+        b"Hello. I am your One-Minute Manager. You are doing great today. Goodbye."
+        in rv.content
+    )
 
 
 def login_test_user(client):
@@ -187,6 +193,7 @@ def test_api_complete_initiative(client):
     assert rv.status_code == 200
     assert rv.json()["message"] == "Initiative 1 completed."
 
+
 def test_api_habit_tracking(client):
     login_test_user(client)
 
@@ -213,17 +220,21 @@ def test_api_habit_tracking(client):
     rv = client.get("/api/habits")
     assert len(rv.json()["habits"]) == 0
 
+
 def test_api_breakdown_goal(client):
     login_test_user(client)
 
     # Request AI Breakdown
-    rv = client.post("/api/goals/breakdown", json=dict(description="Write a book about the universe"))
+    rv = client.post(
+        "/api/goals/breakdown", json=dict(description="Write a book about the universe")
+    )
     assert rv.status_code == 200
 
     subgoals = rv.json().get("subgoals")
     assert subgoals is not None
     assert len(subgoals) == 3
     assert "Write a book about t" in subgoals[0]
+
 
 def test_api_analytics(client):
     login_test_user(client)

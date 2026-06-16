@@ -30,7 +30,9 @@ def trigger_morning_prompt():
             body=f"Good morning! You have {goal_count} pending One-Minute goals for today.",
             speakable_message=f"Good morning! You have {goal_count} pending goals today. Let's make it happen.",
         )
-        print(f"Triggered morning prompt for {user_info['username']} ({goal_count} goals).")
+        print(
+            f"Triggered morning prompt for {user_info['username']} ({goal_count} goals)."
+        )
 
 
 @celery_app.task
@@ -49,7 +51,9 @@ def trigger_quarterly_reminder():
             body=f"Reminder: You have {init_count} pending quarterly initiatives. Are your systems in place?",
             speakable_message=f"Reminder: You have {init_count} pending quarterly initiatives. Plan ahead.",
         )
-        print(f"Triggered quarterly reminder for {user_info['username']} ({init_count} initiatives).")
+        print(
+            f"Triggered quarterly reminder for {user_info['username']} ({init_count} initiatives)."
+        )
 
 
 celery_app.conf.beat_schedule = {

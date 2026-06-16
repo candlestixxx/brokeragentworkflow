@@ -8,7 +8,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Boolean,
-    Table
+    Table,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, backref
 from sqlalchemy.sql import func
@@ -24,13 +24,15 @@ Base = declarative_base()
 
 # --- Association Tables ---
 user_badges = Table(
-    'user_badges', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('badge_id', Integer, ForeignKey('badges.id'), primary_key=True),
-    Column('awarded_at', DateTime(timezone=True), server_default=func.now())
+    "user_badges",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("badge_id", Integer, ForeignKey("badges.id"), primary_key=True),
+    Column("awarded_at", DateTime(timezone=True), server_default=func.now()),
 )
 
 # --- Models ---
+
 
 class Badge(Base):
     __tablename__ = "badges"
@@ -40,6 +42,7 @@ class Badge(Base):
     icon = Column(String(50), nullable=False, default="StarIcon")
 
     users = relationship("User", secondary=user_badges, back_populates="badges")
+
 
 class User(Base, UserMixin):
     __tablename__ = "users"
@@ -129,7 +132,7 @@ def _get_engine(db_path=None):
             engine_args["poolclass"] = NullPool
         else:
             engine_args["pool_pre_ping"] = True
-        
+
         _engines[url] = create_engine(url, echo=False, **engine_args)
     return _engines[url]
 
@@ -198,7 +201,9 @@ def update_user_avatar(user_id, avatar_url, db_path=None):
         return success
 
 
-def update_user_settings(user_id, notifications_enabled=None, is_public=None, db_path=None):
+def update_user_settings(
+    user_id, notifications_enabled=None, is_public=None, db_path=None
+):
     with session_scope(db_path) as session:
         user = session.get(User, int(user_id))
         success = False
@@ -222,7 +227,10 @@ def list_public_users(db_path=None):
     """Retrieve all users who have set their profile to public."""
     with session_scope(db_path) as session:
         users = session.query(User).filter(User.is_public is True).all()
-        return [{"id": u.id, "username": u.username, "avatar_url": u.avatar_url} for u in users]
+        return [
+            {"id": u.id, "username": u.username, "avatar_url": u.avatar_url}
+            for u in users
+        ]
 
 
 # --- Habits ---
@@ -257,7 +265,11 @@ def list_habits(user_id=1, db_path=None):
 
 def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
     with session_scope(db_path) as session:
-        habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+        habit = (
+            session.query(Habit)
+            .filter(Habit.id == habit_id, Habit.user_id == user_id)
+            .first()
+        )
         success = False
         if habit:
             if habit.last_completed_date == completed_date:
@@ -266,7 +278,9 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
             else:
                 if habit.last_completed_date:
                     try:
-                        last_date = datetime.strptime(habit.last_completed_date, "%Y-%m-%d").date()
+                        last_date = datetime.strptime(
+                            habit.last_completed_date, "%Y-%m-%d"
+                        ).date()
                         curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
                         if curr_date - last_date == timedelta(days=1):
                             # Streak continues
@@ -290,7 +304,11 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
 
 def delete_habit(habit_id, user_id=1, db_path=None):
     with session_scope(db_path) as session:
-        habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+        habit = (
+            session.query(Habit)
+            .filter(Habit.id == habit_id, Habit.user_id == user_id)
+            .first()
+        )
         success = False
         if habit:
             session.delete(habit)
@@ -310,7 +328,7 @@ def add_goal(description, user_id=1, parent_id=None, db_path=None):
             "id": new_goal.id,
             "description": new_goal.description,
             "parent_id": new_goal.parent_id,
-            "subgoals": []
+            "subgoals": [],
         }
 
 
@@ -320,7 +338,9 @@ def list_pending_goals(user_id=1, db_path=None):
         goals = (
             session.query(Goal)
             .filter(
-                Goal.status == "pending", Goal.user_id == user_id, Goal.parent_id.is_(None)
+                Goal.status == "pending",
+                Goal.user_id == user_id,
+                Goal.parent_id.is_(None),
             )
             .all()
         )
@@ -386,7 +406,9 @@ def list_calendar_goals(user_id=1, db_path=None):
 def complete_goal(goal_id, user_id=1, db_path=None):
     with session_scope(db_path) as session:
         goal = (
-            session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()
+            session.query(Goal)
+            .filter(Goal.id == goal_id, Goal.user_id == user_id)
+            .first()
         )
         success = False
         if goal:
@@ -398,7 +420,9 @@ def complete_goal(goal_id, user_id=1, db_path=None):
 def delete_goal(goal_id, user_id=1, db_path=None):
     with session_scope(db_path) as session:
         goal = (
-            session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()
+            session.query(Goal)
+            .filter(Goal.id == goal_id, Goal.user_id == user_id)
+            .first()
         )
         success = False
         if goal:
@@ -448,19 +472,30 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
             success = True
         return success
 
+
 # --- Analytics ---
 def get_user_analytics(user_id=1, db_path=None):
     with session_scope(db_path) as session:
         total_goals = session.query(Goal).filter_by(user_id=user_id).count()
-        completed_goals = session.query(Goal).filter_by(user_id=user_id, status="completed").count()
-        pending_goals = session.query(Goal).filter_by(user_id=user_id, status="pending").count()
+        completed_goals = (
+            session.query(Goal).filter_by(user_id=user_id, status="completed").count()
+        )
+        pending_goals = (
+            session.query(Goal).filter_by(user_id=user_id, status="pending").count()
+        )
 
         completion_percentage = 0
         if total_goals > 0:
             completion_percentage = round((completed_goals / total_goals) * 100)
 
         # Calculate streak
-        completed_dates = session.query(func.date(Goal.created_at)).filter_by(user_id=user_id, status="completed").group_by(func.date(Goal.created_at)).order_by(func.date(Goal.created_at).desc()).all()
+        completed_dates = (
+            session.query(func.date(Goal.created_at))
+            .filter_by(user_id=user_id, status="completed")
+            .group_by(func.date(Goal.created_at))
+            .order_by(func.date(Goal.created_at).desc())
+            .all()
+        )
 
         streak = 0
         current_date = datetime.now().date()
@@ -485,17 +520,34 @@ def get_user_analytics(user_id=1, db_path=None):
             "completed_goals": completed_goals,
             "pending_goals": pending_goals,
             "completion_percentage": completion_percentage,
-            "streak": streak
+            "streak": streak,
         }
+
 
 # --- Gamification / Badges ---
 def seed_badges(db_path=None):
     with session_scope(db_path) as session:
         default_badges = [
-            {"name": "First Step", "description": "Complete your first goal", "icon": "StarIcon"},
-            {"name": "On a Roll", "description": "Complete 5 goals", "icon": "FireIcon"},
-            {"name": "Goal Crusher", "description": "Complete 20 goals", "icon": "TrophyIcon"},
-            {"name": "Consistent", "description": "Achieve a 3-day streak", "icon": "CheckBadgeIcon"}
+            {
+                "name": "First Step",
+                "description": "Complete your first goal",
+                "icon": "StarIcon",
+            },
+            {
+                "name": "On a Roll",
+                "description": "Complete 5 goals",
+                "icon": "FireIcon",
+            },
+            {
+                "name": "Goal Crusher",
+                "description": "Complete 20 goals",
+                "icon": "TrophyIcon",
+            },
+            {
+                "name": "Consistent",
+                "description": "Achieve a 3-day streak",
+                "icon": "CheckBadgeIcon",
+            },
         ]
 
         for b_data in default_badges:
@@ -503,6 +555,7 @@ def seed_badges(db_path=None):
             if not existing:
                 new_badge = Badge(**b_data)
                 session.add(new_badge)
+
 
 def evaluate_badges(user_id, db_path=None):
     with session_scope(db_path) as session:
@@ -520,7 +573,7 @@ def evaluate_badges(user_id, db_path=None):
             ("First Step", lambda s: s["completed_goals"] >= 1),
             ("On a Roll", lambda s: s["completed_goals"] >= 5),
             ("Goal Crusher", lambda s: s["completed_goals"] >= 20),
-            ("Consistent", lambda s: s["streak"] >= 3)
+            ("Consistent", lambda s: s["streak"] >= 3),
         ]
 
         for b_name, condition in rules:
@@ -528,9 +581,16 @@ def evaluate_badges(user_id, db_path=None):
                 badge = badges_by_name.get(b_name)
                 if badge:
                     user.badges.append(badge)
-                    newly_awarded.append({"name": badge.name, "description": badge.description, "icon": badge.icon})
+                    newly_awarded.append(
+                        {
+                            "name": badge.name,
+                            "description": badge.description,
+                            "icon": badge.icon,
+                        }
+                    )
 
         return newly_awarded
+
 
 def get_user_badges(user_id, db_path=None):
     with session_scope(db_path) as session:
@@ -538,4 +598,7 @@ def get_user_badges(user_id, db_path=None):
         if not user:
             return []
 
-        return [{"id": b.id, "name": b.name, "description": b.description, "icon": b.icon} for b in user.badges]
+        return [
+            {"id": b.id, "name": b.name, "description": b.description, "icon": b.icon}
+            for b in user.badges
+        ]

@@ -1,27 +1,32 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from pydantic import BaseModel
 import models
-from routers.auth_deps import manager, get_current_user
+from routers.auth_deps import manager, get_current_user, get_current_user_optional
 
 router = APIRouter(prefix="/api")
+
 
 class LoginRequest(BaseModel):
     username: str
     password: str
 
+
 class RegisterRequest(BaseModel):
     username: str
     password: str
+
 
 class SettingsRequest(BaseModel):
     notifications_enabled: bool | None = None
     is_public: bool | None = None
 
+
 class AvatarRequest(BaseModel):
     avatar_url: str
 
+
 @router.get("/me/analytics")
-def api_me_analytics(user = Depends(get_current_user)):
+def api_me_analytics(user=Depends(get_current_user)):
     completed_goals = len(models.list_completed_goals(user_id=user.id))
     active_initiatives = len(models.list_pending_initiatives(user_id=user.id))
     habits = models.list_habits(user_id=user.id)
@@ -32,16 +37,17 @@ def api_me_analytics(user = Depends(get_current_user)):
         "completed_goals": completed_goals,
         "active_initiatives": active_initiatives,
         "total_habits": total_habits,
-        "longest_streak": longest_streak
+        "longest_streak": longest_streak,
     }
 
+
 @router.get("/me")
-async def api_me(request: Request):
+def api_me(request: Request):
     token = request.cookies.get("session")
     user = None
     if token:
         try:
-            user = await manager.get_current_user(token)
+            user = get_current_user_optional(request)
         except Exception:
             pass
 
@@ -52,14 +58,17 @@ async def api_me(request: Request):
             "username": user.username,
             "avatar_url": user.avatar_url,
             "notifications_enabled": user.notifications_enabled,
-            "is_public": getattr(user, 'is_public', False),
-            "has_completed_onboarding": getattr(user, 'has_completed_onboarding', False),
-            "badges": models.get_user_badges(user.id)
+            "is_public": getattr(user, "is_public", False),
+            "has_completed_onboarding": getattr(
+                user, "has_completed_onboarding", False
+            ),
+            "badges": models.get_user_badges(user.id),
         }
     return {"authenticated": False}
 
+
 @router.post("/me/onboarding")
-def api_complete_onboarding(user = Depends(get_current_user)):
+def api_complete_onboarding(user=Depends(get_current_user)):
     with models.session_scope() as session:
         db_user = session.get(models.User, user.id)
         if db_user:
@@ -67,8 +76,9 @@ def api_complete_onboarding(user = Depends(get_current_user)):
             return {"message": "Onboarding completed."}
     raise HTTPException(status_code=500, detail="Update failed.")
 
+
 @router.post("/me/settings")
-def api_update_settings(data: SettingsRequest, user = Depends(get_current_user)):
+def api_update_settings(data: SettingsRequest, user=Depends(get_current_user)):
     if data.notifications_enabled is None and data.is_public is None:
         raise HTTPException(status_code=400, detail="Missing setting parameters.")
 
@@ -80,8 +90,9 @@ def api_update_settings(data: SettingsRequest, user = Depends(get_current_user))
         return {"message": "Settings updated."}
     raise HTTPException(status_code=500, detail="Update failed.")
 
+
 @router.post("/me/avatar")
-def api_update_avatar(data: AvatarRequest, user = Depends(get_current_user)):
+def api_update_avatar(data: AvatarRequest, user=Depends(get_current_user)):
     if not data.avatar_url:
         raise HTTPException(status_code=400, detail="Avatar URL required.")
 
@@ -89,6 +100,7 @@ def api_update_avatar(data: AvatarRequest, user = Depends(get_current_user)):
     if success:
         return {"message": "Avatar updated."}
     raise HTTPException(status_code=500, detail="Update failed.")
+
 
 @router.post("/login")
 def api_login(data: LoginRequest, response: Response):
@@ -98,6 +110,7 @@ def api_login(data: LoginRequest, response: Response):
         manager.set_cookie(response, access_token)
         return {"message": "Logged in successfully."}
     raise HTTPException(status_code=401, detail="Invalid username or password.")
+
 
 @router.post("/register", status_code=201)
 def api_register(data: RegisterRequest):
@@ -111,7 +124,8 @@ def api_register(data: RegisterRequest):
         return {"message": "Registration successful."}
     raise HTTPException(status_code=500, detail="Registration failed.")
 
+
 @router.post("/logout")
-def api_logout(response: Response, user = Depends(get_current_user)):
+def api_logout(response: Response, user=Depends(get_current_user)):
     response.delete_cookie("session")
     return {"message": "Logged out successfully."}

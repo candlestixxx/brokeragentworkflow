@@ -174,7 +174,9 @@ def update_user_avatar(user_id, avatar_url, db_path=None):
         return success
 
 
-def update_user_settings(user_id, notifications_enabled=None, is_public=None, db_path=None):
+def update_user_settings(
+    user_id, notifications_enabled=None, is_public=None, db_path=None
+):
     with session_scope(db_path) as session:
         user = session.get(User, int(user_id))
         success = False
@@ -198,7 +200,10 @@ def list_public_users(db_path=None):
     """Retrieve all users who have set their profile to public."""
     with session_scope(db_path) as session:
         users = session.query(User).filter(User.is_public is True).all()
-        return [{"id": u.id, "username": u.username, "avatar_url": u.avatar_url} for u in users]
+        return [
+            {"id": u.id, "username": u.username, "avatar_url": u.avatar_url}
+            for u in users
+        ]
 
 
 # --- Habits ---
@@ -233,7 +238,11 @@ def list_habits(user_id=1, db_path=None):
 
 def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
     with session_scope(db_path) as session:
-        habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+        habit = (
+            session.query(Habit)
+            .filter(Habit.id == habit_id, Habit.user_id == user_id)
+            .first()
+        )
         success = False
         if habit:
             if habit.last_completed_date == completed_date:
@@ -241,7 +250,9 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
                 pass
             else:
                 if habit.last_completed_date:
-                    last_date = datetime.strptime(habit.last_completed_date, "%Y-%m-%d").date()
+                    last_date = datetime.strptime(
+                        habit.last_completed_date, "%Y-%m-%d"
+                    ).date()
                     curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
                     if curr_date - last_date == timedelta(days=1):
                         # Streak continues
@@ -263,7 +274,11 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
 
 def delete_habit(habit_id, user_id=1, db_path=None):
     with session_scope(db_path) as session:
-        habit = session.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+        habit = (
+            session.query(Habit)
+            .filter(Habit.id == habit_id, Habit.user_id == user_id)
+            .first()
+        )
         success = False
         if habit:
             session.delete(habit)
@@ -283,7 +298,7 @@ def add_goal(description, user_id=1, parent_id=None, db_path=None):
             "id": new_goal.id,
             "description": new_goal.description,
             "parent_id": new_goal.parent_id,
-            "subgoals": []
+            "subgoals": [],
         }
 
 
@@ -293,7 +308,9 @@ def list_pending_goals(user_id=1, db_path=None):
         goals = (
             session.query(Goal)
             .filter(
-                Goal.status == "pending", Goal.user_id == user_id, Goal.parent_id.is_(None)
+                Goal.status == "pending",
+                Goal.user_id == user_id,
+                Goal.parent_id.is_(None),
             )
             .all()
         )
@@ -359,7 +376,9 @@ def list_calendar_goals(user_id=1, db_path=None):
 def complete_goal(goal_id, user_id=1, db_path=None):
     with session_scope(db_path) as session:
         goal = (
-            session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()
+            session.query(Goal)
+            .filter(Goal.id == goal_id, Goal.user_id == user_id)
+            .first()
         )
         success = False
         if goal:
@@ -371,7 +390,9 @@ def complete_goal(goal_id, user_id=1, db_path=None):
 def delete_goal(goal_id, user_id=1, db_path=None):
     with session_scope(db_path) as session:
         goal = (
-            session.query(Goal).filter(Goal.id == goal_id, Goal.user_id == user_id).first()
+            session.query(Goal)
+            .filter(Goal.id == goal_id, Goal.user_id == user_id)
+            .first()
         )
         success = False
         if goal:

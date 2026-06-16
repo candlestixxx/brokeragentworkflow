@@ -12,10 +12,12 @@ app = FastAPI()
 # Mount Socket.IO app
 app.mount("/socket.io", socket_app)
 
+
 # Ensure DB is initialized before first request
 @app.on_event("startup")
 def startup_event():
     models.init_db()
+
 
 # Register Routers
 app.include_router(auth.router)
@@ -29,7 +31,11 @@ app.include_router(webhooks.router)
 # Mount static files (Vue dist)
 dist_dir = os.path.join(os.path.dirname(__file__), "dist")
 if os.path.exists(dist_dir):
-    app.mount("/assets", StaticFiles(directory=os.path.join(dist_dir, "assets")), name="assets")
+    app.mount(
+        "/assets",
+        StaticFiles(directory=os.path.join(dist_dir, "assets")),
+        name="assets",
+    )
 
     @app.get("/{full_path:path}")
     async def serve_vue_app(full_path: str):
@@ -45,4 +51,5 @@ else:
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=5000)

@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 import models
 import os
 
+
 @pytest.fixture
 def client():
     if os.path.exists("test_badges.db"):
@@ -18,9 +19,12 @@ def client():
     if os.path.exists("test_badges.db"):
         os.remove("test_badges.db")
 
+
 def test_gamification_badges(client):
     # Register & Login
-    client.post("/api/register", json={"username": "badge_user", "password": "password"})
+    client.post(
+        "/api/register", json={"username": "badge_user", "password": "password"}
+    )
     client.post("/api/login", json={"username": "badge_user", "password": "password"})
 
     # Check initial badges

@@ -4,6 +4,7 @@ from routers.auth_deps import get_current_user
 
 router = APIRouter()
 
+
 @router.get("/api/analytics")
 def get_analytics(user=Depends(get_current_user)):
     stats = models.get_user_analytics(user.id)
