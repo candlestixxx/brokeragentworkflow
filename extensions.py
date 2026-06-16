@@ -1,3 +1,4 @@
+import logging
 import asyncio
 import socketio
 
@@ -14,7 +15,7 @@ socketio_server = sio
 
 
 # We need to bridge the async emit into the running loop safely from a sync thread
-import logging
+
 
 _main_loop = None
 
