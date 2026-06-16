@@ -7,26 +7,27 @@ from extensions import socket_app
 
 from routers import auth, goals, habits, social, analytics, initiatives, webhooks
 
-app = FastAPI()
+fastapi_app = FastAPI()
+app = fastapi_app
 
 # Mount Socket.IO app
-app.mount("/socket.io", socket_app)
+# Wrapped by ASGIApp below
 
 
 # Ensure DB is initialized before first request
-@app.on_event("startup")
+@fastapi_app.on_event("startup")
 def startup_event():
     models.init_db()
 
 
 # Register Routers
-app.include_router(auth.router)
-app.include_router(goals.router)
-app.include_router(habits.router)
-app.include_router(social.router)
-app.include_router(analytics.router)
-app.include_router(initiatives.router)
-app.include_router(webhooks.router)
+fastapi_app.include_router(auth.router)
+fastapi_app.include_router(goals.router)
+fastapi_app.include_router(habits.router)
+fastapi_app.include_router(social.router)
+fastapi_app.include_router(analytics.router)
+fastapi_app.include_router(initiatives.router)
+fastapi_app.include_router(webhooks.router)
 
 # Mount static files (Vue dist)
 dist_dir = os.path.join(os.path.dirname(__file__), "dist")
@@ -37,7 +38,7 @@ if os.path.exists(dist_dir):
         name="assets",
     )
 
-    @app.get("/{full_path:path}")
+    @fastapi_app.get("/{full_path:path}")
     async def serve_vue_app(full_path: str):
         # Serve the index.html for any route not matched by API to let Vue handle routing
         if not full_path.startswith("api/") and not full_path.startswith("socket.io/"):
@@ -53,3 +54,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=5000)
+
+import socketio
+from extensions import sio
+app = socketio.ASGIApp(sio, other_asgi_app=fastapi_app, socketio_path='socket.io')

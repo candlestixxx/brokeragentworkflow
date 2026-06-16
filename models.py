@@ -226,7 +226,7 @@ def list_users_for_notifications(db_path=None):
 def list_public_users(db_path=None):
     """Retrieve all users who have set their profile to public."""
     with session_scope(db_path) as session:
-        users = session.query(User).filter(User.is_public is True).all()
+        users = session.query(User).filter(User.is_public.is_(True)).all()
         return [
             {"id": u.id, "username": u.username, "avatar_url": u.avatar_url}
             for u in users
