@@ -11,12 +11,25 @@ socket_app = socketio.ASGIApp(sio)
 # though we'll update them to use `sio` directly.
 socketio_server = sio
 
+
+
+# We need to bridge the async emit into the running loop safely from a sync thread
+import logging
+
+_main_loop = None
+
+def get_main_loop():
+    global _main_loop
+    return _main_loop
+
+def set_main_loop(loop):
+    global _main_loop
+    _main_loop = loop
+
 def sync_emit(event, data, to=None):
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = None
+    loop = get_main_loop()
     if loop and loop.is_running():
-        loop.create_task(sio.emit(event, data, to=to))
+        # Dispatch to the main event loop thread safely
+        asyncio.run_coroutine_threadsafe(sio.emit(event, data, to=to), loop)
     else:
-        asyncio.run(sio.emit(event, data, to=to))
+        logging.warning("No main event loop running, skipping sync_emit")

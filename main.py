@@ -18,6 +18,9 @@ app = fastapi_app
 # Ensure DB is initialized before first request
 @fastapi_app.on_event("startup")
 def startup_event():
+    import asyncio
+    import extensions
+    extensions.set_main_loop(asyncio.get_running_loop())
     models.init_db()
 
 
@@ -56,4 +59,4 @@ if __name__ == "__main__":
 
     uvicorn.run(app, host="0.0.0.0", port=5000)
 
-app = socketio.ASGIApp(sio, other_asgi_app=fastapi_app, socketio_path='socket.io')
+app = socketio.ASGIApp(sio, other_asgi_app=fastapi_app, socketio_path="socket.io")
