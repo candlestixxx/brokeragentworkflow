@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from notifications import notify_all
 import models
-from extensions import socketio_server, sync_emit
 from routers.auth_deps import get_current_user
 
 router = APIRouter(prefix="/api/goals")

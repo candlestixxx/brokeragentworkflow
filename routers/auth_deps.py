@@ -1,4 +1,3 @@
-import extensions
 from fastapi import Depends, HTTPException, Request
 import os
 import models

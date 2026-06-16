@@ -57,7 +57,7 @@ def test_social_community_page(page: Page):
 
     try:
         expect(page.locator("h2:has-text('Shared Momentum')")).to_be_visible(timeout=5000)
-    except:
+    except Exception:
         pass
 
     # The username element may be logically hidden but exists, let's use to_be_attached or simple existence

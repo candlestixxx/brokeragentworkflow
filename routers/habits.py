@@ -2,7 +2,6 @@ import extensions
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 import models
-from extensions import socketio_server, sync_emit
 from routers.auth_deps import get_current_user
 from datetime import datetime
 

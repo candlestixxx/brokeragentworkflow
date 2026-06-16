@@ -1,3 +1,4 @@
+import asyncio
 import socketio
 
 # Initialize the python-socketio AsyncServer
@@ -10,7 +11,6 @@ socket_app = socketio.ASGIApp(sio)
 # though we'll update them to use `sio` directly.
 socketio_server = sio
 
-import asyncio
 def sync_emit(event, data, to=None):
     try:
         loop = asyncio.get_running_loop()

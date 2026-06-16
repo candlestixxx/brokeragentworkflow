@@ -1,8 +1,7 @@
-import extensions
 from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from pydantic import BaseModel
 import models
-from routers.auth_deps import manager, get_current_user, get_current_user_optional, query_user, get_current_user_optional
+from routers.auth_deps import manager, get_current_user, get_current_user_optional
 
 router = APIRouter(prefix="/api")
 

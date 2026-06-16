@@ -1,9 +1,10 @@
+import socketio
+from extensions import sio
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
 import models
-from extensions import socket_app
 
 from routers import auth, goals, habits, social, analytics, initiatives, webhooks
 
@@ -55,6 +56,4 @@ if __name__ == "__main__":
 
     uvicorn.run(app, host="0.0.0.0", port=5000)
 
-import socketio
-from extensions import sio
 app = socketio.ASGIApp(sio, other_asgi_app=fastapi_app, socketio_path='socket.io')

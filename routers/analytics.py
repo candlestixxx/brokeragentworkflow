@@ -1,4 +1,3 @@
-import extensions
 from fastapi import APIRouter, Depends
 import models
 from routers.auth_deps import get_current_user
