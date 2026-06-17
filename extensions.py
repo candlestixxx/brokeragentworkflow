@@ -13,19 +13,21 @@ socket_app = socketio.ASGIApp(sio)
 socketio_server = sio
 
 
-
 # We need to bridge the async emit into the running loop safely from a sync thread
 
 
 _main_loop = None
 
+
 def get_main_loop():
     global _main_loop
     return _main_loop
 
+
 def set_main_loop(loop):
     global _main_loop
     _main_loop = loop
+
 
 def sync_emit(event, data, to=None):
     loop = get_main_loop()

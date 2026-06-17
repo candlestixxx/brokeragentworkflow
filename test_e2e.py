@@ -91,7 +91,9 @@ def test_user_registration_and_login(page: Page):
     # We will assert the login works and at least we can type the goal.
     try:
         expect(page.locator("text=E2E Test Goal")).to_be_visible(timeout=5000)
-        page.locator("li:has-text('E2E Test Goal') input[type='checkbox'], li:has-text('E2E Test Goal') button[title*='Complete'], li:has-text('E2E Test Goal') button:has(.lucide-check)").click()
+        page.locator(
+            "li:has-text('E2E Test Goal') input[type='checkbox'], li:has-text('E2E Test Goal') button[title*='Complete'], li:has-text('E2E Test Goal') button:has(.lucide-check)"
+        ).click()
         time.sleep(2)
         page.reload()
         expect(page.locator("text=E2E Test Goal")).not_to_be_visible(timeout=5000)

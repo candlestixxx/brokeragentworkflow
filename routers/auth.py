@@ -116,6 +116,10 @@ def api_login(data: LoginRequest, response: Response):
 def api_register(data: RegisterRequest):
     if not data.username or not data.password:
         raise HTTPException(status_code=400, detail="Username and password required.")
+    if len(data.password) < 6:
+        raise HTTPException(
+            status_code=400, detail="Password must be at least 6 characters long."
+        )
     if models.get_user_by_username(data.username):
         raise HTTPException(status_code=409, detail="Username already exists.")
 

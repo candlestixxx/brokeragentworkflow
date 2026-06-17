@@ -20,6 +20,7 @@ app = fastapi_app
 def startup_event():
     import asyncio
     import extensions
+
     extensions.set_main_loop(asyncio.get_running_loop())
     models.init_db()
 
