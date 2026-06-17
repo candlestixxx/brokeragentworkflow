@@ -10,4 +10,4 @@
 - **Phase 33:** FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact. (Completed)
 
 ## Future Ideas
-- Expanded Social features
+- Expanded Social features (Pending UI scaling)
