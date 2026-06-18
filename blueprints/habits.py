@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 import models
 from extensions import socketio
-from datetime import datetime
 
 habits_bp = Blueprint("habits", __name__, url_prefix="/api/habits")
 
@@ -26,8 +25,7 @@ def api_add_habit():
 @habits_bp.route("/<int:habit_id>/complete", methods=["POST"])
 @login_required
 def api_complete_habit(habit_id):
-    today = datetime.now().strftime("%Y-%m-%d")
-    success = models.complete_habit(habit_id, today, user_id=current_user.id)
+    success = models.complete_habit(habit_id, user_id=current_user.id)
     if success:
         socketio.emit("data_updated", {"message": "Habit completed"}, to=str(current_user.id))
         return jsonify({"message": f"Habit {habit_id} completed for today."})

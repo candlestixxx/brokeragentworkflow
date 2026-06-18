@@ -43,8 +43,8 @@ def api_add_goal():
             body=f"You added a new goal: {description}",
             speakable_message=f"You added a new goal: {description}",
         )
-        socketio.emit("goal_added", {"goal": goal_data}, to=str(current_user.id))
-        return jsonify({"message": "Goal added.", "id": goal_data["id"]}), 201
+        socketio.emit("goal_added", {"goal": {"id": goal_data, "description": description, "parent_id": parent_id}}, to=str(current_user.id))
+        return jsonify({"message": "Goal added.", "id": goal_data}), 201
     return jsonify({"error": "Description required."}), 400
 
 

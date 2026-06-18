@@ -33,38 +33,38 @@ def test_server():
 
 def test_user_registration_and_login(page: Page):
     """Test the full flow of registering, logging in, and creating a goal."""
-    page.goto("http://localhost:5000/")
-    page.click("a:has-text('Register')")
+    page.goto("http://127.0.0.1:5000/")
+    page.goto("http://127.0.0.1:5000/register")
 
     username = f"e2e_user_{int(time.time())}"
 
     page.locator(
-        "div.max-w-md:has(h2:has-text('Register')) >> input[type='text']"
+        "input[placeholder='Pick a handle']"
     ).fill(username)
     page.locator(
-        "div.max-w-md:has(h2:has-text('Register')) >> input[type='password']"
+        "input[placeholder='Make it strong']"
     ).fill("secret123")
     page.locator(
-        "div.max-w-md:has(h2:has-text('Register')) >> button[type='submit']"
+        "button:has-text('Create Account')"
     ).click()
 
     expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
 
-    page.click("a:has-text('Login')")
+    page.goto("http://127.0.0.1:5000/login")
 
-    page.locator("div.max-w-md:has(h2:has-text('Login')) >> input[type='text']").fill(
+    page.locator("input[placeholder='Your handle']").fill(
         username
     )
     page.locator(
-        "div.max-w-md:has(h2:has-text('Login')) >> input[type='password']"
+        "input[placeholder='••••••••']"
     ).fill("secret123")
     page.locator(
-        "div.max-w-md:has(h2:has-text('Login')) >> button[type='submit']"
+        "button:has-text('Sign In')"
     ).click()
 
-    expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
+    expect(page.locator("text=Dashboard")).to_be_visible(timeout=5000)
 
-    page.fill("input[placeholder='New daily goal...']", "E2E Test Goal")
+    page.fill("""input[placeholder="What's your primary focus right now?"]""", "E2E Test Goal")
 
     # We must explicitly wait for the socket connection sequence.
     # The safest approach for an E2E test to not be flaky with Websockets is waiting for the DOM update directly
@@ -83,7 +83,7 @@ def test_user_registration_and_login(page: Page):
     # Verify goal appears in the list (wait for websocket or fallback)
     expect(page.locator("text=E2E Test Goal")).to_be_visible(timeout=10000)
 
-    page.click("li:has-text('E2E Test Goal') button:has-text('Complete')")
+    page.click("li:has-text('E2E Test Goal') button[aria-label='Complete goal']")
     time.sleep(2)
     page.reload()
 

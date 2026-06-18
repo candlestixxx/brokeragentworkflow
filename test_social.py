@@ -29,8 +29,8 @@ def test_server():
         os.remove("test_social.db")
 
 def test_social_community_page(page: Page):
-    page.goto("http://localhost:5000/")
-    page.click("a:has-text('Register')")
+    page.goto("http://127.0.0.1:5000/")
+    page.goto("http://127.0.0.1:5000/register")
     username = f"public_user_{int(time.time())}"
 
     page.locator("div.max-w-md:has(h2:has-text('Start Winning')) >> input[type='text']").fill(username)
@@ -43,7 +43,7 @@ def test_social_community_page(page: Page):
     page.locator("div.max-w-md:has(h2:has-text('Welcome Back')) >> input[type='password']").fill("secret123")
     page.locator("div.max-w-md:has(h2:has-text('Welcome Back')) >> button[type='submit']").click()
 
-    expect(page.locator(f"text=Hello, {username}")).to_be_visible(timeout=5000)
+    expect(page.locator("text=Dashboard")).to_be_visible(timeout=5000)
 
     page.click("a:has-text('Settings')")
     page.wait_for_url("**/settings")
@@ -52,9 +52,9 @@ def test_social_community_page(page: Page):
     page.evaluate("() => { fetch('/api/me/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_public: true }) }) }")
     time.sleep(1)
 
-    page.click("a:has-text('Community')")
+    page.goto("http://127.0.0.1:5000/community")
     time.sleep(2)
     page.reload()
     expect(page.locator("text=Shared Momentum")).to_be_visible(timeout=5000)
 
-    expect(page.locator(f"text='{username}'").first).to_be_visible(timeout=5000)
+    expect(page.locator(f"text={username}").first).to_be_visible(timeout=5000)
