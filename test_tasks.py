@@ -16,6 +16,7 @@ def setup_database():
     models.init_db("test_tasks.db")
     # Create test user for tasks (gets ID 1)
     models.create_user("task_user", "password123", "test_tasks.db")
+    models.update_user_settings(1, True, False, "test_tasks.db")
 
     yield
 

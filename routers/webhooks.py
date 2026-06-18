@@ -1,16 +1,17 @@
-from flask import Blueprint, request
+from fastapi import APIRouter, Request, Response
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.twiml.voice_response import VoiceResponse
 import models
 
-webhooks_bp = Blueprint("webhooks", __name__)
+router = APIRouter()
 
 
-@webhooks_bp.route("/sms", methods=["POST"])
-def sms_reply():
+@router.post("/sms")
+async def sms_reply(request: Request):
     """Respond to incoming messages with a friendly SMS."""
-    # Get the message the user sent our Twilio number
-    body = request.values.get("Body", None)
+    # Twilio sends data as application/x-www-form-urlencoded
+    form_data = await request.form()
+    body = form_data.get("Body", None)
 
     # Start our TwiML response
     resp = MessagingResponse()
@@ -34,10 +35,10 @@ def sms_reply():
             "Welcome to One-Minute Manager. Reply 'list' to see pending goals."
         )
 
-    return str(resp)
+    return Response(content=str(resp), media_type="application/xml")
 
 
-@webhooks_bp.route("/voice", methods=["POST"])
+@router.post("/voice")
 def voice_reply():
     """Respond to incoming phone calls."""
     # Start our TwiML response
@@ -46,4 +47,4 @@ def voice_reply():
     # Read a message aloud to the caller
     resp.say("Hello. I am your One-Minute Manager. You are doing great today. Goodbye.")
 
-    return str(resp)
+    return Response(content=str(resp), media_type="application/xml")

@@ -7,6 +7,7 @@
 - **Phase 30:** Implement WebSocket Sync Refactoring natively passing granular payload diffs instead of blanket re-fetches optimizing frontend architecture. (Completed)
 - **Phase 31:** Implement Social Accountability by allowing users to share profiles and view teammates' progress. (Completed)
 - **Phase 32:** Gamification & Badges. Reward users for hitting milestones (e.g. 7-day streak, 100 goals). (Completed)
+- **Phase 33:** FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact. (Completed)
 
 ## Future Ideas
-- FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact.
+- Expanded Social features (Pending UI scaling)
