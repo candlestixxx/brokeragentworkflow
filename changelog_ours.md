@@ -1,14 +1,5 @@
 # Changelog
-## [0.33.1] - Automated Deployment Finalization
-- Executed full repository upstream synchronizations.
-- Formatted codebase and finalized documentation layers.
-- Handled E2E UI verification synchronization.
-
-## [0.33.0] - FastAPI Migration
-- Rebuilt the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact.
-- Migrated old Flask test suites over to use FastAPI test client, modifying requests and headers natively properly inherently cleanly effectively safely efficiently flawlessly!
-
-## [0.32.0] - Social Accountability
+## [0.31.0] - Social Accountability
 - Added `is_public` user privacy property, accessible via Settings.
 - Created `SocialView.vue` and `Community` tab to list users who have their accounts marked as public, along with their recent goals.
 
@@ -151,10 +142,3 @@
 
 ## [0.0.0] - Initial Setup
 - Initialized core project documentation.
-
-## 0.26.0
-- **Feature**: Implemented Phase 26 Analytics Dashboard.
-  - Added new `/api/analytics` backend endpoint using `blueprints/analytics.py` and `models.get_user_analytics()`.
-  - Added frontend `AnalyticsView.vue` with responsive charts tracking Total Goals, Completed Goals, Completion Rate, and Day Streak.
-  - Updated Vue Router and NavBar to support the new Analytics route.
-  - Tested logic extensively via `test_analytics.py` and E2E `test_playwright_analytics.py`.
