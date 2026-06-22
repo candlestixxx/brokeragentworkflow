@@ -9,5 +9,7 @@
 - **Phase 32:** Gamification & Badges. Reward users for hitting milestones (e.g. 7-day streak, 100 goals). (Completed)
 - **Phase 33:** FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact. (Completed)
 
+- **Phase 34:** Expanded Social Features. Introduce "High-Fives" (micro-interactions to cheer on public user goals), Leaderboards (tracking the highest active streaks and completed goals across public users), and a global Activity Feed showing real-time goal completions from all opted-in users.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)
