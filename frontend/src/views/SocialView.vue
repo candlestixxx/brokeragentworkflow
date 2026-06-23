@@ -15,7 +15,14 @@
       </p>
     </div>
 
+
+    <!-- Leaderboard Section -->
+    <div class="max-w-3xl mx-auto mb-16">
+      <Leaderboard />
+    </div>
+
     <!-- Users Grid -->
+
     <div v-if="loading" class="flex justify-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-brand-calm border-t-transparent opacity-20"></div>
     </div>
@@ -55,9 +62,46 @@
             </div>
           </div>
 
-          <button class="mt-8 w-full bg-slate-50 dark:bg-slate-900 hover:bg-brand-calm hover:text-white text-slate-600 dark:text-slate-400 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95">
+          <button @click="openProfile(user)" class="mt-8 w-full bg-slate-50 dark:bg-slate-900 hover:bg-brand-calm hover:text-white text-slate-600 dark:text-slate-400 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95">
             View Journey
           </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Profile Modal -->
+    <div v-if="selectedUser" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" @click="selectedUser = null"></div>
+      <div class="relative bg-white dark:bg-slate-800 w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-fade-in">
+        <div class="p-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+          <div class="flex items-center gap-4">
+            <img :src="selectedUser.avatar_url || `https://ui-avatars.com/api/?name=${selectedUser.username}&background=2563eb&color=fff`" class="w-12 h-12 rounded-xl object-cover shadow-sm">
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ selectedUser.username }}'s Journey</h3>
+          </div>
+          <button @click="selectedUser = null" class="p-2 bg-white dark:bg-slate-800 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+            <XMarkIcon class="h-6 w-6 text-slate-500" />
+          </button>
+        </div>
+
+        <div class="p-8 overflow-y-auto">
+          <div v-if="loadingProfile" class="flex justify-center py-10">
+             <div class="animate-spin rounded-full h-8 w-8 border-2 border-brand-calm border-t-transparent opacity-20"></div>
+          </div>
+          <div v-else-if="!userProfile || userProfile.recent_completed_goals.length === 0" class="text-center py-10 text-slate-400 italic">
+            No recent wins yet.
+          </div>
+          <div v-else class="space-y-4">
+             <div v-for="goal in userProfile.recent_completed_goals" :key="goal.id" class="p-5 rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800/50 flex justify-between items-center group">
+               <div>
+                 <p class="font-bold text-slate-700 dark:text-slate-200">{{ goal.description }}</p>
+                 <p class="text-xs text-slate-400 mt-1 font-medium">{{ goal.high_fives || 0 }} High-Fives</p>
+               </div>
+               <button @click="sendHighFive(goal)" class="p-3 bg-brand-calm/10 text-brand-calm rounded-xl hover:bg-brand-calm hover:text-white transition-colors active:scale-95 group-hover:shadow-md" title="Send High-Five!">
+                 <HandRaisedIcon class="h-5 w-5" />
+               </button>
+             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -66,8 +110,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import Leaderboard from '../components/Leaderboard.vue'
 import { 
-  UsersIcon, 
+  UsersIcon, XMarkIcon, HandRaisedIcon,
   ArrowPathIcon, 
   SparklesIcon, 
   RocketLaunchIcon,
@@ -76,6 +121,33 @@ import {
 
 const publicUsers = ref<any[]>([])
 const loading = ref(true)
+const selectedUser = ref<any>(null)
+const userProfile = ref<any>(null)
+const loadingProfile = ref(false)
+
+const openProfile = async (user: any) => {
+  selectedUser.value = user
+  loadingProfile.value = true
+  try {
+    const res = await fetch(`/api/social/users/${user.id}/profile`)
+    if (res.ok) {
+      userProfile.value = await res.json()
+    }
+  } finally {
+    loadingProfile.value = false
+  }
+}
+
+const sendHighFive = async (goal: any) => {
+  try {
+    const res = await fetch(`/api/social/goals/${goal.id}/highfive`, { method: 'POST' })
+    if (res.ok) {
+      goal.high_fives = (goal.high_fives || 0) + 1
+      // Toast notification would be nice, but simple update is fine for MVP
+    }
+  } catch(e) { console.error(e) }
+}
+
 
 onMounted(async () => {
   try {
