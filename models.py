@@ -65,6 +65,7 @@ class User(Base, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 
+
 class HighFive(Base):
     __tablename__ = "high_fives"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -73,7 +74,6 @@ class HighFive(Base):
 
     sender = relationship("User", foreign_keys=[sender_id])
     goal = relationship("Goal", back_populates="high_fives")
-
 
 class Goal(Base):
     __tablename__ = "goals"
@@ -85,9 +85,7 @@ class Goal(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="goals")
-    high_fives = relationship(
-        "HighFive", back_populates="goal", cascade="all, delete-orphan"
-    )
+    high_fives = relationship("HighFive", back_populates="goal", cascade="all, delete-orphan")
     subgoals = relationship(
         "Goal",
         backref=backref("parent", remote_side=[id]),
@@ -381,14 +379,7 @@ def list_completed_goals(user_id=1, db_path=None):
         )
 
         return [
-            {
-                "id": g.id,
-                "description": g.description,
-                "parent_id": g.parent_id,
-                "high_fives": session.query(HighFive)
-                .filter_by(target_goal_id=g.id)
-                .count(),
-            }
+            {"id": g.id, "description": g.description, "parent_id": g.parent_id}
             for g in goals
         ]
 
@@ -623,7 +614,6 @@ def get_user_badges(user_id, db_path=None):
             for b in user.badges
         ]
 
-
 def add_high_five(goal_id, sender_id, db_path=None):
     with session_scope(db_path) as session:
         goal = session.get(Goal, int(goal_id))
@@ -631,18 +621,13 @@ def add_high_five(goal_id, sender_id, db_path=None):
             return False
 
         # Check if already given
-        existing = (
-            session.query(HighFive)
-            .filter_by(target_goal_id=goal_id, sender_id=sender_id)
-            .first()
-        )
+        existing = session.query(HighFive).filter_by(target_goal_id=goal_id, sender_id=sender_id).first()
         if existing:
-            return True  # Already high-fived
+            return True # Already high-fived
 
         hf = HighFive(sender_id=sender_id, target_goal_id=goal_id)
         session.add(hf)
         return True
-
 
 def get_leaderboard(db_path=None):
     """Retrieve top users by completed goals count."""
@@ -650,16 +635,12 @@ def get_leaderboard(db_path=None):
         users = session.query(User).filter(User.is_public.is_(True)).all()
         board = []
         for u in users:
-            count = (
-                session.query(Goal).filter_by(user_id=u.id, status="completed").count()
-            )
-            board.append(
-                {
-                    "id": u.id,
-                    "username": u.username,
-                    "avatar_url": u.avatar_url,
-                    "completed_count": count,
-                }
-            )
+            count = session.query(Goal).filter_by(user_id=u.id, status='completed').count()
+            board.append({
+                "id": u.id,
+                "username": u.username,
+                "avatar_url": u.avatar_url,
+                "completed_count": count
+            })
         board.sort(key=lambda x: x["completed_count"], reverse=True)
-        return board[:10]  # Top 10
+        return board[:10] # Top 10
