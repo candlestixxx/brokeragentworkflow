@@ -11,5 +11,7 @@
 
 - **Phase 34:** Expanded Social Features. Introduce "High-Fives" (micro-interactions to cheer on public user goals), Leaderboards (tracking the highest active streaks and completed goals across public users), and a global Activity Feed showing real-time goal completions from all opted-in users.
 
+- **Phase 35:** AI Coach Integration. Embed LLM-driven insights natively into the dashboard, analyzing pending goals and suggesting optimized sub-tasks or routines structurally.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)

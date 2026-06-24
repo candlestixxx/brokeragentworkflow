@@ -100,6 +100,37 @@
         </Transition>
       </li>
     </ul>
+
+    <!-- AI Coach Section -->
+    <div class="mt-12 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-[2.5rem] border border-indigo-100 dark:border-indigo-800/30 p-8 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm text-indigo-500 shrink-0">
+          <SparklesIcon class="h-6 w-6" />
+        </div>
+        <div class="flex-1">
+          <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">AI Performance Coach</h3>
+          <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-4">Stuck on a goal? Let the AI coach suggest actionable routines.</p>
+
+          <div class="flex gap-2 mb-4">
+            <input v-model="coachQuery" @keyup.enter="askCoach" type="text" placeholder="e.g. How do I start running every morning?" class="flex-1 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 text-sm font-medium outline-none border border-slate-200 dark:border-slate-700 focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors">
+            <button @click="askCoach" :disabled="isCoaching" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide transition-colors disabled:opacity-50">
+              <span v-if="!isCoaching">Ask AI</span>
+              <span v-else class="animate-pulse">Thinking...</span>
+            </button>
+          </div>
+
+          <div v-if="coachSuggestions.length > 0" class="space-y-2 mt-4 animate-fade-in">
+            <div v-for="(suggestion, idx) in coachSuggestions" :key="idx" class="flex justify-between items-center bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-indigo-50 dark:border-indigo-900/20">
+              <p class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ suggestion }}</p>
+              <button @click="acceptSuggestion(suggestion, idx)" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wider transition-colors">
+                Accept as Goal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -117,6 +148,50 @@ import {
 import { goals, showToast } from '../store'
 
 const newGoalDescription = ref('')
+
+const coachQuery = ref('')
+const coachSuggestions = ref<string[]>([])
+const isCoaching = ref(false)
+
+const askCoach = async () => {
+  if (!coachQuery.value.trim() || isCoaching.value) return
+
+  isCoaching.value = true
+  coachSuggestions.value = []
+
+  try {
+    const res = await fetch('/api/coach/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal_description: coachQuery.value })
+    })
+    if (res.ok) {
+      const data = await res.json()
+      coachSuggestions.value = data.suggestions || []
+    }
+  } catch (e) {
+    console.error(e)
+  } finally {
+    isCoaching.value = false
+  }
+}
+
+const acceptSuggestion = async (suggestion: string, idx: number) => {
+  if (!suggestion) return
+  try {
+    const res = await fetch('/api/goals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description: suggestion })
+    })
+    if (res.ok) {
+      coachSuggestions.value.splice(idx, 1)
+    }
+  } catch(e) {
+    console.error(e)
+  }
+}
+
 const activeSubGoalParent = ref<number | null>(null)
 const newSubGoalDescription = ref('')
 
