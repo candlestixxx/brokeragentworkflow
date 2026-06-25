@@ -1,11 +1,10 @@
 # TODO
 
-## Current Tasks (Phase 35: AI Coach Integration)
-- [ ] Create `routers/coach.py` with `POST /api/coach/suggest` endpoint.
-- [ ] Implement a simulated local LLM heuristic model returning intelligent goal breakdowns (avoiding strict API key requirements).
-- [ ] Add an "Ask AI Coach" UI element inside `frontend/src/components/ActiveGoals.vue`.
-- [ ] Render the AI suggestions interactively and allow users to accept them natively as new goals.
-- [ ] Verify functionality via Pytest E2E evaluations.
+## Current Tasks (Phase 36: Offline First PWA)
+- [ ] Install `vite-plugin-pwa`.
+- [ ] Configure `vite.config.ts` to output a standard PWA `manifest.json`.
+- [ ] Add Service Worker registration inside `frontend/src/main.ts`.
+- [ ] Provide basic visual feedback when the app is ready for offline execution.
 
 ## Completed Tasks
-- All Phase 1-34 tasks completed.
+- All Phase 1-35 tasks completed.

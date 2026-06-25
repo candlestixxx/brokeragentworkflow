@@ -1,3 +1,4 @@
+import { registerSW } from 'virtual:pwa-register'
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
@@ -15,3 +16,10 @@ const initApp = async () => {
 }
 
 initApp()
+
+
+registerSW({
+  onOfflineReady() {
+    console.log('App ready to work offline')
+  }
+})

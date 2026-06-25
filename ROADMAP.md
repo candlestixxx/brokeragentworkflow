@@ -13,5 +13,7 @@
 
 - **Phase 35:** AI Coach Integration. Embed LLM-driven insights natively into the dashboard, analyzing pending goals and suggesting optimized sub-tasks or routines structurally.
 
+- **Phase 36:** Offline First (PWA). Integrate Service Workers and web manifest files enabling local caching of the application shell seamlessly allowing the frontend to operate securely as a Progressive Web App locally.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)
