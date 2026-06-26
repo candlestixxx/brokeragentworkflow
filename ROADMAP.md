@@ -15,5 +15,7 @@
 
 - **Phase 36:** Offline First (PWA). Integrate Service Workers and web manifest files enabling local caching of the application shell seamlessly allowing the frontend to operate securely as a Progressive Web App locally.
 
+- **Phase 37:** GitHub-Style Activity Heatmap. Implement a visual contribution graph on user profiles tracking daily completion density over the last year to reinforce positive habits.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)

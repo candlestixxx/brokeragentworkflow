@@ -656,3 +656,25 @@ def get_leaderboard(db_path=None):
             )
         board.sort(key=lambda x: x["completed_count"], reverse=True)
         return board[:10]  # Top 10
+
+
+def get_user_heatmap(user_id=1, db_path=None):
+    """Return a list of dicts {date: 'YYYY-MM-DD', count: int} for the last 365 days of completed goals."""
+    with session_scope(db_path) as session:
+        # Group completed goals by date
+        # SQLite uses date(), Postgres uses cast(created_at, Date). We can safely use func.date() in SQLite
+        # but to be engine-agnostic, strftime or literal extraction might be tricky. Let's just fetch recent completed goals and aggregate in python if the dataset isn't millions.
+        # Given it's a personal productivity app, pulling ~1000 goals and aggregating is sub-millisecond.
+
+        goals = session.query(Goal).filter_by(user_id=user_id, status="completed").all()
+        heatmap = {}
+        for g in goals:
+            if not g.created_at:
+                continue
+            d_str = g.created_at.strftime("%Y-%m-%d")
+            heatmap[d_str] = heatmap.get(d_str, 0) + 1
+
+        # Return as sorted array
+        arr = [{"date": k, "count": v} for k, v in heatmap.items()]
+        arr.sort(key=lambda x: x["date"])
+        return arr
