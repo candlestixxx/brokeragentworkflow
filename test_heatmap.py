@@ -6,7 +6,6 @@ import os
 
 client = TestClient(app)
 
-
 @pytest.fixture(autouse=True)
 def setup_database():
     os.environ["DATABASE_PATH"] = "test_heatmap.db"
@@ -17,7 +16,6 @@ def setup_database():
     yield
     if os.path.exists("test_heatmap.db"):
         os.remove("test_heatmap.db")
-
 
 def test_get_heatmap():
     client.post("/api/login", json={"username": "user1", "password": "pass"})
