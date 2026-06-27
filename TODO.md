@@ -1,10 +1,9 @@
 # TODO
 
-## Current Tasks (Phase 37: Activity Heatmap)
-- [ ] Implement `GET /api/me/heatmap` inside `routers/analytics.py` parsing 365-day goal activity arrays.
-- [ ] Create `ActivityHeatmap.vue` mapping dates into visual CSS grid intensity colors based on goal completion frequencies.
-- [ ] Mount the heatmap inside the `AnalyticsView.vue` and user profile dashboards.
-- [ ] Test the backend integration endpoints securely.
+## Current Tasks (Phase 39: AI Integration - Habit Insights)
+- [ ] Implement `POST /api/coach/insights` to analyze a user's `Habit` completion streaks and suggest optimizations or highlight potential burnout points.
+- [ ] Update `HabitsTracker.vue` to display a small "Ask Coach" button next to each habit to fetch insights.
+- [ ] Verify functionality with `pytest` testing structures securely.
 
 ## Completed Tasks
-- All Phase 1-36 tasks completed.
+- All Phase 1-38 tasks completed.

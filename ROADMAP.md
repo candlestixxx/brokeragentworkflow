@@ -9,13 +9,16 @@
 - **Phase 32:** Gamification & Badges. Reward users for hitting milestones (e.g. 7-day streak, 100 goals). (Completed)
 - **Phase 33:** FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact. (Completed)
 
-- **Phase 34:** Expanded Social Features. Introduce "High-Fives" (micro-interactions to cheer on public user goals), Leaderboards (tracking the highest active streaks and completed goals across public users), and a global Activity Feed showing real-time goal completions from all opted-in users.
+- **Phase 34:** (Completed) Expanded Social Features. Introduce "High-Fives" (micro-interactions to cheer on public user goals), Leaderboards (tracking the highest active streaks and completed goals across public users), and a global Activity Feed showing real-time goal completions from all opted-in users.
 
-- **Phase 35:** AI Coach Integration. Embed LLM-driven insights natively into the dashboard, analyzing pending goals and suggesting optimized sub-tasks or routines structurally.
+- **Phase 35:** (Completed) AI Coach Integration. Embed LLM-driven insights natively into the dashboard, analyzing pending goals and suggesting optimized sub-tasks or routines structurally.
 
-- **Phase 36:** Offline First (PWA). Integrate Service Workers and web manifest files enabling local caching of the application shell seamlessly allowing the frontend to operate securely as a Progressive Web App locally.
+- **Phase 36:** (Completed) Offline First (PWA). Integrate Service Workers and web manifest files enabling local caching of the application shell seamlessly allowing the frontend to operate securely as a Progressive Web App locally.
 
-- **Phase 37:** GitHub-Style Activity Heatmap. Implement a visual contribution graph on user profiles tracking daily completion density over the last year to reinforce positive habits.
+- **Phase 37:** (Completed) GitHub-Style Activity Heatmap. Implement a visual contribution graph on user profiles tracking daily completion density over the last year to reinforce positive habits.
+
+
+- **Phase 39:** AI Integration - Habit Insights. Embed an LLM heuristic inside the Habit tracker to detect drop-off patterns and suggest intervention strategies to maintain user streaks.
 
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)
