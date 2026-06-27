@@ -17,5 +17,7 @@
 
 - **Phase 37:** GitHub-Style Activity Heatmap. Implement a visual contribution graph on user profiles tracking daily completion density over the last year to reinforce positive habits.
 
+- **Phase 38:** Automated Database Backup Protocol. Implement scheduled background tasks mapping robust snapshot generation ensuring ongoing local data protection and redundancy.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)
