@@ -1,11 +1,13 @@
-import pytest
-from models import create_user, add_goal, session_scope, Goal
+from models import create_user, add_goal
 from routers.social import get_leaderboard
+
 
 def test_get_leaderboard(tmp_path):
     import os
+
     os.environ["DATABASE_PATH"] = str(tmp_path / "test.db")
     import models
+
     models.init_db()
 
     u1_id = create_user("u1", "p1")

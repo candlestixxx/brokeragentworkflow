@@ -1,10 +1,12 @@
-import pytest
 from models import create_user, add_goal, session_scope, HighFive
+
 
 def test_add_highfive(tmp_path):
     import os
+
     os.environ["DATABASE_PATH"] = str(tmp_path / "test.db")
     import models
+
     models.init_db()
 
     u1_id = create_user("u1", "p1")

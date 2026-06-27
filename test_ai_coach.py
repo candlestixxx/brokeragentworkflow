@@ -37,3 +37,34 @@ def test_ai_coach_empty():
 
     response = client.post("/api/coach/suggest", json={"goal_description": ""})
     assert response.status_code == 400
+
+
+def test_ai_coach_insights_low_streak():
+    client.post("/api/login", json={"username": "user1", "password": "pass"})
+    response = client.post(
+        "/api/coach/insights",
+        json={"habit_description": "Drink Water", "current_streak": 2},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "insight" in data
+    assert "getting started" in data["insight"].lower()
+
+
+def test_ai_coach_insights_high_streak():
+    client.post("/api/login", json={"username": "user1", "password": "pass"})
+    response = client.post(
+        "/api/coach/insights", json={"habit_description": "Read", "current_streak": 35}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "insight" in data
+    assert "incredible streak" in data["insight"].lower()
+
+
+def test_ai_coach_insights_empty():
+    client.post("/api/login", json={"username": "user1", "password": "pass"})
+    response = client.post(
+        "/api/coach/insights", json={"habit_description": "", "current_streak": 5}
+    )
+    assert response.status_code == 400

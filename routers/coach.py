@@ -12,6 +12,7 @@ class CoachRequest(BaseModel):
 
 def generate_mock_suggestions(description: str):
     """Simulate an LLM AI Coach breaking down a complex goal."""
+
     desc = description.lower()
     if "workout" in desc or "fitness" in desc or "gym" in desc:
         return [
@@ -50,3 +51,32 @@ def api_coach_suggest(data: CoachRequest, user=Depends(get_current_user)):
     suggestions = generate_mock_suggestions(data.goal_description)
 
     return {"suggestions": suggestions}
+
+
+class HabitInsightRequest(BaseModel):
+    habit_description: str
+    current_streak: int
+
+
+def generate_mock_habit_insights(description: str, streak: int):
+    """Simulate an LLM AI Coach analyzing a habit streak."""
+
+    if streak < 3:
+        return f"You're just getting started with '{description}'. Focus strictly on consistency over quality right now. Just show up."
+    elif streak >= 3 and streak < 14:
+        return f"Great momentum on '{description}'! You've passed the initial resistance. Try anchoring this habit to an existing daily routine."
+    elif streak >= 14 and streak < 30:
+        return f"You've been doing '{description}' for weeks now. Watch out for the 'plateau' effect; don't skip a day, but allow yourself a low-effort version if you're tired."
+    else:
+        return f"Incredible streak! '{description}' is practically automatic now. To prevent burnout, ensure you're celebrating your micro-wins."
+
+
+@router.post("/insights")
+def api_coach_insights(data: HabitInsightRequest, user=Depends(get_current_user)):
+    if not data.habit_description:
+        raise HTTPException(status_code=400, detail="Habit description is required.")
+
+    time.sleep(0.5)  # Simulate API latency
+
+    insight = generate_mock_habit_insights(data.habit_description, data.current_streak)
+    return {"insight": insight}

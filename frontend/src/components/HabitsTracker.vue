@@ -67,8 +67,13 @@
             </div>
           </div>
 
+
           <div class="flex items-center gap-4 pl-4 md:border-l border-slate-100 dark:border-slate-700/50">
+            <button @click="askCoach(habit)" class="p-3 text-slate-300 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-colors" title="Ask AI Coach for Insights">
+              <ChatBubbleLeftEllipsisIcon class="h-6 w-6" />
+            </button>
             <button @click="deleteHabit(habit.id)" class="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0" title="Delete Habit">
+
               <TrashIcon class="h-6 w-6" />
             </button>
           </div>
@@ -80,12 +85,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { 
-  ArrowPathIcon, 
-  CheckIcon, 
-  FireIcon, 
+import {
+  ArrowPathIcon,
+  CheckIcon,
+  FireIcon,
   TrashIcon,
-  BoltIcon
+  BoltIcon,
+  ChatBubbleLeftEllipsisIcon
 } from '@heroicons/vue/24/outline'
 import { habits, showToast } from '../store'
 
@@ -121,6 +127,24 @@ const deleteHabit = async (id: number) => {
   const res = await fetch(`/api/habits/${id}`, { method: 'DELETE' })
   if (res.ok) {
     showToast("Habit deleted.")
+  }
+}
+
+const askCoach = async (habit: any) => {
+  showToast("Analyzing streak patterns...")
+  const res = await fetch('/api/coach/insights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      habit_description: habit.description,
+      current_streak: habit.current_streak
+    })
+  })
+  if (res.ok) {
+    const data = await res.json()
+    alert("AI Coach Insight:\n\n" + data.insight) // Quick and dirty UI for the insight
+  } else {
+    showToast("Coach is currently unavailable.")
   }
 }
 </script>
