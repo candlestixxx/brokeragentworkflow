@@ -32,8 +32,8 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
       - TWILIO_TO_NUMBER=${TWILIO_TO_NUMBER}
-
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+      - FLASK_APP=app.py
+    command: ["python", "app.py"]
     depends_on:
       - db
 
