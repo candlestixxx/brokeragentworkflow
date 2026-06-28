@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 import os
 import models
 
-from routers import auth, goals, habits, social, analytics, initiatives, webhooks, coach
+from routers import auth, goals, habits, social, analytics, initiatives, webhooks
 
 fastapi_app = FastAPI()
 app = fastapi_app
@@ -33,7 +33,6 @@ fastapi_app.include_router(social.router)
 fastapi_app.include_router(analytics.router)
 fastapi_app.include_router(initiatives.router)
 fastapi_app.include_router(webhooks.router)
-fastapi_app.include_router(coach.router)
 
 # Mount static files (Vue dist)
 dist_dir = os.path.join(os.path.dirname(__file__), "dist")

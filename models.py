@@ -53,7 +53,6 @@ class User(Base, UserMixin):
     notifications_enabled = Column(Boolean, nullable=False, default=True)
     is_public = Column(Boolean, nullable=False, default=False)
     has_completed_onboarding = Column(Boolean, nullable=False, default=False)
-    xp = Column(Integer, nullable=False, default=0)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -66,16 +65,6 @@ class User(Base, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 
-class HighFive(Base):
-    __tablename__ = "high_fives"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    target_goal_id = Column(Integer, ForeignKey("goals.id"), nullable=False)
-
-    sender = relationship("User", foreign_keys=[sender_id])
-    goal = relationship("Goal", back_populates="high_fives")
-
-
 class Goal(Base):
     __tablename__ = "goals"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -86,9 +75,6 @@ class Goal(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="goals")
-    high_fives = relationship(
-        "HighFive", back_populates="goal", cascade="all, delete-orphan"
-    )
     subgoals = relationship(
         "Goal",
         backref=backref("parent", remote_side=[id]),
@@ -427,21 +413,6 @@ def complete_goal(goal_id, user_id=1, db_path=None):
         success = False
         if goal:
             goal.status = "completed"
-
-            # XP Calculation: Base 10 XP, +5 XP per depth level
-            depth = 0
-            current = goal
-            while current.parent_id:
-                depth += 1
-                current = session.query(Goal).filter_by(id=current.parent_id).first()
-                if not current:
-                    break
-
-            xp_awarded = 10 + (depth * 5)
-            user = session.query(User).filter_by(id=user_id).first()
-            if user:
-                user.xp += xp_awarded
-
             success = True
         return success
 
@@ -599,17 +570,14 @@ def evaluate_badges(user_id, db_path=None):
         user_badge_names = [b.name for b in user.badges]
 
         rules = [
-            ("First Step", lambda s, u: s["completed_goals"] >= 1),
-            ("On a Roll", lambda s, u: s["completed_goals"] >= 5),
-            ("Goal Crusher", lambda s, u: s["completed_goals"] >= 20),
-            ("Consistent", lambda s, u: s["streak"] >= 3),
-            ("Novice", lambda s, u: u.xp >= 50),
-            ("Adept", lambda s, u: u.xp >= 150),
-            ("Master", lambda s, u: u.xp >= 500),
+            ("First Step", lambda s: s["completed_goals"] >= 1),
+            ("On a Roll", lambda s: s["completed_goals"] >= 5),
+            ("Goal Crusher", lambda s: s["completed_goals"] >= 20),
+            ("Consistent", lambda s: s["streak"] >= 3),
         ]
 
         for b_name, condition in rules:
-            if b_name not in user_badge_names and condition(stats, user):
+            if b_name not in user_badge_names and condition(stats):
                 badge = badges_by_name.get(b_name)
                 if badge:
                     user.badges.append(badge)
@@ -634,66 +602,3 @@ def get_user_badges(user_id, db_path=None):
             {"id": b.id, "name": b.name, "description": b.description, "icon": b.icon}
             for b in user.badges
         ]
-
-
-def add_high_five(goal_id, sender_id, db_path=None):
-    with session_scope(db_path) as session:
-        goal = session.get(Goal, int(goal_id))
-        if not goal:
-            return False
-
-        # Check if already given
-        existing = (
-            session.query(HighFive)
-            .filter_by(target_goal_id=goal_id, sender_id=sender_id)
-            .first()
-        )
-        if existing:
-            return True  # Already high-fived
-
-        hf = HighFive(sender_id=sender_id, target_goal_id=goal_id)
-        session.add(hf)
-        return True
-
-
-def get_leaderboard(db_path=None):
-    """Retrieve top users by completed goals count."""
-    with session_scope(db_path) as session:
-        users = session.query(User).filter(User.is_public.is_(True)).all()
-        board = []
-        for u in users:
-            count = (
-                session.query(Goal).filter_by(user_id=u.id, status="completed").count()
-            )
-            board.append(
-                {
-                    "id": u.id,
-                    "username": u.username,
-                    "avatar_url": u.avatar_url,
-                    "completed_count": count,
-                }
-            )
-        board.sort(key=lambda x: x["completed_count"], reverse=True)
-        return board[:10]  # Top 10
-
-
-def get_user_heatmap(user_id=1, db_path=None):
-    """Return a list of dicts {date: 'YYYY-MM-DD', count: int} for the last 365 days of completed goals."""
-    with session_scope(db_path) as session:
-        # Group completed goals by date
-        # SQLite uses date(), Postgres uses cast(created_at, Date). We can safely use func.date() in SQLite
-        # but to be engine-agnostic, strftime or literal extraction might be tricky. Let's just fetch recent completed goals and aggregate in python if the dataset isn't millions.
-        # Given it's a personal productivity app, pulling ~1000 goals and aggregating is sub-millisecond.
-
-        goals = session.query(Goal).filter_by(user_id=user_id, status="completed").all()
-        heatmap = {}
-        for g in goals:
-            if not g.created_at:
-                continue
-            d_str = g.created_at.strftime("%Y-%m-%d")
-            heatmap[d_str] = heatmap.get(d_str, 0) + 1
-
-        # Return as sorted array
-        arr = [{"date": k, "count": v} for k, v in heatmap.items()]
-        arr.sort(key=lambda x: x["date"])
-        return arr

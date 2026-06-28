@@ -34,6 +34,7 @@ def test_server():
 
 
 def test_social_community_page(page: Page):
+    page.goto("http://127.0.0.1:5000/")
     page.goto("http://127.0.0.1:5000/register")
     username = f"public_user_{int(time.time())}"
 
@@ -61,7 +62,7 @@ def test_social_community_page(page: Page):
         "div.max-w-md:has(h2:has-text('Welcome Back')) >> button[type='submit']"
     ).click()
 
-    expect(page.locator("nav")).to_contain_text(username, timeout=5000)
+    expect(page.locator("text=Dashboard")).to_be_visible(timeout=5000)
 
     # Use evaluate to navigate instead of clicking the link to avoid UI changes breaking it
     page.goto("http://127.0.0.1:5000/settings")
@@ -80,12 +81,4 @@ def test_social_community_page(page: Page):
     time.sleep(2)
     page.reload()
 
-    try:
-        expect(page.locator("h2:has-text('Shared Momentum')")).to_be_visible(
-            timeout=5000
-        )
-    except Exception:
-        pass
-
-    # The username element may be logically hidden but exists, let's use to_be_attached or simple existence
-    expect(page.locator(f"text='{username}'").first).to_be_attached(timeout=5000)
+    expect(page.locator(f"text={username}").first).to_be_visible(timeout=5000)

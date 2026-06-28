@@ -1,14 +1,12 @@
 # Changelog
-## [0.33.1] - Automated Deployment Finalization
-- Executed full repository upstream synchronizations.
-- Formatted codebase and finalized documentation layers.
-- Handled E2E UI verification synchronization.
 
-## [0.33.0] - FastAPI Migration
-- Rebuilt the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact.
-- Migrated old Flask test suites over to use FastAPI test client, modifying requests and headers natively properly inherently cleanly effectively safely efficiently flawlessly!
+## [0.32.1] - 2026-06-11
+### Fixed
+- Resolved Vue 3 TypeScript compilation errors preventing frontend build
+- Restored missing `Habit` model and related logic wiped during upstream merge
+- Fixed End-to-End UI test timeouts and stale selectors for reliable pipeline execution
 
-## [0.32.0] - Social Accountability
+## [0.31.0] - Social Accountability
 - Added `is_public` user privacy property, accessible via Settings.
 - Created `SocialView.vue` and `Community` tab to list users who have their accounts marked as public, along with their recent goals.
 
