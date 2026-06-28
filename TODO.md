@@ -1,9 +1,9 @@
 # TODO
 
-## Current Tasks (Phase 39: AI Integration - Habit Insights)
-- [ ] Implement `POST /api/coach/insights` to analyze a user's `Habit` completion streaks and suggest optimizations or highlight potential burnout points.
-- [ ] Update `HabitsTracker.vue` to display a small "Ask Coach" button next to each habit to fetch insights.
-- [ ] Verify functionality with `pytest` testing structures securely.
+## Current Tasks (Phase 40: Advanced Sub-goal Gamification)
+- [ ] Implement a dynamic progression multiplier that awards fractional 'XP' or 'Points' recursively based on nested Sub-goal completion depths inside `models.py`.
+- [ ] Upgrade the Gamification Engine tracking `User` score thresholds natively triggering unique 'Mastery' Badges dynamically via Socket.io upon leveling up.
+- [ ] Bind Vue.js `ActiveGoals.vue` frontend interfaces resolving XP animations.
 
 ## Completed Tasks
-- All Phase 1-38 tasks completed.
+- All Phase 1-39 tasks completed.

@@ -18,7 +18,9 @@
 - **Phase 37:** (Completed) GitHub-Style Activity Heatmap. Implement a visual contribution graph on user profiles tracking daily completion density over the last year to reinforce positive habits.
 
 
-- **Phase 39:** AI Integration - Habit Insights. Embed an LLM heuristic inside the Habit tracker to detect drop-off patterns and suggest intervention strategies to maintain user streaks.
+- **Phase 39:** (Completed) AI Integration - Habit Insights. Embed an LLM heuristic inside the Habit tracker to detect drop-off patterns and suggest intervention strategies to maintain user streaks.
+
+- **Phase 40:** Advanced Sub-goal Gamification. Overhaul the goal completion endpoint to calculate nested completion depths and award exponential experience points (XP) unlocking Mastery badges.
 
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)

@@ -53,6 +53,7 @@ class User(Base, UserMixin):
     notifications_enabled = Column(Boolean, nullable=False, default=True)
     is_public = Column(Boolean, nullable=False, default=False)
     has_completed_onboarding = Column(Boolean, nullable=False, default=False)
+    xp = Column(Integer, nullable=False, default=0)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
@@ -426,6 +427,21 @@ def complete_goal(goal_id, user_id=1, db_path=None):
         success = False
         if goal:
             goal.status = "completed"
+
+            # XP Calculation: Base 10 XP, +5 XP per depth level
+            depth = 0
+            current = goal
+            while current.parent_id:
+                depth += 1
+                current = session.query(Goal).filter_by(id=current.parent_id).first()
+                if not current:
+                    break
+
+            xp_awarded = 10 + (depth * 5)
+            user = session.query(User).filter_by(id=user_id).first()
+            if user:
+                user.xp += xp_awarded
+
             success = True
         return success
 
@@ -583,14 +599,17 @@ def evaluate_badges(user_id, db_path=None):
         user_badge_names = [b.name for b in user.badges]
 
         rules = [
-            ("First Step", lambda s: s["completed_goals"] >= 1),
-            ("On a Roll", lambda s: s["completed_goals"] >= 5),
-            ("Goal Crusher", lambda s: s["completed_goals"] >= 20),
-            ("Consistent", lambda s: s["streak"] >= 3),
+            ("First Step", lambda s, u: s["completed_goals"] >= 1),
+            ("On a Roll", lambda s, u: s["completed_goals"] >= 5),
+            ("Goal Crusher", lambda s, u: s["completed_goals"] >= 20),
+            ("Consistent", lambda s, u: s["streak"] >= 3),
+            ("Novice", lambda s, u: u.xp >= 50),
+            ("Adept", lambda s, u: u.xp >= 150),
+            ("Master", lambda s, u: u.xp >= 500),
         ]
 
         for b_name, condition in rules:
-            if b_name not in user_badge_names and condition(stats):
+            if b_name not in user_badge_names and condition(stats, user):
                 badge = badges_by_name.get(b_name)
                 if badge:
                     user.badges.append(badge)
