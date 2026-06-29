@@ -81,6 +81,12 @@ onMounted(async () => {
     }
   })
 
+  socket.on('high_five_received', (data: any) => {
+    // Show a simple toast or alert. We can push it to an array or just use standard alert/console for now
+    // If there's a toast system, we would use it. Let's create a minimal reactive toast in App.vue later, or just console.log and alert
+    alert(`🙌 ${data.from} sent you a High-Five for your goal!`)
+  })
+
   socket.on('goal_completed', (data: any) => {
     if (data.id) {
       let targetGoal = goals.value.find(g => g.id === data.id)

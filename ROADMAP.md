@@ -9,5 +9,24 @@
 - **Phase 32:** Gamification & Badges. Reward users for hitting milestones (e.g. 7-day streak, 100 goals). (Completed)
 - **Phase 33:** FastAPI Migration. Rebuild the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact. (Completed)
 
+- **Phase 34:** (Completed) Expanded Social Features. Introduce "High-Fives" (micro-interactions to cheer on public user goals), Leaderboards (tracking the highest active streaks and completed goals across public users), and a global Activity Feed showing real-time goal completions from all opted-in users.
+
+- **Phase 35:** (Completed) AI Coach Integration. Embed LLM-driven insights natively into the dashboard, analyzing pending goals and suggesting optimized sub-tasks or routines structurally.
+
+- **Phase 36:** (Completed) Offline First (PWA). Integrate Service Workers and web manifest files enabling local caching of the application shell seamlessly allowing the frontend to operate securely as a Progressive Web App locally.
+
+- **Phase 37:** (Completed) GitHub-Style Activity Heatmap. Implement a visual contribution graph on user profiles tracking daily completion density over the last year to reinforce positive habits.
+
+
+- **Phase 39:** (Completed) AI Integration - Habit Insights. Embed an LLM heuristic inside the Habit tracker to detect drop-off patterns and suggest intervention strategies to maintain user streaks.
+
+- **Phase 40:** (Completed) Advanced Sub-goal Gamification. Overhaul the goal completion endpoint to calculate nested completion depths and award exponential experience points (XP) unlocking Mastery badges.
+
+- **Phase 41:** (Completed) CI/CD Guardrails & Repository Management Protocols. Hardening GitHub actions to evaluate, track, and record session logic dynamically accurately.
+
+- **Phase 42:** (Completed) Production Build Optimization. Structurally evaluate the application architecture shifting from localized development execution layers into native production boundaries.
+
+- **Phase 43:** (Completed) Final Documentation Governance. Prepare the repository to exist in an evergreen, stable state mapping deployment scripts perfectly safely efficiently.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)

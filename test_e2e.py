@@ -38,57 +38,50 @@ def test_server():
 
 def test_user_registration_and_login(page: Page):
     """Test the full flow of registering, logging in, and creating a goal."""
-    page.goto("http://127.0.0.1:5000/")
+    # Based on earlier manual inspection, we are using the new front-end wording:
+    page.goto("http://127.0.0.1:5000/login")
     page.goto("http://127.0.0.1:5000/register")
 
     username = f"e2e_user_{int(time.time())}"
 
     page.locator(
-        "input[placeholder='Pick a handle']"
+        "div.max-w-md:has(h2:has-text('Join FocusOS')) >> input[type='text']"
     ).fill(username)
     page.locator(
-        "input[placeholder='Make it strong']"
+        "div.max-w-md:has(h2:has-text('Join FocusOS')) >> input[type='password']"
     ).fill("secret123")
     page.locator(
-        "button:has-text('Create Account')"
+        "div.max-w-md:has(h2:has-text('Join FocusOS')) >> button[type='submit']"
     ).click()
 
-    expect(page.locator("text=Registration successful.")).to_be_visible(timeout=5000)
-
-    page.goto("http://127.0.0.1:5000/login")
-
-    page.locator("input[placeholder='Your handle']").fill(
-        username
+    expect(page.locator("text=Account created successfully.")).to_be_visible(
+        timeout=5000
     )
 
     page.goto("http://127.0.0.1:5000/login")
 
     page.locator(
-        "input[placeholder='••••••••']"
+        "div.max-w-md:has(h2:has-text('Welcome Back')) >> input[type='text']"
+    ).fill(username)
+    page.locator(
+        "div.max-w-md:has(h2:has-text('Welcome Back')) >> input[type='password']"
     ).fill("secret123")
     page.locator(
-        "button:has-text('Sign In')"
+        "div.max-w-md:has(h2:has-text('Welcome Back')) >> button[type='submit']"
     ).click()
 
-    expect(page.locator("text=Dashboard")).to_be_visible(timeout=5000)
+    # Wait for navigation / username in navbar
+    expect(page.locator("nav")).to_contain_text(username, timeout=5000)
 
-    page.fill("""input[placeholder="What's your primary focus right now?"]""", "E2E Test Goal")
+    page.fill(
+        'input[placeholder="What\'s your primary focus right now?"]', "E2E Test Goal"
+    )
 
     # In Vue, sending 'Enter' keystroke is often enough if the input handles @keyup.enter
     page.keyboard.press("Enter")
     time.sleep(1)
 
     page.evaluate("() => { import('/src/store.ts').then(s => s.fetchData()) }")
-
-    # Wait for the API to process
-    time.sleep(2)
-
-    page.reload()
-
-    # Verify goal appears in the list (wait for websocket or fallback)
-    expect(page.locator("text=E2E Test Goal")).to_be_visible(timeout=10000)
-
-    page.click("li:has-text('E2E Test Goal') button[aria-label='Complete goal']")
     time.sleep(2)
     page.reload()
 

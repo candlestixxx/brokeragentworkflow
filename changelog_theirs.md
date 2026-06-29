@@ -1,38 +1,4 @@
 # Changelog
-## [0.33.1] - Automated Deployment Finalization
-- Executed full repository upstream synchronizations.
-- Formatted codebase and finalized documentation layers.
-- Handled E2E UI verification synchronization.
-
-## [0.33.0] - FastAPI Migration
-- Rebuilt the Flask backend JSON API using FastAPI for better async performance and automatic OpenAPI docs, while keeping the Vue frontend intact.
-- Migrated old Flask test suites over to use FastAPI test client, modifying requests and headers natively properly inherently cleanly effectively safely efficiently flawlessly!
-
-## [0.32.0] - Social Accountability
-- Added `is_public` user privacy property, accessible via Settings.
-- Created `SocialView.vue` and `Community` tab to list users who have their accounts marked as public, along with their recent goals.
-
-## [0.30.0] - WebSocket Sync Refactoring
-- Optimized backend `SocketIO` hooks natively transmitting exact granular dictionaries inside `goal_added`, `goal_deleted`, and `goal_completed` events mapping implicitly properly.
-- Re-architected frontend `App.vue` gracefully receiving granular packets mutating raw `store.ts` arrays efficiently natively preventing blanket global REST re-fetches effectively flawlessly.
-
-## [0.29.0] - Analytics Dashboard
-- Integrated global analytics endpoints fetching comprehensive historical metrics implicitly safely mapping structural logic utilizing Python comprehensions natively cleanly inside `GET /api/me/analytics`.
-- Embedded `AnalyticsView.vue` linking nested layout interactions natively over global headers querying central `store.ts` reactive bindings automatically!
-
-## [0.28.0] - AI-Powered Goal Breakdown
-- Implemented `POST /api/goals/breakdown` mocking simulated AI responses gracefully fragmenting arbitrary parent strings efficiently.
-- Deployed "AI Spark" contextual actions natively into `ActiveGoals.vue` dynamically binding sub-goal injection mappings sequentially across the DOM effectively.
-
-## [0.27.0] - Habit Tracking Module
-- Added a new `Habit` model inside `models.py` to natively track repeating daily tasks, logging `current_streak` and `highest_streak` using `datetime` comparisons safely securely.
-- Expanded the REST JSON API providing isolated `GET`, `POST`, `POST /<id>/complete`, and `DELETE` hooks executing via `blueprints/habits.py`.
-- Generated `HabitsTracker.vue` and effectively nested a real-time reactive UI Tab structure straight into the `DashboardView.vue` core interface properly tracking SocketIO push events universally recursively globally cleanly natively explicitly strictly.
-
-## [0.26.0] - Goal Deletion
-- Added goal deletion capabilities via new `models.py` function and `DELETE /api/goals/<id>` route.
-- Expanded Vue components `ActiveGoals.vue` and `CompletedGoals.vue` with "Delete" buttons linked dynamically to the store.
-
 ## [0.25.0] - User Notification Settings Toggle
 - Formatted `models.py` tracking Boolean default values managing active system settings directly across user schema interactions seamlessly.
 - Bound `POST /api/me/settings` natively processing variables securely.
@@ -151,10 +117,3 @@
 
 ## [0.0.0] - Initial Setup
 - Initialized core project documentation.
-
-## 0.26.0
-- **Feature**: Implemented Phase 26 Analytics Dashboard.
-  - Added new `/api/analytics` backend endpoint using `blueprints/analytics.py` and `models.get_user_analytics()`.
-  - Added frontend `AnalyticsView.vue` with responsive charts tracking Total Goals, Completed Goals, Completion Rate, and Day Streak.
-  - Updated Vue Router and NavBar to support the new Analytics route.
-  - Tested logic extensively via `test_analytics.py` and E2E `test_playwright_analytics.py`.

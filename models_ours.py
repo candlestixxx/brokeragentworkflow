@@ -8,7 +8,6 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Boolean,
-    Table,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, backref
 from sqlalchemy.sql import func
@@ -22,27 +21,6 @@ load_dotenv()
 
 Base = declarative_base()
 
-# --- Association Tables ---
-user_badges = Table(
-    "user_badges",
-    Base.metadata,
-    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
-    Column("badge_id", Integer, ForeignKey("badges.id"), primary_key=True),
-    Column("awarded_at", DateTime(timezone=True), server_default=func.now()),
-)
-
-# --- Models ---
-
-
-class Badge(Base):
-    __tablename__ = "badges"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), unique=True, nullable=False)
-    description = Column(String(250), nullable=False)
-    icon = Column(String(50), nullable=False, default="StarIcon")
-
-    users = relationship("User", secondary=user_badges, back_populates="badges")
-
 
 class User(Base, UserMixin):
     __tablename__ = "users"
@@ -52,28 +30,15 @@ class User(Base, UserMixin):
     avatar_url = Column(String(500), nullable=True)
     notifications_enabled = Column(Boolean, nullable=False, default=True)
     is_public = Column(Boolean, nullable=False, default=False)
-    has_completed_onboarding = Column(Boolean, nullable=False, default=False)
-    xp = Column(Integer, nullable=False, default=0)
 
     goals = relationship("Goal", back_populates="user")
     initiatives = relationship("QuarterlyInitiative", back_populates="user")
-    badges = relationship("Badge", secondary=user_badges, back_populates="users")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password).decode("utf8")
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-
-class HighFive(Base):
-    __tablename__ = "high_fives"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    target_goal_id = Column(Integer, ForeignKey("goals.id"), nullable=False)
-
-    sender = relationship("User", foreign_keys=[sender_id])
-    goal = relationship("Goal", back_populates="high_fives")
 
 
 class Goal(Base):
@@ -86,9 +51,6 @@ class Goal(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="goals")
-    high_fives = relationship(
-        "HighFive", back_populates="goal", cascade="all, delete-orphan"
-    )
     subgoals = relationship(
         "Goal",
         backref=backref("parent", remote_side=[id]),
@@ -140,14 +102,11 @@ def get_db_url(db_path=None):
 def _get_engine(db_path=None):
     url = get_db_url(db_path)
     if url not in _engines:
-        engine_args = {}
         if "sqlite" in url:
             # Use NullPool for SQLite on Windows to avoid file locking issues during tests
-            engine_args["poolclass"] = NullPool
+            _engines[url] = create_engine(url, echo=False, poolclass=NullPool)
         else:
-            engine_args["pool_pre_ping"] = True
-
-        _engines[url] = create_engine(url, echo=False, **engine_args)
+            _engines[url] = create_engine(url, echo=False, pool_pre_ping=True)
     return _engines[url]
 
 
@@ -161,7 +120,6 @@ def init_db(db_path=None):
     """Initialize the database with required tables using SQLAlchemy."""
     engine = _get_engine(db_path)
     Base.metadata.create_all(engine)
-    seed_badges(db_path)
 
 
 @contextmanager
@@ -189,6 +147,7 @@ def create_user(username, password, db_path=None):
         new_user = User(username=username)
         new_user.set_password(password)
         session.add(new_user)
+        # commit is handled by session_scope
         session.flush()
         return new_user.id
 
@@ -291,18 +250,15 @@ def complete_habit(habit_id, completed_date, user_id=1, db_path=None):
                 pass
             else:
                 if habit.last_completed_date:
-                    try:
-                        last_date = datetime.strptime(
-                            habit.last_completed_date, "%Y-%m-%d"
-                        ).date()
-                        curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
-                        if curr_date - last_date == timedelta(days=1):
-                            # Streak continues
-                            habit.current_streak += 1
-                        else:
-                            # Streak broken
-                            habit.current_streak = 1
-                    except ValueError:
+                    last_date = datetime.strptime(
+                        habit.last_completed_date, "%Y-%m-%d"
+                    ).date()
+                    curr_date = datetime.strptime(completed_date, "%Y-%m-%d").date()
+                    if curr_date - last_date == timedelta(days=1):
+                        # Streak continues
+                        habit.current_streak += 1
+                    else:
+                        # Streak broken
                         habit.current_streak = 1
                 else:
                     # First completion
@@ -427,21 +383,6 @@ def complete_goal(goal_id, user_id=1, db_path=None):
         success = False
         if goal:
             goal.status = "completed"
-
-            # XP Calculation: Base 10 XP, +5 XP per depth level
-            depth = 0
-            current = goal
-            while current.parent_id:
-                depth += 1
-                current = session.query(Goal).filter_by(id=current.parent_id).first()
-                if not current:
-                    break
-
-            xp_awarded = 10 + (depth * 5)
-            user = session.query(User).filter_by(id=user_id).first()
-            if user:
-                user.xp += xp_awarded
-
             success = True
         return success
 
@@ -500,200 +441,3 @@ def complete_initiative(initiative_id, user_id=1, db_path=None):
             initiative.status = "completed"
             success = True
         return success
-
-
-# --- Analytics ---
-def get_user_analytics(user_id=1, db_path=None):
-    with session_scope(db_path) as session:
-        total_goals = session.query(Goal).filter_by(user_id=user_id).count()
-        completed_goals = (
-            session.query(Goal).filter_by(user_id=user_id, status="completed").count()
-        )
-        pending_goals = (
-            session.query(Goal).filter_by(user_id=user_id, status="pending").count()
-        )
-
-        completion_percentage = 0
-        if total_goals > 0:
-            completion_percentage = round((completed_goals / total_goals) * 100)
-
-        # Calculate streak
-        completed_dates = (
-            session.query(func.date(Goal.created_at))
-            .filter_by(user_id=user_id, status="completed")
-            .group_by(func.date(Goal.created_at))
-            .order_by(func.date(Goal.created_at).desc())
-            .all()
-        )
-
-        streak = 0
-        current_date = datetime.now().date()
-
-        for date_tuple in completed_dates:
-            try:
-                d_obj = datetime.strptime(str(date_tuple[0]), "%Y-%m-%d").date()
-            except ValueError:
-                break
-
-            if d_obj == current_date:
-                streak += 1
-                current_date -= timedelta(days=1)
-            elif d_obj == current_date - timedelta(days=1):
-                streak += 1
-                current_date -= timedelta(days=2)
-            else:
-                break
-
-        return {
-            "total_goals": total_goals,
-            "completed_goals": completed_goals,
-            "pending_goals": pending_goals,
-            "completion_percentage": completion_percentage,
-            "streak": streak,
-        }
-
-
-# --- Gamification / Badges ---
-def seed_badges(db_path=None):
-    with session_scope(db_path) as session:
-        default_badges = [
-            {
-                "name": "First Step",
-                "description": "Complete your first goal",
-                "icon": "StarIcon",
-            },
-            {
-                "name": "On a Roll",
-                "description": "Complete 5 goals",
-                "icon": "FireIcon",
-            },
-            {
-                "name": "Goal Crusher",
-                "description": "Complete 20 goals",
-                "icon": "TrophyIcon",
-            },
-            {
-                "name": "Consistent",
-                "description": "Achieve a 3-day streak",
-                "icon": "CheckBadgeIcon",
-            },
-        ]
-
-        for b_data in default_badges:
-            existing = session.query(Badge).filter_by(name=b_data["name"]).first()
-            if not existing:
-                new_badge = Badge(**b_data)
-                session.add(new_badge)
-
-
-def evaluate_badges(user_id, db_path=None):
-    with session_scope(db_path) as session:
-        user = session.get(User, int(user_id))
-        if not user:
-            return []
-
-        stats = get_user_analytics(user_id, db_path)
-        newly_awarded = []
-
-        badges_by_name = {b.name: b for b in session.query(Badge).all()}
-        user_badge_names = [b.name for b in user.badges]
-
-        rules = [
-            ("First Step", lambda s, u: s["completed_goals"] >= 1),
-            ("On a Roll", lambda s, u: s["completed_goals"] >= 5),
-            ("Goal Crusher", lambda s, u: s["completed_goals"] >= 20),
-            ("Consistent", lambda s, u: s["streak"] >= 3),
-            ("Novice", lambda s, u: u.xp >= 50),
-            ("Adept", lambda s, u: u.xp >= 150),
-            ("Master", lambda s, u: u.xp >= 500),
-        ]
-
-        for b_name, condition in rules:
-            if b_name not in user_badge_names and condition(stats, user):
-                badge = badges_by_name.get(b_name)
-                if badge:
-                    user.badges.append(badge)
-                    newly_awarded.append(
-                        {
-                            "name": badge.name,
-                            "description": badge.description,
-                            "icon": badge.icon,
-                        }
-                    )
-
-        return newly_awarded
-
-
-def get_user_badges(user_id, db_path=None):
-    with session_scope(db_path) as session:
-        user = session.get(User, int(user_id))
-        if not user:
-            return []
-
-        return [
-            {"id": b.id, "name": b.name, "description": b.description, "icon": b.icon}
-            for b in user.badges
-        ]
-
-
-def add_high_five(goal_id, sender_id, db_path=None):
-    with session_scope(db_path) as session:
-        goal = session.get(Goal, int(goal_id))
-        if not goal:
-            return False
-
-        # Check if already given
-        existing = (
-            session.query(HighFive)
-            .filter_by(target_goal_id=goal_id, sender_id=sender_id)
-            .first()
-        )
-        if existing:
-            return True  # Already high-fived
-
-        hf = HighFive(sender_id=sender_id, target_goal_id=goal_id)
-        session.add(hf)
-        return True
-
-
-def get_leaderboard(db_path=None):
-    """Retrieve top users by completed goals count."""
-    with session_scope(db_path) as session:
-        users = session.query(User).filter(User.is_public.is_(True)).all()
-        board = []
-        for u in users:
-            count = (
-                session.query(Goal).filter_by(user_id=u.id, status="completed").count()
-            )
-            board.append(
-                {
-                    "id": u.id,
-                    "username": u.username,
-                    "avatar_url": u.avatar_url,
-                    "completed_count": count,
-                }
-            )
-        board.sort(key=lambda x: x["completed_count"], reverse=True)
-        return board[:10]  # Top 10
-
-
-def get_user_heatmap(user_id=1, db_path=None):
-    """Return a list of dicts {date: 'YYYY-MM-DD', count: int} for the last 365 days of completed goals."""
-    with session_scope(db_path) as session:
-        # Group completed goals by date
-        # SQLite uses date(), Postgres uses cast(created_at, Date). We can safely use func.date() in SQLite
-        # but to be engine-agnostic, strftime or literal extraction might be tricky. Let's just fetch recent completed goals and aggregate in python if the dataset isn't millions.
-        # Given it's a personal productivity app, pulling ~1000 goals and aggregating is sub-millisecond.
-
-        goals = session.query(Goal).filter_by(user_id=user_id, status="completed").all()
-        heatmap = {}
-        for g in goals:
-            if not g.created_at:
-                continue
-            d_str = g.created_at.strftime("%Y-%m-%d")
-            heatmap[d_str] = heatmap.get(d_str, 0) + 1
-
-        # Return as sorted array
-        arr = [{"date": k, "count": v} for k, v in heatmap.items()]
-        arr.sort(key=lambda x: x["date"])
-        return arr
