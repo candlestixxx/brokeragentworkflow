@@ -28,5 +28,7 @@
 
 - **Phase 43:** (Completed) Final Documentation Governance. Prepare the repository to exist in an evergreen, stable state mapping deployment scripts perfectly safely efficiently.
 
+- **Phase 44:** Mobile App Migration. Begin scaffolding the `CapacitorJS` wrappers allowing the Vue SPA to be natively bundled for iOS and Android environments.
+
 ## Future Ideas
 - Expanded Social features (Pending UI scaling)
