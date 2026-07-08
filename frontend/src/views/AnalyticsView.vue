@@ -29,7 +29,7 @@
         <div :class="['absolute -right-4 -bottom-4 h-24 w-24 opacity-5 group-hover:opacity-10 transition-opacity', stat.colorClass]">
           <component :is="stat.icon" class="h-full w-full" />
         </div>
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ stat.label }}</p>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4" :title="stat.label === 'Total XP' ? 'Experience points earned by completing goals and nested subgoals' : 'Platform metric'">{{ stat.label }}</p>
         <div class="flex items-baseline gap-2">
           <h4 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{{ stat.value }}</h4>
           <span v-if="stat.suffix" class="text-sm font-black text-slate-400 uppercase tracking-widest">{{ stat.suffix }}</span>
@@ -55,7 +55,7 @@
           <div class="w-20 h-20 bg-brand-calm/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 group-hover:rotate-6">
             <component :is="iconMap[badge.icon]" class="h-10 w-10 text-brand-calm" />
           </div>
-          <h5 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ badge.name }}</h5>
+          <h5 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight" title="Unlock unique badges by reaching Gamification thresholds!">{{ badge.name }}</h5>
           <p class="text-xs font-medium text-slate-400 mt-2 leading-relaxed">{{ badge.description }}</p>
         </div>
       </div>

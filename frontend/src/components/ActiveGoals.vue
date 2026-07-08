@@ -48,13 +48,13 @@
           </div>
           
           <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-            <button @click="breakdownGoal(goal.id, goal.description)" class="p-3 text-slate-400 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-all" title="AI Breakdown">
+            <button @click="breakdownGoal(goal.id, goal.description)" class="p-3 text-slate-400 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-all" title="AI Spark: Let an LLM automatically break this goal into 3 granular 1-minute sub-tasks!">
               <BoltIcon class="h-5 w-5" />
             </button>
-            <button @click="activeSubGoalParent = goal.id" class="p-3 text-slate-400 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-all" title="Add Sub-goal">
+            <button @click="activeSubGoalParent = goal.id" class="p-3 text-slate-400 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-all" title="Add Manual Sub-goal (Nested sub-goals award exponential gamification XP!)">
               <PlusCircleIcon class="h-5 w-5" />
             </button>
-            <button @click="deleteGoal(goal.id)" class="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all" title="Delete">
+            <button @click="deleteGoal(goal.id)" class="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all" title="Delete Goal (Warning: Cannot be undone)">
               <TrashIcon class="h-5 w-5" />
             </button>
           </div>

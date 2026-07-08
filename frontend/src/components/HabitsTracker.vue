@@ -69,7 +69,7 @@
 
 
           <div class="flex items-center gap-4 pl-4 md:border-l border-slate-100 dark:border-slate-700/50">
-            <button @click="askCoach(habit)" class="p-3 text-slate-300 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-colors" title="Ask AI Coach for Insights">
+            <button @click="askCoach(habit)" class="p-3 text-slate-300 hover:text-brand-calm hover:bg-brand-calm/10 rounded-xl transition-colors" title="Ask AI Coach: Get personalized guidance and psychological insights on maintaining your current consistency streak.">
               <ChatBubbleLeftEllipsisIcon class="h-6 w-6" />
             </button>
             <button @click="deleteHabit(habit.id)" class="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0" title="Delete Habit">
