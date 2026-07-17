@@ -6,5 +6,4 @@ __pycache__/
 goals.db
 dist/
 frontend/package-lock.json
-.hypercode/
 data/
