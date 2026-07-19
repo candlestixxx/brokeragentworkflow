@@ -1,9 +1,9 @@
 # TODO
 
-## Current Tasks (Phase 44: Mobile-First Capacitor Migration Prep)
-- [ ] Refactor UI scaling logic in Tailwind to ensure `CapacitorJS` rendering architectures behave securely across dynamic iOS/Android viewports.
-- [ ] Add `capacitor` to the Node.js frontend workspace mapping native plugins gracefully.
-- [ ] Create testing guidelines evaluating mobile breakpoints recursively.
+## Current Tasks (Phase 45: Native Plugin Integration)
+- [ ] Implement Camera plugin for avatar uploads.
+- [ ] Implement Push Notifications plugin.
+- [ ] Implement Splash Screen customization.
 
 ## Completed Tasks
-- All Phase 1-43 tasks completed.
+- All Phase 1-44 tasks completed.

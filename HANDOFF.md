@@ -1,3 +1,8 @@
+## Phase 44 Update (v0.44.0)
+- **Implemented:** Scaffolding the `CapacitorJS` wrappers allowing the Vue SPA to be natively bundled for iOS and Android environments. Added `@capacitor/core`, `@capacitor/ios`, and `@capacitor/android` packages. Executed `npx cap init` and `npx cap add ios / android`. Adjusted UI boundaries (`min-h-[100dvh]` vs `min-h-screen`) and metadata tags to enforce strict safe-area rendering. Established mobile testing documentation.
+- **Frontend:** Updated `App.vue` and `index.html`.
+- **Status:** Phase 44 complete. Prepared for Phase 45 (native plugin integrations).
+
 ## Phase 26 Update (v0.26.0)
 - **Implemented:** Added the Analytics Dashboard feature. Configured complex `models.py` queries tracking `total_goals`, `completed_goals`, `completion_percentage`, and daily `streak` statistics utilizing SQLite/PostgreSQL dynamic datetime mapping. Integrated these backend models into a dedicated `blueprints/analytics.py` route (`GET /api/analytics`).
 - **Frontend:** Wrote `AnalyticsView.vue` exposing data via responsive Tailwind grids using HeadlessUI patterns. Updated `vue-router` to expose the `/analytics` boundary natively linked inside the main `NavBar.vue` layer.

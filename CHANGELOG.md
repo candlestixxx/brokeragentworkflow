@@ -1,4 +1,10 @@
 # Changelog
+## [0.44.0] - Mobile App Migration
+- Scaffolding `CapacitorJS` wrappers natively to allow Vue SPA deployment for iOS and Android environments.
+- Added Capacitor native plugins and CLI tools to Node.js workspace.
+- Refactored frontend styling UI viewports (`min-h-[100dvh]`) to ensure correct rendering without overlapping mobile browser UI elements.
+- Implemented recursive breakpoint documentation for testing guidelines (`MOBILE_TESTING.md`).
+
 ## [0.33.1] - Automated Deployment Finalization
 - Executed full repository upstream synchronizations.
 - Formatted codebase and finalized documentation layers.

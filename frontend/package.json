@@ -10,12 +10,16 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/ios": "^8.4.2",
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
     "vue": "^3.5.34",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.2",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "^6.0.6",
