@@ -7,3 +7,5 @@ goals.db
 dist/
 frontend/package-lock.json
 data/
+*.log
+nul
