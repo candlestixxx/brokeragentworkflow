@@ -15,7 +15,7 @@
             System Online
           </div>
           
-          <h2 class="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
+          <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
             Welcome back, <br/>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-calm to-brand-accent">{{ user.username }}</span>
           </h2>
