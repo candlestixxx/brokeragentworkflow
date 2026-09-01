@@ -6,7 +6,7 @@
 
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h4 class="text-md font-medium text-gray-900 dark:text-gray-200 transition-colors">Email & SMS Alerts</h4>
+        <h4 class="text-sm sm:text-base md:text-lg font-medium text-gray-900 dark:text-gray-200 transition-colors">Email & SMS Alerts</h4>
         <p class="text-sm text-gray-500 dark:text-gray-400 transition-colors">Receive morning prompts and weekly initiative reminders.</p>
       </div>
       <Switch
@@ -27,7 +27,7 @@
 
     <div class="flex items-center justify-between">
       <div>
-        <h4 class="text-md font-medium text-gray-900 dark:text-gray-200 transition-colors">Public Profile</h4>
+        <h4 class="text-sm sm:text-base md:text-lg font-medium text-gray-900 dark:text-gray-200 transition-colors">Public Profile</h4>
         <p class="text-sm text-gray-500 dark:text-gray-400 transition-colors">Allow teammates to see your completed goals in the Community tab.</p>
       </div>
       <Switch

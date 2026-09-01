@@ -7,7 +7,7 @@
         <UsersIcon class="h-4 w-4" />
         Collective Intelligence
       </div>
-      <h2 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
+      <h2 class="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
         Shared <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-calm to-brand-accent">Momentum</span>
       </h2>
       <p class="text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
@@ -101,6 +101,25 @@
                  <HandRaisedIcon class="h-5 w-5" />
                </button>
              </div>
+
+             <!-- Feedback Section -->
+             <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700">
+               <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4">One-Minute Feedback</h4>
+               <textarea
+                 v-model="feedbackMessage"
+                 rows="3"
+                 placeholder="Share a quick praising or course re-direct..."
+                 class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-brand-calm outline-none transition-all dark:text-white text-sm mb-4 resize-none"
+               ></textarea>
+               <div class="flex gap-4">
+                 <button @click="sendFeedback('praise')" :disabled="!feedbackMessage.trim()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-green-500/20">
+                   Send Praise
+                 </button>
+                 <button @click="sendFeedback('redirect')" :disabled="!feedbackMessage.trim()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-amber-500/20">
+                   Send Re-Direct
+                 </button>
+               </div>
+             </div>
           </div>
         </div>
       </div>
@@ -118,12 +137,14 @@ import {
   RocketLaunchIcon,
   FireIcon 
 } from '@heroicons/vue/24/outline'
+import { showToast } from '../store'
 
 const publicUsers = ref<any[]>([])
 const loading = ref(true)
 const selectedUser = ref<any>(null)
 const userProfile = ref<any>(null)
 const loadingProfile = ref(false)
+const feedbackMessage = ref('')
 
 const openProfile = async (user: any) => {
   selectedUser.value = user
@@ -143,9 +164,33 @@ const sendHighFive = async (goal: any) => {
     const res = await fetch(`/api/social/goals/${goal.id}/highfive`, { method: 'POST' })
     if (res.ok) {
       goal.high_fives = (goal.high_fives || 0) + 1
-      // Toast notification would be nice, but simple update is fine for MVP
+      showToast("High-Five sent!")
     }
   } catch(e) { console.error(e) }
+}
+
+const sendFeedback = async (type: string) => {
+  if (!selectedUser.value || !feedbackMessage.value.trim()) return
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        receiver_id: selectedUser.value.id,
+        message: feedbackMessage.value,
+        feedback_type: type
+      })
+    })
+    if (res.ok) {
+      showToast(`One-Minute ${type === 'praise' ? 'Praise' : 'Re-Direct'} sent!`)
+      feedbackMessage.value = ''
+    } else {
+      showToast("Failed to send feedback.", true)
+    }
+  } catch (e) {
+    console.error(e)
+    showToast("An error occurred.", true)
+  }
 }
 
 

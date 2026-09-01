@@ -53,7 +53,65 @@
           </template>
         </div>
       </div>
+
+      <!-- Mobile Menu Toggle Button -->
+      <div class="md:hidden flex items-center">
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none" aria-label="Toggle Mobile Menu">
+          <Bars3Icon v-if="!mobileMenuOpen" class="w-6 h-6" />
+          <XMarkIcon v-else class="w-6 h-6" />
+        </button>
+      </div>
+
     </nav>
+
+    <!-- Mobile Dropdown Menu -->
+    <div v-if="mobileMenuOpen" class="md:hidden absolute inset-x-0 top-20 bg-white dark:bg-slate-900 shadow-xl border-b border-slate-100 dark:border-slate-800 z-[60] flex flex-col p-6 gap-6">
+
+      <div v-if="user.authenticated" class="flex flex-col gap-4">
+        <router-link
+          v-for="link in navLinks"
+          :key="link.path"
+          :to="link.path"
+          @click="mobileMenuOpen = false"
+          class="text-lg font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest px-2"
+          active-class="text-brand-calm dark:text-brand-accent"
+        >
+          {{ link.name }}
+        </router-link>
+      </div>
+
+      <div class="border-t border-slate-200 dark:border-slate-700 pt-6 flex flex-col gap-6">
+        <div class="flex items-center justify-between px-2">
+          <span class="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Theme</span>
+          <button @click="toggleTheme" class="p-2.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none" aria-label="Toggle Dark Mode">
+            <SunIcon v-if="isDarkMode" class="w-5 h-5" />
+            <MoonIcon v-else class="w-5 h-5" />
+          </button>
+        </div>
+
+        <template v-if="user.authenticated">
+          <div class="flex items-center justify-between px-2">
+            <button @click="showAvatarModal = true; mobileMenuOpen = false" class="flex items-center gap-3 group/user">
+              <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=2563eb&color=fff`" alt="Avatar" class="w-10 h-10 rounded-xl shadow-sm object-cover">
+              <div class="text-left">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">High Performer</p>
+                <p class="text-sm font-bold text-slate-700 dark:text-slate-200 mt-0.5">{{ user.username }}</p>
+              </div>
+            </button>
+            <button @click="logout(); mobileMenuOpen = false" class="p-2.5 text-red-500 hover:text-red-600 transition-all rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20" title="Logout">
+              <ArrowLeftOnRectangleIcon class="w-5 h-5" />
+            </button>
+          </div>
+        </template>
+
+        <template v-else>
+          <div class="flex flex-col gap-4">
+            <router-link to="/login" @click="mobileMenuOpen = false" class="text-center text-sm font-black text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white uppercase tracking-widest">Login</router-link>
+            <router-link to="/register" @click="mobileMenuOpen = false" class="text-center px-6 py-3 bg-brand-calm text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-brand-calm/90 transition-all active:scale-95 shadow-lg shadow-brand-calm/20">Get Started</router-link>
+          </div>
+        </template>
+      </div>
+    </div>
   </header>
 
   <!-- Avatar Modal via Headless UI -->
@@ -131,13 +189,16 @@ import {
   SunIcon, 
   MoonIcon, 
   RocketLaunchIcon, 
-  ArrowLeftOnRectangleIcon 
+  ArrowLeftOnRectangleIcon,
+  Bars3Icon,
+  XMarkIcon
 } from '@heroicons/vue/24/outline'
 import { user, logout as storeLogout, showToast, toggleTheme, isDarkMode } from '../store'
 
 const router = useRouter()
 const showAvatarModal = ref(false)
 const newAvatarUrl = ref('')
+const mobileMenuOpen = ref(false)
 
 const navLinks = [
   { name: 'Dashboard', path: '/' },

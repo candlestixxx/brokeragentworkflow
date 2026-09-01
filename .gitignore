@@ -9,3 +9,4 @@ frontend/package-lock.json
 data/
 *.log
 nul
+instance/

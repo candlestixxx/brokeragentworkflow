@@ -76,6 +76,19 @@ class HighFive(Base):
     goal = relationship("Goal", back_populates="high_fives")
 
 
+class Feedback(Base):
+    __tablename__ = "feedback"
+    id = Column(Integer, primary_key=True)
+    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    receiver_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    message = Column(String(500), nullable=False)
+    feedback_type = Column(String(50), nullable=False)  # 'praise' or 'redirect'
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id], backref="feedback_received")
+
+
 class Goal(Base):
     __tablename__ = "goals"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -697,3 +710,37 @@ def get_user_heatmap(user_id=1, db_path=None):
         arr = [{"date": k, "count": v} for k, v in heatmap.items()]
         arr.sort(key=lambda x: x["date"])
         return arr
+
+
+# --- Feedback ---
+def add_feedback(sender_id, receiver_id, message, feedback_type, db_path=None):
+    with session_scope(db_path) as session:
+        fb = Feedback(
+            sender_id=sender_id,
+            receiver_id=receiver_id,
+            message=message,
+            feedback_type=feedback_type,
+        )
+        session.add(fb)
+        session.flush()
+        return fb.id
+
+
+def get_user_feedback(user_id, db_path=None):
+    with session_scope(db_path) as session:
+        feedback = (
+            session.query(Feedback)
+            .filter_by(receiver_id=user_id)
+            .order_by(Feedback.created_at.desc())
+            .all()
+        )
+        return [
+            {
+                "id": f.id,
+                "sender_username": f.sender.username if f.sender else "Unknown",
+                "message": f.message,
+                "feedback_type": f.feedback_type,
+                "created_at": f.created_at.isoformat(),
+            }
+            for f in feedback
+        ]

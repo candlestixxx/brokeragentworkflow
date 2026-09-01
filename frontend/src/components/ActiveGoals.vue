@@ -33,10 +33,13 @@
 
     <!-- Goals List -->
     <ul class="space-y-6">
-      <li v-for="goal in goals" :key="goal.id" class="group bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 p-6 rounded-[2rem] shadow-sm hover:shadow-xl hover:border-brand-calm/30 transition-all duration-500 relative">
+      <li v-for="(goal, index) in goals" :key="goal.id" :class="[index < 3 ? 'border-brand-calm/50 shadow-md ring-2 ring-brand-calm/20' : 'border-slate-100 dark:border-slate-700 shadow-sm', 'group bg-white dark:bg-slate-800/50 border p-6 rounded-[2rem] hover:shadow-xl hover:border-brand-calm/30 transition-all duration-500 relative']">
         
         <div class="flex items-center justify-between gap-6">
           <div class="flex items-center gap-5 flex-1 min-w-0">
+            <div v-if="index < 3" class="hidden sm:flex p-2 bg-brand-calm/10 rounded-xl shrink-0" title="One-Minute Goal (Top 3 Daily Focus)">
+              <StarIconSolid class="h-6 w-6 text-brand-calm" />
+            </div>
             <button 
               @click="completeGoal(goal.id)" 
               class="w-10 h-10 rounded-2xl border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center hover:border-brand-calm hover:bg-brand-calm/5 transition-all group/check shrink-0"
@@ -145,6 +148,7 @@ import {
   XMarkIcon,
   SparklesIcon
 } from '@heroicons/vue/24/outline'
+import { StarIcon as StarIconSolid } from '@heroicons/vue/24/solid'
 import { goals, showToast } from '../store'
 
 const newGoalDescription = ref('')
