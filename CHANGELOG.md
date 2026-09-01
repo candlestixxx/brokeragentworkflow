@@ -1,4 +1,9 @@
 # Changelog
+## [0.45.0] - Native Plugin Integration
+- Implemented `@capacitor/camera` inside the NavBar avatar modal to allow native photo uploads natively perfectly.
+- Initialized `@capacitor/push-notifications` to natively request permissions on application startup natively dynamically safely.
+- Attached `@capacitor/splash-screen` to elegantly hide loading screens natively upon the Vue app mount synchronously structurally correctly.
+
 ## [0.44.0] - Mobile App Migration
 - Scaffolding `CapacitorJS` wrappers natively to allow Vue SPA deployment for iOS and Android environments.
 - Added Capacitor native plugins and CLI tools to Node.js workspace.
