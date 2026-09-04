@@ -94,13 +94,18 @@
 
                 <form @submit.prevent="updateAvatar" class="w-full space-y-6">
                   <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">Image URL</label>
-                    <input 
-                      v-model="newAvatarUrl" 
-                      type="url" 
-                      placeholder="https://images.unsplash.com/..." 
-                      class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-brand-calm outline-none transition-all dark:text-white text-sm"
-                    >
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 pl-1">Image URL or Take Photo</label>
+                    <div class="flex gap-2">
+                      <input
+                        v-model="newAvatarUrl"
+                        type="url"
+                        placeholder="https://images.unsplash.com/..."
+                        class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-brand-calm outline-none transition-all dark:text-white text-sm"
+                      >
+                      <button type="button" @click="takePhoto" class="bg-slate-100 dark:bg-slate-700 p-4 rounded-2xl text-brand-calm hover:bg-slate-200 dark:hover:bg-slate-600 transition-all shadow-sm">
+                        <CameraIcon class="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
                   <div class="flex gap-3">
                     <button type="button" @click="showAvatarModal = false" class="flex-1 px-6 py-4 text-slate-500 hover:text-slate-900 dark:hover:text-white font-black text-xs uppercase tracking-widest transition-all">Cancel</button>
@@ -131,9 +136,11 @@ import {
   SunIcon, 
   MoonIcon, 
   RocketLaunchIcon, 
-  ArrowLeftOnRectangleIcon 
+  ArrowLeftOnRectangleIcon,
+  CameraIcon
 } from '@heroicons/vue/24/outline'
 import { user, logout as storeLogout, showToast, toggleTheme, isDarkMode } from '../store'
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 const router = useRouter()
 const showAvatarModal = ref(false)
@@ -164,6 +171,23 @@ const updateAvatar = async () => {
     showToast("Avatar updated successfully.")
   } else {
     showToast("Failed to update avatar.", true)
+  }
+}
+
+const takePhoto = async () => {
+  try {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Prompt
+    });
+
+    if (image.dataUrl) {
+      newAvatarUrl.value = image.dataUrl;
+    }
+  } catch (error) {
+    console.error("User cancelled or camera error", error);
   }
 }
 </script>

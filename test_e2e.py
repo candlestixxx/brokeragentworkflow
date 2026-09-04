@@ -38,6 +38,9 @@ def test_server():
 
 def test_user_registration_and_login(page: Page):
     """Test the full flow of registering, logging in, and creating a goal."""
+    # Enforce mobile viewport mapping for native testing checks.
+    page.set_viewport_size({"width": 390, "height": 844})
+
     # Based on earlier manual inspection, we are using the new front-end wording:
     page.goto("http://127.0.0.1:5000/login")
     page.goto("http://127.0.0.1:5000/register")
