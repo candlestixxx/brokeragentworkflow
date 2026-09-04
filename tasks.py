@@ -56,6 +56,32 @@ def trigger_quarterly_reminder():
         )
 
 
+@celery_app.task
+def trigger_weekly_goal_template():
+    """Trigger a weekly prompt to remind agents to set their One-Minute Goals."""
+    users = models.list_users_for_notifications()
+    for user_info in users:
+        notify_all(
+            subject="Weekly One-Minute Goal Template",
+            body="It's time to set your top 3 needle-moving goals for the week. Log into your dashboard to set your focus.",
+            speakable_message="It's time to set your top 3 needle-moving goals for the week. Log into your dashboard to set your focus.",
+        )
+        print(f"Triggered weekly goal template for {user_info['username']}.")
+
+
+@celery_app.task
+def trigger_90_day_lookahead_alerts():
+    """Trigger a 90-day look-ahead alert for major events (e.g., Oct 1 holiday prep)."""
+    users = models.list_users_for_notifications()
+    for user_info in users:
+        notify_all(
+            subject="Action Required: Order Holiday Client Gifts Today",
+            body="As part of your 3-Month Look-Ahead, please finalize and order client holiday gifts today to prepare for Q4.",
+            speakable_message="As part of your 3-Month Look-Ahead, please finalize and order client holiday gifts today to prepare for Q4.",
+        )
+        print(f"Triggered 90-day look-ahead alert for {user_info['username']}.")
+
+
 celery_app.conf.beat_schedule = {
     "morning-prompt-every-day": {
         "task": "tasks.trigger_morning_prompt",
@@ -64,6 +90,14 @@ celery_app.conf.beat_schedule = {
     "quarterly-reminder-every-monday": {
         "task": "tasks.trigger_quarterly_reminder",
         "schedule": crontab(day_of_week="mon", hour=9, minute=0),
+    },
+    "weekly-goal-template-every-monday": {
+        "task": "tasks.trigger_weekly_goal_template",
+        "schedule": crontab(day_of_week="mon", hour=9, minute=0),
+    },
+    "october-first-lookahead-alert": {
+        "task": "tasks.trigger_90_day_lookahead_alerts",
+        "schedule": crontab(month_of_year=10, day_of_month=1, hour=9, minute=0),
     },
 }
 celery_app.conf.timezone = "UTC"
