@@ -121,6 +121,19 @@ class QuarterlyInitiative(Base):
     user = relationship("User", back_populates="initiatives")
 
 
+class MacroPlan(Base):
+    __tablename__ = "macro_plans"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, default=1)
+    plan_type = Column(String(50), nullable=False)  # yearly, quarterly, monthly, weekly
+    period_name = Column(String(100), nullable=False)  # e.g., '2024', 'Q4', 'October', 'Week 42'
+    description = Column(String(500), nullable=False)
+    status = Column(String(50), nullable=False, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User")
+
+
 class Habit(Base):
     __tablename__ = "habits"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -471,6 +484,63 @@ def delete_goal(goal_id, user_id=1, db_path=None):
             session.delete(goal)
             success = True
         return success
+
+
+# --- Macro Planner ---
+def add_macro_plan(plan_type, period_name, description, user_id=1, db_path=None):
+    with session_scope(db_path) as session:
+        new_plan = MacroPlan(
+            plan_type=plan_type,
+            period_name=period_name,
+            description=description,
+            user_id=user_id,
+        )
+        session.add(new_plan)
+        session.flush()
+        return new_plan.id
+
+def list_macro_plans(user_id=1, db_path=None):
+    with session_scope(db_path) as session:
+        plans = (
+            session.query(MacroPlan)
+            .filter_by(user_id=user_id)
+            .order_by(MacroPlan.created_at.desc())
+            .all()
+        )
+        return [
+            {
+                "id": p.id,
+                "plan_type": p.plan_type,
+                "period_name": p.period_name,
+                "description": p.description,
+                "status": p.status,
+            }
+            for p in plans
+        ]
+
+def complete_macro_plan(plan_id, user_id=1, db_path=None):
+    with session_scope(db_path) as session:
+        plan = (
+            session.query(MacroPlan)
+            .filter_by(id=plan_id, user_id=user_id)
+            .first()
+        )
+        if plan:
+            plan.status = "completed"
+            return True
+        return False
+
+def delete_macro_plan(plan_id, user_id=1, db_path=None):
+    with session_scope(db_path) as session:
+        plan = (
+            session.query(MacroPlan)
+            .filter_by(id=plan_id, user_id=user_id)
+            .first()
+        )
+        if plan:
+            session.delete(plan)
+            return True
+        return False
 
 
 # --- Quarterly Initiatives ---

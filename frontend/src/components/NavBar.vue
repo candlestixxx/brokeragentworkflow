@@ -204,6 +204,7 @@ const navLinks = [
   { name: 'Dashboard', path: '/' },
   { name: 'Analytics', path: '/analytics' },
   { name: 'Community', path: '/community' },
+  { name: 'Planner', path: '/planner' },
   { name: 'Settings', path: '/settings' }
 ]
 

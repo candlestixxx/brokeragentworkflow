@@ -1,0 +1,21 @@
+INFO:     Started server process [3074869]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:41022 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /assets/index-BM12n3yo.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41030 - "GET /assets/index-D-paQTu-.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /api/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41030 - "GET /assets/workbox-window.prod.es5-Bd17z0YL.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41030 - "GET /socket.io/?EIO=4&transport=polling&t=u4dxpjrl HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41030 - "GET /api/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41030 - "POST /socket.io/?EIO=4&transport=polling&t=u4dz0t9i&sid=giIPbLQSjA0CQD8tAAAA HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /socket.io/?EIO=4&transport=polling&t=u4dz31x6&sid=giIPbLQSjA0CQD8tAAAA HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41042 - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=giIPbLQSjA0CQD8tAAAA" [accepted]
+INFO:     127.0.0.1:41022 - "GET /socket.io/?EIO=4&transport=polling&t=u4dzb2r9&sid=giIPbLQSjA0CQD8tAAAA HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /socket.io/?EIO=4&transport=polling&t=u4dzh72r&sid=giIPbLQSjA0CQD8tAAAA HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /sw.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /workbox-9c191d2f.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /index.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41022 - "GET /manifest.webmanifest HTTP/1.1" 200 OK
+ished server process [3032211]

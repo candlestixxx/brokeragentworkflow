@@ -7,6 +7,7 @@ import DashboardView from '../views/DashboardView.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import SocialView from '../views/SocialView.vue'
+import PlannerView from '../views/PlannerView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -43,6 +44,12 @@ const router = createRouter({
       path: '/community',
       name: 'community',
       component: SocialView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/planner',
+      name: 'planner',
+      component: PlannerView,
       meta: { requiresAuth: true }
     }
   ]

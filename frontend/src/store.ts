@@ -28,6 +28,14 @@ export interface Habit {
   last_completed_date: string | null;
 }
 
+export interface MacroPlan {
+  id: number;
+  plan_type: string;
+  period_name: string;
+  description: string;
+  status: string;
+}
+
 export interface UserState {
   authenticated: boolean;
   user_id: number | null;
@@ -87,6 +95,7 @@ export const completedGoals = ref<Goal[]>([])
 export const calendarGoals = ref<Record<string, Goal[]>>({})
 export const initiatives = ref<Initiative[]>([])
 export const habits = ref<Habit[]>([])
+export const macroPlans = ref<MacroPlan[]>([])
 
 export const analytics = ref<Record<string, number>>({
   completed_goals: 0,
@@ -105,13 +114,14 @@ export const showToast = (msg: string, isError: boolean = false) => {
 
 export const fetchData = async () => {
   if (!user.authenticated) return
-  const [goalsRes, initRes, compRes, calRes, habitsRes, analyticsRes] = await Promise.all([
+  const [goalsRes, initRes, compRes, calRes, habitsRes, analyticsRes, macroPlansRes] = await Promise.all([
     fetch('/api/goals'),
     fetch('/api/initiatives'),
     fetch('/api/goals/completed'),
     fetch('/api/goals/calendar'),
     fetch('/api/habits'),
-    fetch('/api/me/analytics')
+    fetch('/api/me/analytics'),
+    fetch('/api/planner')
   ])
   if (goalsRes.ok) {
     const gData = await goalsRes.json()
@@ -135,6 +145,10 @@ export const fetchData = async () => {
   }
   if (analyticsRes.ok) {
     analytics.value = await analyticsRes.json()
+  }
+  if (macroPlansRes.ok) {
+    const mpData = await macroPlansRes.json()
+    macroPlans.value = mpData.plans
   }
 }
 
